@@ -70,9 +70,6 @@ const mockLeaderboard: KOL[] = [
 ];
 
 const getRankBadge = (rank: number) => {
-  if (rank === 1) return "🥇";
-  if (rank === 2) return "🥈";
-  if (rank === 3) return "🥉";
   return rank;
 };
 
@@ -89,7 +86,6 @@ export const LeaderboardTable = () => {
                   <th className="px-6 py-4 text-left text-sm font-semibold">Trader</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Trades</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">P&L</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Win Rate</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -149,19 +145,6 @@ export const LeaderboardTable = () => {
                           {kol.profitLossPercentage >= 0 ? "+" : ""}
                           {kol.profitLossPercentage.toFixed(1)}%
                         </Badge>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                          <div
-                            className="h-full bg-primary transition-all"
-                            style={{ width: `${kol.winRate}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-foreground w-12">
-                          {kol.winRate.toFixed(1)}%
-                        </span>
                       </div>
                     </td>
                   </tr>
@@ -227,18 +210,6 @@ export const LeaderboardTable = () => {
                     {kol.profitLossPercentage >= 0 ? "+" : ""}
                     {kol.profitLossPercentage.toFixed(1)}%
                   </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Win Rate:</span>
-                  <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                    <div
-                      className="h-full bg-primary transition-all"
-                      style={{ width: `${kol.winRate}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-foreground w-12">
-                    {kol.winRate.toFixed(1)}%
-                  </span>
                 </div>
               </div>
             </div>
