@@ -129,7 +129,7 @@ export const LeaderboardTable = () => {
                           kol.profitLoss >= 0 ? "text-success" : "text-destructive"
                         }`}
                       >
-                        {kol.profitLoss >= 0 ? "$" : "-$"}{Math.abs(kol.profitLoss).toLocaleString()}
+                        {kol.profitLoss >= 0 ? "+$" : "-$"}{Math.abs(kol.profitLoss).toLocaleString()}
                       </div>
                     </td>
                   </tr>
@@ -182,7 +182,7 @@ export const LeaderboardTable = () => {
                     kol.profitLoss >= 0 ? "text-success" : "text-destructive"
                   }`}
                 >
-                  {kol.profitLoss >= 0 ? "$" : "-$"}{Math.abs(kol.profitLoss).toLocaleString()}
+                  {kol.profitLoss >= 0 ? "+$" : "-$"}{Math.abs(kol.profitLoss).toLocaleString()}
                 </div>
               </div>
             </div>
