@@ -1,5 +1,6 @@
 import logo from "@/assets/logo.png";
 import { Twitter, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Header = () => {
   return (
@@ -14,6 +15,18 @@ export const Header = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              asChild
+              className="bg-primary hover:bg-accent text-primary-foreground font-semibold"
+            >
+              <a
+                href="https://t.me/stonks_sniper_bot?start=tonkolreferral"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Trade on Ton
+              </a>
+            </Button>
             <a
               href="https://x.com/Toncoinkol"
               target="_blank"

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
+import { PriceTracker } from "@/components/PriceTracker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy } from "lucide-react";
 
@@ -9,9 +10,9 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("trades");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-12">
             <TabsTrigger value="trades" className="text-base font-semibold flex items-center gap-2">
@@ -45,6 +46,7 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
+      <PriceTracker />
     </div>
   );
 };
