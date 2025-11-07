@@ -10,7 +10,7 @@ export const Header = () => {
             <img src={logo} alt="Tonkol" className="h-12 w-12" />
             <div>
               <h1 className="text-2xl font-bold text-foreground">Tonkol</h1>
-              <p className="text-sm text-muted-foreground">Real-Time Trade Monitoring</p>
+              <p className="text-sm text-muted-foreground">Know what KOLs are trading</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

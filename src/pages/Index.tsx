@@ -28,7 +28,7 @@ const Index = () => {
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-foreground mb-2">Real-Time Trades</h2>
               <p className="text-muted-foreground">
-                Monitor live trading activity from top crypto KOLs
+                Monitor live trading activity from top KOLs on TON
               </p>
             </div>
             <TradesTable />
@@ -38,7 +38,7 @@ const Index = () => {
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-foreground mb-2">KOL Leaderboard</h2>
               <p className="text-muted-foreground">
-                Ranked by profit & loss performance
+                Top TON KOLs ranked by profit & loss performance
               </p>
             </div>
             <LeaderboardTable />
