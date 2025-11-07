@@ -1,6 +1,5 @@
-import { Twitter, Send, TrendingUp, TrendingDown } from "lucide-react";
+import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface KOL {
   id: string;
@@ -125,26 +124,12 @@ export const LeaderboardTable = () => {
                       <span className="font-medium text-foreground">{kol.totalTrades}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div
-                          className={`font-mono font-bold flex items-center gap-1 ${
-                            kol.profitLoss >= 0 ? "text-success" : "text-destructive"
-                          }`}
-                        >
-                          {kol.profitLoss >= 0 ? (
-                            <TrendingUp className="h-4 w-4" />
-                          ) : (
-                            <TrendingDown className="h-4 w-4" />
-                          )}
-                          ${Math.abs(kol.profitLoss).toLocaleString()}
-                        </div>
-                        <Badge
-                          variant={kol.profitLossPercentage >= 0 ? "default" : "destructive"}
-                          className="font-mono text-xs"
-                        >
-                          {kol.profitLossPercentage >= 0 ? "+" : ""}
-                          {kol.profitLossPercentage.toFixed(1)}%
-                        </Badge>
+                      <div
+                        className={`font-mono font-bold ${
+                          kol.profitLoss >= 0 ? "text-success" : "text-destructive"
+                        }`}
+                      >
+                        ${kol.profitLoss >= 0 ? "" : "-"}${Math.abs(kol.profitLoss).toLocaleString()}
                       </div>
                     </td>
                   </tr>
@@ -193,23 +178,11 @@ export const LeaderboardTable = () => {
               </div>
               <div className="space-y-2">
                 <div
-                  className={`font-mono font-bold flex items-center gap-1 ${
+                  className={`font-mono font-bold ${
                     kol.profitLoss >= 0 ? "text-success" : "text-destructive"
                   }`}
                 >
-                  {kol.profitLoss >= 0 ? (
-                    <TrendingUp className="h-4 w-4" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4" />
-                  )}
-                  ${Math.abs(kol.profitLoss).toLocaleString()}
-                  <Badge
-                    variant={kol.profitLossPercentage >= 0 ? "default" : "destructive"}
-                    className="font-mono text-xs ml-2"
-                  >
-                    {kol.profitLossPercentage >= 0 ? "+" : ""}
-                    {kol.profitLossPercentage.toFixed(1)}%
-                  </Badge>
+                  ${kol.profitLoss >= 0 ? "" : "-"}${Math.abs(kol.profitLoss).toLocaleString()}
                 </div>
               </div>
             </div>
