@@ -24,7 +24,7 @@ const Index = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="trades" className="space-y-4">
+          <TabsContent value="trades" className="space-y-4 animate-fade-in">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-foreground mb-2">Real-Time Trades</h2>
               <p className="text-muted-foreground">
@@ -34,7 +34,7 @@ const Index = () => {
             <TradesTable />
           </TabsContent>
 
-          <TabsContent value="leaderboard" className="space-y-4">
+          <TabsContent value="leaderboard" className="space-y-4 animate-fade-in">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-foreground mb-2">KOL Leaderboard</h2>
               <p className="text-muted-foreground">
