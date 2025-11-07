@@ -9,7 +9,7 @@ interface Trade {
   xLink?: string;
   telegramLink?: string;
   type: "buy" | "sell";
-  solAmount: number;
+  tonAmount: number;
   usdValue: number;
   tokenName: string;
   timestamp: Date;
@@ -22,7 +22,7 @@ const mockTrades: Trade[] = [
     xLink: "https://x.com/cryptowhale",
     telegramLink: "https://t.me/cryptowhale",
     type: "buy",
-    solAmount: 50.5,
+    tonAmount: 50.5,
     usdValue: 8580,
     tokenName: "BONK",
     timestamp: new Date(Date.now() - 120000),
@@ -32,7 +32,7 @@ const mockTrades: Trade[] = [
     kolName: "SolanaMaxi",
     xLink: "https://x.com/solanamaxi",
     type: "sell",
-    solAmount: 25.3,
+    tonAmount: 25.3,
     usdValue: 4301,
     tokenName: "WIF",
     timestamp: new Date(Date.now() - 300000),
@@ -42,7 +42,7 @@ const mockTrades: Trade[] = [
     kolName: "DeFiTrader",
     telegramLink: "https://t.me/defitrader",
     type: "buy",
-    solAmount: 100,
+    tonAmount: 100,
     usdValue: 17000,
     tokenName: "JTO",
     timestamp: new Date(Date.now() - 600000),
@@ -53,7 +53,7 @@ const mockTrades: Trade[] = [
     xLink: "https://x.com/memeking",
     telegramLink: "https://t.me/memeking",
     type: "buy",
-    solAmount: 15.8,
+    tonAmount: 15.8,
     usdValue: 2686,
     tokenName: "POPCAT",
     timestamp: new Date(Date.now() - 900000),
@@ -136,7 +136,7 @@ export const TradesTable = () => {
                     <td className="px-6 py-4">
                       <div className="space-y-1">
                         <div className="font-mono font-semibold text-foreground">
-                          {trade.solAmount.toFixed(2)} SOL
+                          {trade.tonAmount.toFixed(2)} TON
                         </div>
                         <div className="text-sm text-muted-foreground">
                           ${trade.usdValue.toLocaleString()}
@@ -200,7 +200,7 @@ export const TradesTable = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-mono font-semibold text-foreground">
-                    {trade.solAmount.toFixed(2)} SOL
+                    {trade.tonAmount.toFixed(2)} TON
                   </div>
                   <div className="text-sm text-muted-foreground">
                     ${trade.usdValue.toLocaleString()}
