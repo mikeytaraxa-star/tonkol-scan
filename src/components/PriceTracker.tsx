@@ -93,7 +93,7 @@ export const PriceTracker = () => {
                   <div className="text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold text-foreground font-mono">
-                      ${tonData.price.toFixed(4)}
+                      ${tonData.price.toFixed(2)}
                     </span>
                     <div
                       className={`flex items-center gap-1 px-2 py-1 rounded-md ${
@@ -126,11 +126,11 @@ export const PriceTracker = () => {
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-muted-foreground mb-1">24h High</div>
-                  <div className="font-semibold text-foreground">${tonData.high24h.toFixed(4)}</div>
+                  <div className="font-semibold text-foreground">${tonData.high24h.toFixed(2)}</div>
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-muted-foreground mb-1">24h Low</div>
-                  <div className="font-semibold text-foreground">${tonData.low24h.toFixed(4)}</div>
+                  <div className="font-semibold text-foreground">${tonData.low24h.toFixed(2)}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
