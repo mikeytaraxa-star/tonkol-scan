@@ -15,7 +15,7 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "http://89.58.30.186:8080";
+const API_BASE = "https://corsproxy.io/?http://89.58.30.186:8080";
 
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
