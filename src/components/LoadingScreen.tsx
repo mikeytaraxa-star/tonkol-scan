@@ -1,6 +1,14 @@
-export const LoadingScreen = () => {
+interface LoadingScreenProps {
+  isExiting: boolean;
+}
+
+export const LoadingScreen = ({ isExiting }: LoadingScreenProps) => {
   return (
-    <div className="fixed inset-0 bg-primary flex items-center justify-center z-50">
+    <div 
+      className={`fixed inset-0 bg-primary flex items-center justify-center z-50 transition-opacity duration-700 ${
+        isExiting ? 'opacity-0' : 'opacity-100'
+      }`}
+    >
       <div className="text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white animate-pulse">
           Know where and who on Ton

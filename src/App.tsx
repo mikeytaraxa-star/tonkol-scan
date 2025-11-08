@@ -12,17 +12,25 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const exitTimer = setTimeout(() => {
+      setIsExiting(true);
+    }, 1800);
 
-    return () => clearTimeout(timer);
+    const hideTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+
+    return () => {
+      clearTimeout(exitTimer);
+      clearTimeout(hideTimer);
+    };
   }, []);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen isExiting={isExiting} />;
   }
 
   return (
