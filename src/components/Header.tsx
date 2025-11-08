@@ -12,7 +12,8 @@ import {
 import { useState } from "react";
 
 export const Header = () => {
-  const [open, setOpen] = useState(false);
+  const [getListedOpen, setGetListedOpen] = useState(false);
+  const [tradeOpen, setTradeOpen] = useState(false);
 
   return (
     <header className="border-b border-border bg-card">
@@ -26,20 +27,52 @@ export const Header = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              asChild
-              className="bg-primary hover:bg-accent text-primary-foreground font-semibold"
-            >
-              <a
-                href="https://t.me/stonks_sniper_bot?start=tonkolreferral"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Trade on Ton
-              </a>
-            </Button>
+            <Dialog open={tradeOpen} onOpenChange={setTradeOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  className="bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                >
+                  Trade on Ton
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Choose Trading Platform</DialogTitle>
+                  <DialogDescription className="sr-only">
+                    Select your preferred trading platform
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3 py-4">
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
+                      href="https://t.me/stonks_sniper_bot?start=tonkolreferral"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Stonks Bot
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
+                      href="https://x1000.finance/?ref=mikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      x1000 Trading Terminal
+                    </a>
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={getListedOpen} onOpenChange={setGetListedOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
