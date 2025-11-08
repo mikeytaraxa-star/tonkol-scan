@@ -68,7 +68,7 @@ export const LeaderboardTable = () => {
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
-      <div className="hidden md:block">
+      <div key={timeframe} className="hidden md:block animate-fade-in">
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -134,7 +134,7 @@ export const LeaderboardTable = () => {
       </div>
 
       {/* Mobile view */}
-      <div className="md:hidden space-y-4">
+      <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
         {leaderboard.map((entry) => (
           <Card key={entry.wallet_address} className="p-4">
             <div className="space-y-3">
