@@ -1,78 +1,52 @@
 import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 
-interface KOL {
-  id: string;
+interface LeaderboardEntry {
   rank: number;
-  name: string;
-  xLink?: string;
-  telegramLink?: string;
-  totalTrades: number;
-  profitLoss: number;
-  profitLossPercentage: number;
-  winRate: number;
+  kol_name: string;
+  kol_social: string;
+  kol_platform: string;
+  wallet_address: string;
+  total_pnl_24h: number;
+  total_pnl_7d: number;
+  trade_count_24h: number;
+  trade_count_7d: number;
+  last_calculated: string;
 }
 
-const mockLeaderboard: KOL[] = [
-  {
-    id: "1",
-    rank: 1,
-    name: "CryptoWhale",
-    xLink: "https://x.com/cryptowhale",
-    telegramLink: "https://t.me/cryptowhale",
-    totalTrades: 342,
-    profitLoss: 125000,
-    profitLossPercentage: 45.2,
-    winRate: 72.5,
-  },
-  {
-    id: "2",
-    rank: 2,
-    name: "DeFiTrader",
-    telegramLink: "https://t.me/defitrader",
-    totalTrades: 289,
-    profitLoss: 98500,
-    profitLossPercentage: 38.7,
-    winRate: 68.3,
-  },
-  {
-    id: "3",
-    rank: 3,
-    name: "SolanaMaxi",
-    xLink: "https://x.com/solanamaxi",
-    totalTrades: 412,
-    profitLoss: 87200,
-    profitLossPercentage: 32.4,
-    winRate: 65.8,
-  },
-  {
-    id: "4",
-    rank: 4,
-    name: "MemeKing",
-    xLink: "https://x.com/memeking",
-    telegramLink: "https://t.me/memeking",
-    totalTrades: 567,
-    profitLoss: 54300,
-    profitLossPercentage: 28.1,
-    winRate: 61.2,
-  },
-  {
-    id: "5",
-    rank: 5,
-    name: "NFTCollector",
-    xLink: "https://x.com/nftcollector",
-    totalTrades: 198,
-    profitLoss: -15400,
-    profitLossPercentage: -12.3,
-    winRate: 42.7,
-  },
-];
-
-const getRankBadge = (rank: number) => {
-  return rank;
-};
+const API_BASE = "/api";
 
 export const LeaderboardTable = () => {
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchLeaderboard = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/leaderboard?timeframe=24h&limit=20`);
+      const data = await response.json();
+      setLeaderboard(data.leaderboard || []);
+    } catch (error) {
+      console.error("Failed to fetch leaderboard:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeaderboard();
+    const interval = setInterval(fetchLeaderboard, 45000); // Refresh every 45s
+    return () => clearInterval(interval);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-8">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="hidden md:block">
@@ -88,18 +62,18 @@ export const LeaderboardTable = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {mockLeaderboard.map((kol) => (
-                  <tr key={kol.id} className="hover:bg-muted/50 transition-colors">
+                {leaderboard.map((entry) => (
+                  <tr key={entry.wallet_address} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
-                      <span className="text-2xl font-bold">{getRankBadge(kol.rank)}</span>
+                      <span className="text-2xl font-bold">{entry.rank}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <span className="font-medium text-foreground">{kol.name}</span>
+                        <span className="font-medium text-foreground">{entry.kol_name}</span>
                         <div className="flex gap-2">
-                          {kol.xLink && (
+                          {entry.kol_platform === "X" && entry.kol_social && (
                             <a
-                              href={kol.xLink}
+                              href={entry.kol_social}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-muted-foreground hover:text-primary transition-colors"
@@ -107,9 +81,9 @@ export const LeaderboardTable = () => {
                               <Twitter className="h-4 w-4" />
                             </a>
                           )}
-                          {kol.telegramLink && (
+                          {entry.kol_platform === "Telegram" && entry.kol_social && (
                             <a
-                              href={kol.telegramLink}
+                              href={entry.kol_social}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-muted-foreground hover:text-primary transition-colors"
@@ -121,15 +95,15 @@ export const LeaderboardTable = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-medium text-foreground">{kol.totalTrades}</span>
+                      <span className="font-medium text-foreground">{entry.trade_count_24h}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div
                         className={`font-mono font-bold ${
-                          kol.profitLoss >= 0 ? "text-success" : "text-destructive"
+                          entry.total_pnl_24h >= 0 ? "text-success" : "text-destructive"
                         }`}
                       >
-                        {kol.profitLoss >= 0 ? "+$" : "-$"}{Math.abs(kol.profitLoss).toLocaleString()}
+                        {entry.total_pnl_24h >= 0 ? "+$" : "-$"}{Math.abs(entry.total_pnl_24h).toLocaleString()}
                       </div>
                     </td>
                   </tr>
@@ -142,21 +116,21 @@ export const LeaderboardTable = () => {
 
       {/* Mobile view */}
       <div className="md:hidden space-y-4">
-        {mockLeaderboard.map((kol) => (
-          <Card key={kol.id} className="p-4">
+        {leaderboard.map((entry) => (
+          <Card key={entry.wallet_address} className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl font-bold">{getRankBadge(kol.rank)}</span>
+                  <span className="text-2xl font-bold">{entry.rank}</span>
                   <div>
-                    <div className="font-medium text-foreground">{kol.name}</div>
-                    <div className="text-sm text-muted-foreground">{kol.totalTrades} trades</div>
+                    <div className="font-medium text-foreground">{entry.kol_name}</div>
+                    <div className="text-sm text-muted-foreground">{entry.trade_count_24h} trades</div>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  {kol.xLink && (
+                  {entry.kol_platform === "X" && entry.kol_social && (
                     <a
-                      href={kol.xLink}
+                      href={entry.kol_social}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-primary transition-colors"
@@ -164,9 +138,9 @@ export const LeaderboardTable = () => {
                       <Twitter className="h-4 w-4" />
                     </a>
                   )}
-                  {kol.telegramLink && (
+                  {entry.kol_platform === "Telegram" && entry.kol_social && (
                     <a
-                      href={kol.telegramLink}
+                      href={entry.kol_social}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-primary transition-colors"
@@ -179,10 +153,10 @@ export const LeaderboardTable = () => {
               <div className="space-y-2">
                 <div
                   className={`font-mono font-bold ${
-                    kol.profitLoss >= 0 ? "text-success" : "text-destructive"
+                    entry.total_pnl_24h >= 0 ? "text-success" : "text-destructive"
                   }`}
                 >
-                  {kol.profitLoss >= 0 ? "+$" : "-$"}{Math.abs(kol.profitLoss).toLocaleString()}
+                  {entry.total_pnl_24h >= 0 ? "+$" : "-$"}{Math.abs(entry.total_pnl_24h).toLocaleString()}
                 </div>
               </div>
             </div>

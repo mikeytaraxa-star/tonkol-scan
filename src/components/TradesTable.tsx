@@ -4,64 +4,28 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
 interface Trade {
-  id: string;
-  kolName: string;
-  xLink?: string;
-  telegramLink?: string;
-  type: "buy" | "sell";
-  tonAmount: number;
-  usdValue: number;
-  tokenName: string;
-  timestamp: Date;
+  kol_name: string;
+  kol_social: string;
+  kol_platform: string;
+  wallet_address: string;
+  token_symbol: string;
+  token_name: string;
+  token_address: string;
+  trade_type: "buy" | "sell";
+  amount: number;
+  amount_ton: number;
+  value_usd: number;
+  price_usd: number;
+  timestamp: string;
+  tx_hash: string;
+  dex_name: string;
 }
 
-const mockTrades: Trade[] = [
-  {
-    id: "1",
-    kolName: "CryptoWhale",
-    xLink: "https://x.com/cryptowhale",
-    telegramLink: "https://t.me/cryptowhale",
-    type: "buy",
-    tonAmount: 50.5,
-    usdValue: 8580,
-    tokenName: "BONK",
-    timestamp: new Date(Date.now() - 120000),
-  },
-  {
-    id: "2",
-    kolName: "SolanaMaxi",
-    xLink: "https://x.com/solanamaxi",
-    type: "sell",
-    tonAmount: 25.3,
-    usdValue: 4301,
-    tokenName: "WIF",
-    timestamp: new Date(Date.now() - 300000),
-  },
-  {
-    id: "3",
-    kolName: "DeFiTrader",
-    telegramLink: "https://t.me/defitrader",
-    type: "buy",
-    tonAmount: 100,
-    usdValue: 17000,
-    tokenName: "JTO",
-    timestamp: new Date(Date.now() - 600000),
-  },
-  {
-    id: "4",
-    kolName: "MemeKing",
-    xLink: "https://x.com/memeking",
-    telegramLink: "https://t.me/memeking",
-    type: "buy",
-    tonAmount: 15.8,
-    usdValue: 2686,
-    tokenName: "POPCAT",
-    timestamp: new Date(Date.now() - 900000),
-  },
-];
+const API_BASE = "/api";
 
-const formatTimeSince = (date: Date) => {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+const formatTimeSince = (timestampStr: string) => {
+  const timestamp = new Date(timestampStr).getTime();
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
   
   if (seconds < 60) return `${seconds}s ago`;
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
@@ -70,15 +34,43 @@ const formatTimeSince = (date: Date) => {
 };
 
 export const TradesTable = () => {
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
+  const fetchTrades = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/trades/recent?timeframe=24h&limit=100`);
+      const data = await response.json();
+      setTrades(data.trades || []);
+    } catch (error) {
+      console.error("Failed to fetch trades:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
+    fetchTrades();
+    const tradeInterval = setInterval(fetchTrades, 45000); // Refresh every 45s
+    
+    const timeInterval = setInterval(() => {
       setCurrentTime(Date.now());
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(tradeInterval);
+      clearInterval(timeInterval);
+    };
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-8">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -96,15 +88,15 @@ export const TradesTable = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {mockTrades.map((trade) => (
-                  <tr key={trade.id} className="hover:bg-muted/50 transition-colors">
+                {trades.map((trade) => (
+                  <tr key={trade.tx_hash} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <span className="font-medium text-foreground">{trade.kolName}</span>
+                        <span className="font-medium text-foreground">{trade.kol_name}</span>
                         <div className="flex gap-2">
-                          {trade.xLink && (
+                          {trade.kol_platform === "X" && trade.kol_social && (
                             <a
-                              href={trade.xLink}
+                              href={trade.kol_social}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-muted-foreground hover:text-primary transition-colors"
@@ -112,9 +104,9 @@ export const TradesTable = () => {
                               <Twitter className="h-4 w-4" />
                             </a>
                           )}
-                          {trade.telegramLink && (
+                          {trade.kol_platform === "Telegram" && trade.kol_social && (
                             <a
-                              href={trade.telegramLink}
+                              href={trade.kol_social}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-muted-foreground hover:text-primary transition-colors"
@@ -127,24 +119,31 @@ export const TradesTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <Badge
-                        variant={trade.type === "buy" ? "default" : "destructive"}
+                        variant={trade.trade_type === "buy" ? "default" : "destructive"}
                         className="uppercase font-semibold"
                       >
-                        {trade.type}
+                        {trade.trade_type}
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-1">
                         <div className="font-mono font-semibold text-foreground">
-                          {trade.tonAmount.toFixed(2)} TON
+                          {trade.amount_ton.toFixed(2)} TON
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          ${trade.usdValue.toLocaleString()}
+                          ${trade.value_usd.toLocaleString()}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-primary">${trade.tokenName}</span>
+                      <a 
+                        href={`https://tonviewer.com/${trade.token_address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        ${trade.token_symbol}
+                      </a>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-muted-foreground">
@@ -161,16 +160,16 @@ export const TradesTable = () => {
 
       {/* Mobile view */}
       <div className="md:hidden space-y-4">
-        {mockTrades.map((trade) => (
-          <Card key={trade.id} className="p-4">
+        {trades.map((trade) => (
+          <Card key={trade.tx_hash} className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="font-medium text-foreground">{trade.kolName}</span>
+                  <span className="font-medium text-foreground">{trade.kol_name}</span>
                   <div className="flex gap-2">
-                    {trade.xLink && (
+                    {trade.kol_platform === "X" && trade.kol_social && (
                       <a
-                        href={trade.xLink}
+                        href={trade.kol_social}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary transition-colors"
@@ -178,9 +177,9 @@ export const TradesTable = () => {
                         <Twitter className="h-4 w-4" />
                       </a>
                     )}
-                    {trade.telegramLink && (
+                    {trade.kol_platform === "Telegram" && trade.kol_social && (
                       <a
-                        href={trade.telegramLink}
+                        href={trade.kol_social}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary transition-colors"
@@ -191,23 +190,30 @@ export const TradesTable = () => {
                   </div>
                 </div>
                 <Badge
-                  variant={trade.type === "buy" ? "default" : "destructive"}
+                  variant={trade.trade_type === "buy" ? "default" : "destructive"}
                   className="uppercase font-semibold"
                 >
-                  {trade.type}
+                  {trade.trade_type}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-mono font-semibold text-foreground">
-                    {trade.tonAmount.toFixed(2)} TON
+                    {trade.amount_ton.toFixed(2)} TON
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    ${trade.usdValue.toLocaleString()}
+                    ${trade.value_usd.toLocaleString()}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-semibold text-primary">${trade.tokenName}</div>
+                  <a 
+                    href={`https://tonviewer.com/${trade.token_address}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    ${trade.token_symbol}
+                  </a>
                   <div className="text-sm text-muted-foreground">
                     {formatTimeSince(trade.timestamp)}
                   </div>
