@@ -21,7 +21,7 @@ interface Trade {
   dex_name: string;
 }
 
-const API_BASE = "/api";
+const API_BASE = "http://89.58.30.186:8080";
 
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();
