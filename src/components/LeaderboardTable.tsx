@@ -1,5 +1,6 @@
 import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useState, useEffect } from "react";
 
 interface LeaderboardEntry {
@@ -20,10 +21,11 @@ const API_BASE = "https://russia-triangle-breeds-tumor.trycloudflare.com";
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [timeframe, setTimeframe] = useState<"24h" | "7d">("24h");
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/leaderboard?timeframe=24h&limit=20`);
+      const response = await fetch(`${API_BASE}/api/leaderboard?timeframe=${timeframe}&limit=20`);
       const data = await response.json();
       setLeaderboard(data.leaderboard || []);
     } catch (error) {
@@ -34,10 +36,11 @@ export const LeaderboardTable = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchLeaderboard();
     const interval = setInterval(fetchLeaderboard, 45000); // Refresh every 45s
     return () => clearInterval(interval);
-  }, []);
+  }, [timeframe]);
 
   if (isLoading) {
     return (
@@ -47,8 +50,24 @@ export const LeaderboardTable = () => {
     );
   }
 
+  const currentPnl = (entry: LeaderboardEntry) => 
+    timeframe === "24h" ? entry.total_pnl_24h : entry.total_pnl_7d;
+  
+  const currentTradeCount = (entry: LeaderboardEntry) => 
+    timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
+
   return (
     <div className="space-y-4">
+      <div className="flex justify-center mb-4">
+        <ToggleGroup type="single" value={timeframe} onValueChange={(value) => value && setTimeframe(value as "24h" | "7d")}>
+          <ToggleGroupItem value="24h" aria-label="24 hours">
+            24H
+          </ToggleGroupItem>
+          <ToggleGroupItem value="7d" aria-label="7 days">
+            7D
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
       <div className="hidden md:block">
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
@@ -95,15 +114,15 @@ export const LeaderboardTable = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-medium text-foreground">{entry.trade_count_24h}</span>
+                      <span className="font-medium text-foreground">{currentTradeCount(entry)}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div
                         className={`font-mono font-bold ${
-                          entry.total_pnl_24h >= 0 ? "text-success" : "text-destructive"
+                          currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
                         }`}
                       >
-                        {entry.total_pnl_24h >= 0 ? "+$" : "-$"}{Math.abs(entry.total_pnl_24h).toLocaleString()}
+                        {currentPnl(entry) >= 0 ? "+$" : "-$"}{Math.abs(currentPnl(entry)).toLocaleString()}
                       </div>
                     </td>
                   </tr>
@@ -120,13 +139,13 @@ export const LeaderboardTable = () => {
           <Card key={entry.wallet_address} className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl font-bold">{entry.rank}</span>
-                  <div>
-                    <div className="font-medium text-foreground">{entry.kol_name}</div>
-                    <div className="text-sm text-muted-foreground">{entry.trade_count_24h} trades</div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl font-bold">{entry.rank}</span>
+                    <div>
+                      <div className="font-medium text-foreground">{entry.kol_name}</div>
+                      <div className="text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
+                    </div>
                   </div>
-                </div>
                 <div className="flex gap-2">
                   {entry.kol_platform === "X" && entry.kol_social && (
                     <a
@@ -153,10 +172,10 @@ export const LeaderboardTable = () => {
               <div className="space-y-2">
                 <div
                   className={`font-mono font-bold ${
-                    entry.total_pnl_24h >= 0 ? "text-success" : "text-destructive"
+                    currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
                   }`}
                 >
-                  {entry.total_pnl_24h >= 0 ? "+$" : "-$"}{Math.abs(entry.total_pnl_24h).toLocaleString()}
+                  {currentPnl(entry) >= 0 ? "+$" : "-$"}{Math.abs(currentPnl(entry)).toLocaleString()}
                 </div>
               </div>
             </div>
