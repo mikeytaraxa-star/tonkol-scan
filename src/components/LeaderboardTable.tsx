@@ -15,7 +15,7 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://corsproxy.io/?http://89.58.30.186:8080";
+const API_BASE = "https://russia-triangle-breeds-tumor.trycloudflare.com";
 
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -23,7 +23,7 @@ export const LeaderboardTable = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch(`${API_BASE}/leaderboard?timeframe=24h&limit=20`);
+      const response = await fetch(`${API_BASE}/api/leaderboard?timeframe=24h&limit=20`);
       const data = await response.json();
       setLeaderboard(data.leaderboard || []);
     } catch (error) {

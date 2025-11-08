@@ -21,7 +21,7 @@ interface Trade {
   dex_name: string;
 }
 
-const API_BASE = "https://corsproxy.io/?http://89.58.30.186:8080";
+const API_BASE = "https://russia-triangle-breeds-tumor.trycloudflare.com";
 
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();
@@ -40,7 +40,7 @@ export const TradesTable = () => {
 
   const fetchTrades = async () => {
     try {
-      const response = await fetch(`${API_BASE}/trades/recent?timeframe=24h&limit=100`);
+      const response = await fetch(`${API_BASE}/api/trades/recent?timeframe=24h&limit=100`);
       const data = await response.json();
       setTrades(data.trades || []);
     } catch (error) {
