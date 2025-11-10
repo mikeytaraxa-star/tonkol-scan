@@ -17,22 +17,23 @@ export const Header = () => {
 
   return (
     <header className="border-b border-border bg-card">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Tonkol" className="h-12 w-12" />
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Tonkol</h1>
-              <p className="text-sm text-muted-foreground">Know what KOLs are trading</p>
+      <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink">
+            <img src={logo} alt="Tonkol" className="h-8 w-8 sm:h-12 sm:w-12 flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">Tonkol</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Know what KOLs are trading</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             <Dialog open={tradeOpen} onOpenChange={setTradeOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className="bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  className="bg-primary hover:bg-accent text-primary-foreground font-semibold text-xs sm:text-sm px-2 sm:px-4 h-8 sm:h-10"
                 >
-                  Trade on Ton
+                  <span className="hidden sm:inline">Trade on Ton</span>
+                  <span className="sm:hidden">Trade</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -76,9 +77,10 @@ export const Header = () => {
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="bg-background hover:bg-accent text-foreground font-semibold"
+                  className="bg-background hover:bg-accent text-foreground font-semibold text-xs sm:text-sm px-2 sm:px-4 h-8 sm:h-10"
                 >
-                  Get Listed
+                  <span className="hidden sm:inline">Get Listed</span>
+                  <span className="sm:hidden">List</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -141,19 +143,19 @@ export const Header = () => {
               href="https://x.com/Toncoinkol"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg hover:bg-primary/10 text-foreground hover:text-primary transition-all duration-200 hover:scale-110"
+              className="p-1.5 sm:p-2 rounded-lg hover:bg-primary/10 text-foreground hover:text-primary transition-all duration-200 hover:scale-110"
               aria-label="Follow us on X"
             >
-              <Twitter className="h-5 w-5" />
+              <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />
             </a>
             <a
               href="https://t.me/tonkolpro"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg hover:bg-primary/10 text-foreground hover:text-primary transition-all duration-200 hover:scale-110"
+              className="p-1.5 sm:p-2 rounded-lg hover:bg-primary/10 text-foreground hover:text-primary transition-all duration-200 hover:scale-110"
               aria-label="Join us on Telegram"
             >
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4 sm:h-5 sm:w-5" />
             </a>
           </div>
         </div>
