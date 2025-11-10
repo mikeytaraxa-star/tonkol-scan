@@ -108,6 +108,12 @@ export const Header = () => {
                         A <span className="font-semibold">project/event recognised</span> by Ton Officials
                       </p>
                     </div>
+                    <div className="flex items-start gap-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2" />
+                      <p className="text-sm text-foreground">
+                        <span className="font-semibold">5k+ members</span> on Telegram
+                      </p>
+                    </div>
                   </div>
                   
                   <div className="pt-2">
