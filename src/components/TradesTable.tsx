@@ -21,7 +21,7 @@ interface Trade {
   dex_name: string;
 }
 
-const API_BASE = "https://russia-triangle-breeds-tumor.trycloudflare.com";
+const API_BASE = "https://argument-answer-gallery-elect.trycloudflare.com";
 
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();
