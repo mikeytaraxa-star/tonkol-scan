@@ -40,7 +40,11 @@ export const TradesTable = () => {
 
   const fetchTrades = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/trades/recent?timeframe=24h&limit=100`);
+      const response = await fetch(`${API_BASE}/api/trades/recent?timeframe=24h&limit=100`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
       const data = await response.json();
       setTrades(data.trades || []);
     } catch (error) {
