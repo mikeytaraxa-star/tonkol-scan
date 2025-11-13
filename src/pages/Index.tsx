@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { PriceTracker } from "@/components/PriceTracker";
+import { TelegramCTA } from "@/components/TelegramCTA";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy } from "lucide-react";
 
@@ -47,6 +48,7 @@ const Index = () => {
         </Tabs>
       </main>
       <PriceTracker />
+      <TelegramCTA />
     </div>
   );
 };
