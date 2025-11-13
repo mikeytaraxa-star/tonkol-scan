@@ -11,16 +11,11 @@ export const LoadingScreen = ({ isExiting }: LoadingScreenProps) => {
         isExiting ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      <div className="text-center">
-        <img 
-          src={loadingLogo} 
-          alt="TON KOL" 
-          className="w-32 h-32 mx-auto mb-8 animate-pulse"
-        />
-        <h1 className="text-4xl md:text-5xl font-bold text-white animate-pulse">
-          Know where and who on Ton
-        </h1>
-      </div>
+      <img 
+        src={loadingLogo} 
+        alt="TON KOL" 
+        className="w-32 h-32 animate-pulse"
+      />
     </div>
   );
 };
