@@ -21,7 +21,7 @@ interface Trade {
   dex_name: string;
 }
 
-const API_BASE = "https://lou-bottles-suburban-computing.trycloudflare.com";
+const API_BASE = "https://kurt-development-winds-arranged.trycloudflare.com";
 
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();
