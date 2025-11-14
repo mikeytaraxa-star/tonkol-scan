@@ -16,7 +16,7 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://ouida-nonzonate-roger.ngrok-free.dev";
+const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
 
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
