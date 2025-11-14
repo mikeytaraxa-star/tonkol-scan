@@ -21,7 +21,7 @@ interface Trade {
   dex_name: string;
 }
 
-const API_BASE = "https://roots-cabinet-update-cute.trycloudflare.com";
+const API_BASE = "https://ouida-nonzonate-roger.ngrok-free.dev";
 
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();
