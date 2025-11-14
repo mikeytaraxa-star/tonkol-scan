@@ -34,16 +34,17 @@ export const PriceTracker = () => {
       const data = await response.json();
       
       setTonData({
-        price: data.price,
+        price: data.price_usd || 0,
         priceChange24h: data.price_change_24h || 0,
         volume24h: data.volume_24h || 0,
         marketCap: data.market_cap || 0,
-        high24h: data.high_24h || data.price,
-        low24h: data.low_24h || data.price,
+        high24h: data.high_24h || data.price_usd || 0,
+        low24h: data.low_24h || data.price_usd || 0,
       });
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching TON price:", error);
+      setIsLoading(false);
     }
   };
 
@@ -87,7 +88,7 @@ export const PriceTracker = () => {
                   <div className="text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold text-foreground font-mono">
-                      ${tonData.price.toFixed(2)}
+                      ${(tonData.price || 0).toFixed(2)}
                     </span>
                     <div
                       className={`flex items-center gap-1 px-2 py-1 rounded-md ${
@@ -103,7 +104,7 @@ export const PriceTracker = () => {
                       )}
                       <span className="font-semibold text-sm">
                         {isPositive ? "+" : ""}
-                        {tonData.priceChange24h.toFixed(2)}%
+                        {(tonData.priceChange24h || 0).toFixed(2)}%
                       </span>
                     </div>
                   </div>
@@ -120,11 +121,11 @@ export const PriceTracker = () => {
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-muted-foreground mb-1">24h High</div>
-                  <div className="font-semibold text-foreground">${tonData.high24h.toFixed(2)}</div>
+                  <div className="font-semibold text-foreground">${(tonData.high24h || 0).toFixed(2)}</div>
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-muted-foreground mb-1">24h Low</div>
-                  <div className="font-semibold text-foreground">${tonData.low24h.toFixed(2)}</div>
+                  <div className="font-semibold text-foreground">${(tonData.low24h || 0).toFixed(2)}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
