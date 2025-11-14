@@ -11,6 +11,8 @@ interface TONData {
   low24h: number;
 }
 
+const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
+
 export const PriceTracker = () => {
   const [tonData, setTonData] = useState<TONData>({
     price: 0,
@@ -24,30 +26,22 @@ export const PriceTracker = () => {
 
   const fetchTONPrice = async () => {
     try {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true"
-      );
+      const response = await fetch(`${API_BASE}/api/ton/price`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
       const data = await response.json();
       
-      if (data["the-open-network"]) {
-        const tonInfo = data["the-open-network"];
-        
-        // Fetch additional data for high/low
-        const detailResponse = await fetch(
-          "https://api.coingecko.com/api/v3/coins/the-open-network?localization=false&tickers=false&community_data=false&developer_data=false"
-        );
-        const detailData = await detailResponse.json();
-        
-        setTonData({
-          price: tonInfo.usd,
-          priceChange24h: tonInfo.usd_24h_change || 0,
-          volume24h: tonInfo.usd_24h_vol || 0,
-          marketCap: tonInfo.usd_market_cap || 0,
-          high24h: detailData.market_data?.high_24h?.usd || tonInfo.usd,
-          low24h: detailData.market_data?.low_24h?.usd || tonInfo.usd,
-        });
-        setIsLoading(false);
-      }
+      setTonData({
+        price: data.price,
+        priceChange24h: data.price_change_24h || 0,
+        volume24h: data.volume_24h || 0,
+        marketCap: data.market_cap || 0,
+        high24h: data.high_24h || data.price,
+        low24h: data.low_24h || data.price,
+      });
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching TON price:", error);
     }
