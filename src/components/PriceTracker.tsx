@@ -11,8 +11,6 @@ interface TONData {
   low24h: number;
 }
 
-const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
-
 export const PriceTracker = () => {
   const [tonData, setTonData] = useState<TONData>({
     price: 0,
@@ -26,25 +24,32 @@ export const PriceTracker = () => {
 
   const fetchTONPrice = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/ton/price`, {
-        headers: {
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true"
+      );
       const data = await response.json();
       
-      setTonData({
-        price: data.price_usd || 0,
-        priceChange24h: data.price_change_24h || 0,
-        volume24h: data.volume_24h || 0,
-        marketCap: data.market_cap || 0,
-        high24h: data.high_24h || data.price_usd || 0,
-        low24h: data.low_24h || data.price_usd || 0,
-      });
-      setIsLoading(false);
+      if (data["the-open-network"]) {
+        const tonInfo = data["the-open-network"];
+        
+        // Fetch additional data for high/low
+        const detailResponse = await fetch(
+          "https://api.coingecko.com/api/v3/coins/the-open-network?localization=false&tickers=false&community_data=false&developer_data=false"
+        );
+        const detailData = await detailResponse.json();
+        
+        setTonData({
+          price: tonInfo.usd,
+          priceChange24h: tonInfo.usd_24h_change || 0,
+          volume24h: tonInfo.usd_24h_vol || 0,
+          marketCap: tonInfo.usd_market_cap || 0,
+          high24h: detailData.market_data?.high_24h?.usd || tonInfo.usd,
+          low24h: detailData.market_data?.low_24h?.usd || tonInfo.usd,
+        });
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Error fetching TON price:", error);
-      setIsLoading(false);
     }
   };
 
@@ -88,7 +93,7 @@ export const PriceTracker = () => {
                   <div className="text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold text-foreground font-mono">
-                      ${(tonData.price || 0).toFixed(2)}
+                      ${tonData.price.toFixed(2)}
                     </span>
                     <div
                       className={`flex items-center gap-1 px-2 py-1 rounded-md ${
@@ -104,7 +109,7 @@ export const PriceTracker = () => {
                       )}
                       <span className="font-semibold text-sm">
                         {isPositive ? "+" : ""}
-                        {(tonData.priceChange24h || 0).toFixed(2)}%
+                        {tonData.priceChange24h.toFixed(2)}%
                       </span>
                     </div>
                   </div>
@@ -121,11 +126,11 @@ export const PriceTracker = () => {
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-muted-foreground mb-1">24h High</div>
-                  <div className="font-semibold text-foreground">${(tonData.high24h || 0).toFixed(2)}</div>
+                  <div className="font-semibold text-foreground">${tonData.high24h.toFixed(2)}</div>
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-muted-foreground mb-1">24h Low</div>
-                  <div className="font-semibold text-foreground">${(tonData.low24h || 0).toFixed(2)}</div>
+                  <div className="font-semibold text-foreground">${tonData.low24h.toFixed(2)}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
