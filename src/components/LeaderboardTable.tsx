@@ -16,7 +16,7 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://ouida-nonzonate-roger.ngrok-free.dev";
+const API_BASE = "https://roots-cabinet-update-cute.trycloudflare.com";
 
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
