@@ -98,21 +98,21 @@ export const LeaderboardTable = () => {
                         <span className="font-medium text-foreground">{entry.kol_name}</span>
                         {entry.rank === 1 && (
                           <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
-                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]">
                               Profi Degen
                             </span>
                           </div>
                         )}
                         {entry.rank === 2 && (
                           <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
-                            <span className="text-2xl font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            <span className="text-2xl font-black bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(209,213,219,0.6)]">
                               Beast Mode
                             </span>
                           </div>
                         )}
                         {entry.rank === 3 && (
                           <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
-                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            <span className="text-2xl font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-700 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(217,119,6,0.6)]">
                               Somebody stop him
                             </span>
                           </div>
@@ -176,21 +176,21 @@ export const LeaderboardTable = () => {
                       <div className="font-medium text-foreground">{entry.kol_name}</div>
                       {entry.rank === 1 && (
                         <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                          <span className="text-lg font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]">
                             Profi Degen
                           </span>
                         </div>
                       )}
                       {entry.rank === 2 && (
                         <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                          <span className="text-lg font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                          <span className="text-lg font-black bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(209,213,219,0.6)]">
                             Beast Mode
                           </span>
                         </div>
                       )}
                       {entry.rank === 3 && (
                         <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                          <span className="text-lg font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-700 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(217,119,6,0.6)]">
                             Somebody stop him
                           </span>
                         </div>
