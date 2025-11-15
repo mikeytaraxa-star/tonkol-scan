@@ -118,38 +118,70 @@ export const LeaderboardTable = () => {
                 <h3 className="text-lg font-semibold">7-Day P&L Trend</h3>
                 <div className="h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={generateChartData(selectedTrader)}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <LineChart 
+                      data={generateChartData(selectedTrader)}
+                      margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" opacity={0.3} />
                       <XAxis 
                         dataKey="day" 
                         className="text-xs"
                         tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                        tickLine={{ stroke: 'hsl(var(--border))' }}
                       />
                       <YAxis 
                         className="text-xs"
                         tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                        tickLine={{ stroke: 'hsl(var(--border))' }}
                         tickFormatter={(value) => `$${value.toFixed(0)}`}
                       />
                       <Tooltip 
                         contentStyle={{ 
-                          backgroundColor: 'hsl(var(--background))',
+                          backgroundColor: 'hsl(var(--popover))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '6px'
+                          borderRadius: '8px',
+                          padding: '12px',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                         }}
-                        formatter={(value: number) => [`$${value.toFixed(2)}`, 'P&L']}
+                        labelStyle={{
+                          color: 'hsl(var(--foreground))',
+                          fontWeight: 'bold',
+                          marginBottom: '4px'
+                        }}
+                        itemStyle={{
+                          color: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
+                          fontWeight: '600'
+                        }}
+                        formatter={(value: number) => [
+                          `${value >= 0 ? '+' : ''}$${value.toFixed(2)}`,
+                          'P&L'
+                        ]}
+                        cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '5 5' }}
                       />
                       <Line 
                         type="monotone" 
                         dataKey="pnl" 
                         stroke={selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
-                        strokeWidth={2}
-                        dot={{ fill: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))' }}
+                        strokeWidth={3}
+                        dot={{ 
+                          fill: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
+                          r: 4,
+                          strokeWidth: 2,
+                          stroke: 'hsl(var(--background))'
+                        }}
+                        activeDot={{ 
+                          r: 6,
+                          fill: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
+                          stroke: 'hsl(var(--background))',
+                          strokeWidth: 3,
+                          style: { cursor: 'pointer' }
+                        }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
                 <p className="text-xs text-muted-foreground text-center">
-                  Daily P&L breakdown over the last 7 days
+                  Hover over data points to see exact daily P&L values
                 </p>
               </div>
             )}
