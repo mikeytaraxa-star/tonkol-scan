@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { VisitorCounter } from "@/components/VisitorCounter";
 
 export const Header = () => {
   const [getListedOpen, setGetListedOpen] = useState(false);
@@ -27,6 +28,7 @@ export const Header = () => {
             </div>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
+            <VisitorCounter />
             <Dialog open={tradeOpen} onOpenChange={setTradeOpen}>
               <DialogTrigger asChild>
                 <Button
