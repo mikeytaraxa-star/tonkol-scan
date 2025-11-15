@@ -1,6 +1,7 @@
 import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 
 interface LeaderboardEntry {
@@ -13,6 +14,7 @@ interface LeaderboardEntry {
   total_pnl_7d: number;
   trade_count_24h: number;
   trade_count_7d: number;
+  trading_volume?: number;
   last_calculated: string;
 }
 
@@ -22,6 +24,7 @@ export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<"24h" | "7d">("24h");
+  const [selectedTrader, setSelectedTrader] = useState<LeaderboardEntry | null>(null);
 
   const fetchLeaderboard = async () => {
     try {
@@ -62,6 +65,36 @@ export const LeaderboardTable = () => {
 
   return (
     <div className="space-y-4">
+      <Dialog open={!!selectedTrader} onOpenChange={(open) => !open && setSelectedTrader(null)}>
+        <DialogContent className="sm:max-w-md bg-background border-border">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">{selectedTrader?.kol_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Trades (7D)</p>
+                <p className="text-2xl font-bold">{selectedTrader?.trade_count_7d || 0}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Total Trades</p>
+                <p className="text-2xl font-bold">{(selectedTrader?.trade_count_24h || 0) + (selectedTrader?.trade_count_7d || 0)}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Realized P&L (7D)</p>
+                <p className={`text-2xl font-bold font-mono ${(selectedTrader?.total_pnl_7d || 0) >= 0 ? "text-success" : "text-destructive"}`}>
+                  {(selectedTrader?.total_pnl_7d || 0) >= 0 ? "+$" : "-$"}{Math.abs(selectedTrader?.total_pnl_7d || 0).toLocaleString()}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Trading Volume</p>
+                <p className="text-2xl font-bold">${(selectedTrader?.trading_volume || 0).toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex justify-center mb-4">
         <ToggleGroup type="single" value={timeframe} onValueChange={(value) => value && setTimeframe(value as "24h" | "7d")}>
           <ToggleGroupItem value="24h" aria-label="24 hours">
@@ -95,7 +128,12 @@ export const LeaderboardTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <span className="font-medium text-foreground">{entry.kol_name}</span>
+                        <button 
+                          onClick={() => setSelectedTrader(entry)}
+                          className="font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
+                        >
+                          {entry.kol_name}
+                        </button>
                         <div className="flex gap-2 relative">
                           {entry.kol_platform === "X" && entry.kol_social && (
                             <a
@@ -173,7 +211,12 @@ export const LeaderboardTable = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold">{entry.rank}</span>
                     <div className="space-y-1">
-                      <div className="font-medium text-foreground">{entry.kol_name}</div>
+                      <button 
+                        onClick={() => setSelectedTrader(entry)}
+                        className="font-medium text-foreground hover:text-primary transition-colors cursor-pointer text-left"
+                      >
+                        {entry.kol_name}
+                      </button>
                       <div className="text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
                     </div>
                   </div>
