@@ -71,6 +71,19 @@ export const Header = () => {
                       x1000 Trading Terminal
                     </a>
                   </Button>
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
+                      href="https://t.me/maestro?start=r-mikeyketomi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Maestro
+                    </a>
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
