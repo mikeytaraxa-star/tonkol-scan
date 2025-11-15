@@ -88,21 +88,35 @@ export const LeaderboardTable = () => {
                 {leaderboard.map((entry) => (
                   <tr 
                     key={entry.wallet_address} 
-                    className={`hover:bg-muted/50 transition-colors ${entry.rank === 1 ? 'relative group' : ''}`}
+                    className={`hover:bg-muted/50 transition-colors ${entry.rank <= 3 ? 'group' : ''}`}
                   >
                     <td className="px-6 py-4">
                       <span className="text-2xl font-bold">{entry.rank}</span>
-                      {entry.rank === 1 && (
-                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-125 z-50">
-                          <span className="text-6xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse whitespace-nowrap drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                            Profi Degen
-                          </span>
-                        </div>
-                      )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 relative">
                         <span className="font-medium text-foreground">{entry.kol_name}</span>
+                        {entry.rank === 1 && (
+                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                              Profi Degen
+                            </span>
+                          </div>
+                        )}
+                        {entry.rank === 2 && (
+                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                            <span className="text-2xl font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                              Beast Mode
+                            </span>
+                          </div>
+                        )}
+                        {entry.rank === 3 && (
+                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                              Somebody stop him
+                            </span>
+                          </div>
+                        )}
                         <div className="flex gap-2">
                           {entry.kol_platform === "X" && entry.kol_social && (
                             <a
@@ -152,21 +166,35 @@ export const LeaderboardTable = () => {
         {leaderboard.map((entry) => (
           <Card 
             key={entry.wallet_address} 
-            className={`p-4 ${entry.rank === 1 ? 'relative group' : ''}`}
+            className={`p-4 ${entry.rank <= 3 ? 'group' : ''}`}
           >
-            {entry.rank === 1 && (
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-125 z-50">
-                <span className="text-3xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse whitespace-nowrap drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                  Profi Degen
-                </span>
-              </div>
-            )}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold">{entry.rank}</span>
-                    <div>
+                    <div className="relative">
                       <div className="font-medium text-foreground">{entry.kol_name}</div>
+                      {entry.rank === 1 && (
+                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            Profi Degen
+                          </span>
+                        </div>
+                      )}
+                      {entry.rank === 2 && (
+                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                          <span className="text-lg font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            Beast Mode
+                          </span>
+                        </div>
+                      )}
+                      {entry.rank === 3 && (
+                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            Somebody stop him
+                          </span>
+                        </div>
+                      )}
                       <div className="text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
                     </div>
                   </div>
