@@ -46,7 +46,7 @@ export const LeaderboardTable = () => {
   useEffect(() => {
     setIsLoading(true);
     fetchLeaderboard();
-    const interval = setInterval(fetchLeaderboard, 45000); // Refresh every 45s
+    const interval = setInterval(fetchLeaderboard, 45000);
     return () => clearInterval(interval);
   }, [timeframe]);
 
@@ -64,14 +64,10 @@ export const LeaderboardTable = () => {
   const currentTradeCount = (entry: LeaderboardEntry) => 
     timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
 
-  // Generate P&L trend data for chart (simulated daily breakdown)
   const generateChartData = (trader: LeaderboardEntry) => {
     const total7d = trader.total_pnl_7d;
     const total24h = trader.total_pnl_24h;
-    
-    // Create 7 data points representing daily P&L
-    // This is a simplified representation - ideally the API would provide daily breakdown
-    const dailyAvg = (total7d - total24h) / 6; // Average for days 2-7
+    const dailyAvg = (total7d - total24h) / 6;
     
     return [
       { day: "Day 1", pnl: dailyAvg },
@@ -293,7 +289,6 @@ export const LeaderboardTable = () => {
         </Card>
       </div>
 
-      {/* Mobile view */}
       <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
         {leaderboard.map((entry) => (
           <Card 
