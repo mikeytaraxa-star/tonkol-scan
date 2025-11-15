@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
 
-const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
+const API_BASE = "https://tonkol.pro.ngrok.dev";
 
 export const VisitorCounter = () => {
   const [visitors7d, setVisitors7d] = useState(3322);
