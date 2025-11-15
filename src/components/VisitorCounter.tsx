@@ -14,7 +14,7 @@ export const VisitorCounter = () => {
         }
       });
       const data = await response.json();
-      setVisitorCount(data.visitors_24h || 0);
+      setVisitorCount(data.visitors_7d || 0);
     } catch (error) {
       console.error("Error fetching visitor stats:", error);
     }
@@ -37,7 +37,7 @@ export const VisitorCounter = () => {
           {visitorCount.toLocaleString()}
         </span>
         <span className="text-[8px] sm:text-[10px] text-muted-foreground leading-none hidden sm:block">
-          24h visitors
+          7d visitors
         </span>
       </div>
     </div>
