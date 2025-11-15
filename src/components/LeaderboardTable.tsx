@@ -73,8 +73,8 @@ export const LeaderboardTable = () => {
         </ToggleGroup>
       </div>
       <div key={timeframe} className="hidden md:block animate-fade-in">
-        <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
+        <Card className="overflow-visible">
+          <div className="overflow-x-auto overflow-y-visible">
             <table className="w-full">
               <thead className="bg-primary text-primary-foreground">
                 <tr>
@@ -101,25 +101,25 @@ export const LeaderboardTable = () => {
                     <td className="px-6 py-4">
                       <span className="text-2xl font-bold">{entry.rank}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3 relative">
+                    <td className="px-6 py-4 relative overflow-visible">
+                      <div className="flex items-center gap-3 relative overflow-visible">
                         <span className="font-medium text-foreground">{entry.kol_name}</span>
                         {entry.rank === 1 && (
-                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
                             <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]">
                               Profi Degen
                             </span>
                           </div>
                         )}
                         {entry.rank === 2 && (
-                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
                             <span className="text-2xl font-black bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(209,213,219,0.6)]">
                               Beast Mode
                             </span>
                           </div>
                         )}
                         {entry.rank === 3 && (
-                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
                             <span className="text-2xl font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-700 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(217,119,6,0.6)]">
                               Somebody stop him
                             </span>
@@ -182,30 +182,30 @@ export const LeaderboardTable = () => {
           return (
           <Card 
             key={entry.wallet_address} 
-            className={`p-4 ${entry.rank <= 3 ? 'group' : ''} ${getBgClass()}`}
+            className={`p-4 relative overflow-visible ${entry.rank <= 3 ? 'group' : ''} ${getBgClass()}`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold">{entry.rank}</span>
-                    <div className="relative">
+                    <div className="relative overflow-visible">
                       <div className="font-medium text-foreground">{entry.kol_name}</div>
                       {entry.rank === 1 && (
-                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                        <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
                           <span className="text-lg font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]">
                             Profi Degen
                           </span>
                         </div>
                       )}
                       {entry.rank === 2 && (
-                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                        <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
                           <span className="text-lg font-black bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(209,213,219,0.6)]">
                             Beast Mode
                           </span>
                         </div>
                       )}
                       {entry.rank === 3 && (
-                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                        <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
                           <span className="text-lg font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-700 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(217,119,6,0.6)]">
                             Somebody stop him
                           </span>
