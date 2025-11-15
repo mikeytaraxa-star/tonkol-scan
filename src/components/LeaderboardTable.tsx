@@ -73,8 +73,8 @@ export const LeaderboardTable = () => {
         </ToggleGroup>
       </div>
       <div key={timeframe} className="hidden md:block animate-fade-in">
-        <Card className="overflow-visible">
-          <div className="overflow-x-auto overflow-y-visible">
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-primary text-primary-foreground">
                 <tr>
@@ -85,42 +85,34 @@ export const LeaderboardTable = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {leaderboard.map((entry) => {
-                  const getBgClass = () => {
-                    if (entry.rank === 1) return 'bg-yellow-500/5 hover:bg-yellow-500/10';
-                    if (entry.rank === 2) return 'bg-gray-400/5 hover:bg-gray-400/10';
-                    if (entry.rank === 3) return 'bg-amber-600/5 hover:bg-amber-600/10';
-                    return 'hover:bg-muted/50';
-                  };
-                  
-                  return (
+                {leaderboard.map((entry) => (
                   <tr 
                     key={entry.wallet_address} 
-                    className={`transition-colors ${entry.rank <= 3 ? 'group' : ''} ${getBgClass()}`}
+                    className={`hover:bg-muted/50 transition-colors ${entry.rank <= 3 ? 'group' : ''}`}
                   >
                     <td className="px-6 py-4">
                       <span className="text-2xl font-bold">{entry.rank}</span>
                     </td>
-                    <td className="px-6 py-4 relative overflow-visible">
-                      <div className="flex items-center gap-3 relative overflow-visible">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3 relative">
                         <span className="font-medium text-foreground">{entry.kol_name}</span>
                         {entry.rank === 1 && (
-                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
-                            <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]">
+                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                               Profi Degen
                             </span>
                           </div>
                         )}
                         {entry.rank === 2 && (
-                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
-                            <span className="text-2xl font-black bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(209,213,219,0.6)]">
+                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                            <span className="text-2xl font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                               Beast Mode
                             </span>
                           </div>
                         )}
                         {entry.rank === 3 && (
-                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
-                            <span className="text-2xl font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-700 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(217,119,6,0.6)]">
+                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
+                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                               Somebody stop him
                             </span>
                           </div>
@@ -162,7 +154,7 @@ export const LeaderboardTable = () => {
                       </div>
                     </td>
                   </tr>
-                )})}
+                ))}
               </tbody>
             </table>
           </div>
@@ -171,42 +163,34 @@ export const LeaderboardTable = () => {
 
       {/* Mobile view */}
       <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
-        {leaderboard.map((entry) => {
-          const getBgClass = () => {
-            if (entry.rank === 1) return 'bg-yellow-500/5 hover:bg-yellow-500/10';
-            if (entry.rank === 2) return 'bg-gray-400/5 hover:bg-gray-400/10';
-            if (entry.rank === 3) return 'bg-amber-600/5 hover:bg-amber-600/10';
-            return '';
-          };
-          
-          return (
+        {leaderboard.map((entry) => (
           <Card 
             key={entry.wallet_address} 
-            className={`p-4 relative overflow-visible ${entry.rank <= 3 ? 'group' : ''} ${getBgClass()}`}
+            className={`p-4 ${entry.rank <= 3 ? 'group' : ''}`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold">{entry.rank}</span>
-                    <div className="relative overflow-visible">
+                    <div className="relative">
                       <div className="font-medium text-foreground">{entry.kol_name}</div>
                       {entry.rank === 1 && (
-                        <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
-                          <span className="text-lg font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]">
+                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                             Profi Degen
                           </span>
                         </div>
                       )}
                       {entry.rank === 2 && (
-                        <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
-                          <span className="text-lg font-black bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(209,213,219,0.6)]">
+                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                          <span className="text-lg font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                             Beast Mode
                           </span>
                         </div>
                       )}
                       {entry.rank === 3 && (
-                        <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-50">
-                          <span className="text-lg font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-700 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_20px_rgba(217,119,6,0.6)]">
+                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                             Somebody stop him
                           </span>
                         </div>
@@ -248,7 +232,7 @@ export const LeaderboardTable = () => {
               </div>
             </div>
           </Card>
-        )})}
+        ))}
       </div>
     </div>
   );
