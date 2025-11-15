@@ -27,6 +27,7 @@ export const LeaderboardTable = () => {
     try {
       const response = await fetch(`${API_BASE}/api/leaderboard?timeframe=${timeframe}&limit=30`, {
         headers: {
+          'X-API-Key': 'sk_project1_abc123',
           'ngrok-skip-browser-warning': 'true'
         }
       });

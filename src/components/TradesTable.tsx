@@ -42,6 +42,7 @@ export const TradesTable = () => {
     try {
       const response = await fetch(`${API_BASE}/api/trades/recent?timeframe=24h&limit=100`, {
         headers: {
+          'X-API-Key': 'sk_project1_abc123',
           'ngrok-skip-browser-warning': 'true'
         }
       });
