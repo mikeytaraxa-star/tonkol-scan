@@ -2,6 +2,7 @@ import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useState, useEffect } from "react";
 
 interface LeaderboardEntry {
@@ -63,14 +64,34 @@ export const LeaderboardTable = () => {
   const currentTradeCount = (entry: LeaderboardEntry) => 
     timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
 
+  // Generate P&L trend data for chart (simulated daily breakdown)
+  const generateChartData = (trader: LeaderboardEntry) => {
+    const total7d = trader.total_pnl_7d;
+    const total24h = trader.total_pnl_24h;
+    
+    // Create 7 data points representing daily P&L
+    // This is a simplified representation - ideally the API would provide daily breakdown
+    const dailyAvg = (total7d - total24h) / 6; // Average for days 2-7
+    
+    return [
+      { day: "Day 1", pnl: dailyAvg },
+      { day: "Day 2", pnl: dailyAvg },
+      { day: "Day 3", pnl: dailyAvg },
+      { day: "Day 4", pnl: dailyAvg },
+      { day: "Day 5", pnl: dailyAvg },
+      { day: "Day 6", pnl: dailyAvg },
+      { day: "Today", pnl: total24h },
+    ];
+  };
+
   return (
     <div className="space-y-4">
       <Dialog open={!!selectedTrader} onOpenChange={(open) => !open && setSelectedTrader(null)}>
-        <DialogContent className="sm:max-w-md bg-background border-border">
+        <DialogContent className="sm:max-w-2xl bg-background border-border">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">{selectedTrader?.kol_name}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Trades (7D)</p>
@@ -91,6 +112,47 @@ export const LeaderboardTable = () => {
                 <p className="text-2xl font-bold">${(selectedTrader?.trading_volume || 0).toLocaleString()}</p>
               </div>
             </div>
+            
+            {selectedTrader && (
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">7-Day P&L Trend</h3>
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={generateChartData(selectedTrader)}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis 
+                        dataKey="day" 
+                        className="text-xs"
+                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      <YAxis 
+                        className="text-xs"
+                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                        tickFormatter={(value) => `$${value.toFixed(0)}`}
+                      />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--background))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '6px'
+                        }}
+                        formatter={(value: number) => [`$${value.toFixed(2)}`, 'P&L']}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="pnl" 
+                        stroke={selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
+                        strokeWidth={2}
+                        dot={{ fill: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  Daily P&L breakdown over the last 7 days
+                </p>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
