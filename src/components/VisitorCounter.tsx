@@ -10,6 +10,7 @@ export const VisitorCounter = () => {
     try {
       const response = await fetch(`${API_BASE}/api/stats`, {
         headers: {
+          'X-API-Key': 'sk_project1_abc123',
           'ngrok-skip-browser-warning': 'true'
         }
       });
