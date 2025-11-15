@@ -84,6 +84,19 @@ export const Header = () => {
                       Maestro
                     </a>
                   </Button>
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
+                      href="https://t.me/swapi?start=TshWZnMJmTc"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Swapi
+                    </a>
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
