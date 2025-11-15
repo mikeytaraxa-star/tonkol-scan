@@ -86,9 +86,19 @@ export const LeaderboardTable = () => {
               </thead>
               <tbody className="divide-y divide-border">
                 {leaderboard.map((entry) => (
-                  <tr key={entry.wallet_address} className="hover:bg-muted/50 transition-colors">
+                  <tr 
+                    key={entry.wallet_address} 
+                    className={`hover:bg-muted/50 transition-colors ${entry.rank === 1 ? 'relative group' : ''}`}
+                  >
                     <td className="px-6 py-4">
                       <span className="text-2xl font-bold">{entry.rank}</span>
+                      {entry.rank === 1 && (
+                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-125 z-50">
+                          <span className="text-6xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse whitespace-nowrap drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                            Profi Degen
+                          </span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -140,7 +150,17 @@ export const LeaderboardTable = () => {
       {/* Mobile view */}
       <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
         {leaderboard.map((entry) => (
-          <Card key={entry.wallet_address} className="p-4">
+          <Card 
+            key={entry.wallet_address} 
+            className={`p-4 ${entry.rank === 1 ? 'relative group' : ''}`}
+          >
+            {entry.rank === 1 && (
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-125 z-50">
+                <span className="text-3xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse whitespace-nowrap drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                  Profi Degen
+                </span>
+              </div>
+            )}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
