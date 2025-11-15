@@ -1,9 +1,33 @@
+import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
 
+const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
+
 export const VisitorCounter = () => {
-  // Using actual analytics data from tonkol.pro
-  const visitors7d = 3322; // Last 7 days total
-  const visitors24h = 219; // Last 24 hours
+  const [visitors24h, setVisitors24h] = useState(219);
+  const [visitors7d, setVisitors7d] = useState(3322);
+
+  const fetchVisitorStats = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/stats`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
+      const data = await response.json();
+      if (data.visitors_24h !== undefined) setVisitors24h(data.visitors_24h);
+      if (data.visitors_7d !== undefined) setVisitors7d(data.visitors_7d);
+    } catch (error) {
+      console.error("Error fetching visitor stats:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVisitorStats();
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchVisitorStats, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex items-center gap-2">
