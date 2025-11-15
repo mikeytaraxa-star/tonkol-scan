@@ -94,29 +94,31 @@ export const LeaderboardTable = () => {
                       <span className="text-2xl font-bold">{entry.rank}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3 relative">
-                        <span className="font-medium text-foreground">{entry.kol_name}</span>
-                        {entry.rank === 1 && (
-                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
-                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                              Profi Degen
-                            </span>
-                          </div>
-                        )}
-                        {entry.rank === 2 && (
-                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
-                            <span className="text-2xl font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                              Beast Mode
-                            </span>
-                          </div>
-                        )}
-                        {entry.rank === 3 && (
-                          <div className="absolute left-full ml-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap">
-                            <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                              Somebody stop him
-                            </span>
-                          </div>
-                        )}
+                      <div className="flex items-center gap-3">
+                        <div className="relative inline-block">
+                          <span className="font-medium text-foreground">{entry.kol_name}</span>
+                          {entry.rank === 1 && (
+                            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                              <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                                Profi Degen
+                              </span>
+                            </div>
+                          )}
+                          {entry.rank === 2 && (
+                            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                              <span className="text-2xl font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                                Beast Mode
+                              </span>
+                            </div>
+                          )}
+                          {entry.rank === 3 && (
+                            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
+                              <span className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                                Somebody stop him
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <div className="flex gap-2">
                           {entry.kol_platform === "X" && entry.kol_social && (
                             <a
@@ -172,29 +174,31 @@ export const LeaderboardTable = () => {
               <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold">{entry.rank}</span>
-                    <div className="relative">
-                      <div className="font-medium text-foreground">{entry.kol_name}</div>
-                      {entry.rank === 1 && (
-                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                            Profi Degen
-                          </span>
-                        </div>
-                      )}
-                      {entry.rank === 2 && (
-                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                          <span className="text-lg font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                            Beast Mode
-                          </span>
-                        </div>
-                      )}
-                      {entry.rank === 3 && (
-                        <div className="absolute left-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                          <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                            Somebody stop him
-                          </span>
-                        </div>
-                      )}
+                    <div>
+                      <div className="relative inline-block">
+                        <div className="font-medium text-foreground">{entry.kol_name}</div>
+                        {entry.rank === 1 && (
+                          <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-20">
+                            <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                              Profi Degen
+                            </span>
+                          </div>
+                        )}
+                        {entry.rank === 2 && (
+                          <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-20">
+                            <span className="text-lg font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                              Beast Mode
+                            </span>
+                          </div>
+                        )}
+                        {entry.rank === 3 && (
+                          <div className="absolute left-0 top-full mt-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-20">
+                            <span className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
+                              Somebody stop him
+                            </span>
+                          </div>
+                        )}
+                      </div>
                       <div className="text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
                     </div>
                   </div>
