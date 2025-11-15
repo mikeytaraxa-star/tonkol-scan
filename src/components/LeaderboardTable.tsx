@@ -6,17 +6,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useState, useEffect } from "react";
 
 interface LeaderboardEntry {
-  rank: number;
-  kol_name: string;
-  kol_social: string;
-  kol_platform: string;
+  name: string;
   wallet_address: string;
-  total_pnl_24h: number;
-  total_pnl_7d: number;
-  trade_count_24h: number;
-  trade_count_7d: number;
-  trading_volume?: number;
-  last_calculated: string;
+  social_link: string;
+  platform: string;
+  pnl: number;
+  trade_count: number;
+  volume: number;
 }
 
 const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
@@ -58,16 +54,9 @@ export const LeaderboardTable = () => {
     );
   }
 
-  const currentPnl = (entry: LeaderboardEntry) => 
-    timeframe === "24h" ? entry.total_pnl_24h : entry.total_pnl_7d;
-  
-  const currentTradeCount = (entry: LeaderboardEntry) => 
-    timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
-
   const generateChartData = (trader: LeaderboardEntry) => {
-    const total7d = trader.total_pnl_7d;
-    const total24h = trader.total_pnl_24h;
-    const dailyAvg = (total7d - total24h) / 6;
+    const pnl = trader.pnl || 0;
+    const dailyAvg = pnl / 7;
     
     return [
       { day: "Day 1", pnl: dailyAvg },
@@ -76,7 +65,7 @@ export const LeaderboardTable = () => {
       { day: "Day 4", pnl: dailyAvg },
       { day: "Day 5", pnl: dailyAvg },
       { day: "Day 6", pnl: dailyAvg },
-      { day: "Today", pnl: total24h },
+      { day: "Today", pnl: dailyAvg },
     ];
   };
 
@@ -85,27 +74,23 @@ export const LeaderboardTable = () => {
       <Dialog open={!!selectedTrader} onOpenChange={(open) => !open && setSelectedTrader(null)}>
         <DialogContent className="sm:max-w-2xl bg-background border-border">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">{selectedTrader?.kol_name}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">{selectedTrader?.name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Trades (7D)</p>
-                <p className="text-2xl font-bold">{selectedTrader?.trade_count_7d || 0}</p>
-              </div>
-              <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Total Trades</p>
-                <p className="text-2xl font-bold">{(selectedTrader?.trade_count_24h || 0) + (selectedTrader?.trade_count_7d || 0)}</p>
+                <p className="text-2xl font-bold">{selectedTrader?.trade_count || 0}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Realized P&L (7D)</p>
-                <p className={`text-2xl font-bold font-mono ${(selectedTrader?.total_pnl_7d || 0) >= 0 ? "text-success" : "text-destructive"}`}>
-                  {(selectedTrader?.total_pnl_7d || 0) >= 0 ? "+$" : "-$"}{Math.abs(selectedTrader?.total_pnl_7d || 0).toLocaleString()}
+                <p className="text-sm text-muted-foreground">Realized P&L</p>
+                <p className={`text-2xl font-bold font-mono ${(selectedTrader?.pnl || 0) >= 0 ? "text-success" : "text-destructive"}`}>
+                  {(selectedTrader?.pnl || 0) >= 0 ? "+$" : "-$"}{Math.abs(selectedTrader?.pnl || 0).toLocaleString()}
                 </p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Trading Volume</p>
-                <p className="text-2xl font-bold">${(selectedTrader?.trading_volume || 0).toLocaleString()}</p>
+                <p className="text-2xl font-bold">${(selectedTrader?.volume || 0).toLocaleString()}</p>
               </div>
             </div>
             
@@ -145,7 +130,7 @@ export const LeaderboardTable = () => {
                           marginBottom: '4px'
                         }}
                         itemStyle={{
-                          color: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
+                          color: selectedTrader.pnl >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
                           fontWeight: '600'
                         }}
                         formatter={(value: number) => [
@@ -157,17 +142,17 @@ export const LeaderboardTable = () => {
                       <Line 
                         type="monotone" 
                         dataKey="pnl" 
-                        stroke={selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
+                        stroke={selectedTrader.pnl >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
                         strokeWidth={3}
                         dot={{ 
-                          fill: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
+                          fill: selectedTrader.pnl >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
                           r: 4,
                           strokeWidth: 2,
                           stroke: 'hsl(var(--background))'
                         }}
                         activeDot={{ 
                           r: 6,
-                          fill: selectedTrader.total_pnl_7d >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
+                          fill: selectedTrader.pnl >= 0 ? 'hsl(var(--success))' : 'hsl(var(--destructive))',
                           stroke: 'hsl(var(--background))',
                           strokeWidth: 3,
                           style: { cursor: 'pointer' }
@@ -208,13 +193,13 @@ export const LeaderboardTable = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {leaderboard.map((entry) => (
+                {leaderboard.map((entry, index) => (
                   <tr 
                     key={entry.wallet_address} 
-                    className={`hover:bg-muted/50 transition-colors ${entry.rank <= 3 ? 'group' : ''}`}
+                    className={`hover:bg-muted/50 transition-colors ${index + 1 <= 3 ? 'group' : ''}`}
                   >
                     <td className="px-6 py-4">
-                      <span className="text-2xl font-bold">{entry.rank}</span>
+                      <span className="text-2xl font-bold">{index + 1}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -222,12 +207,12 @@ export const LeaderboardTable = () => {
                           onClick={() => setSelectedTrader(entry)}
                           className="font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
                         >
-                          {entry.kol_name}
+                          {entry.name}
                         </button>
                         <div className="flex gap-2 relative">
-                          {entry.kol_platform === "X" && entry.kol_social && (
+                          {entry.platform === "X" && entry.social_link && (
                             <a
-                              href={entry.kol_social}
+                              href={entry.social_link}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-muted-foreground hover:text-primary transition-colors"
@@ -235,9 +220,9 @@ export const LeaderboardTable = () => {
                               <Twitter className="h-4 w-4" />
                             </a>
                           )}
-                          {entry.kol_platform === "Telegram" && entry.kol_social && (
+                          {entry.platform === "Telegram" && entry.social_link && (
                             <a
-                              href={entry.kol_social}
+                              href={entry.social_link}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-muted-foreground hover:text-primary transition-colors"
@@ -245,21 +230,21 @@ export const LeaderboardTable = () => {
                               <Send className="h-4 w-4" />
                             </a>
                           )}
-                          {entry.rank === 1 && (
+                          {index + 1 === 1 && (
                             <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
                               <span className="text-sm font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                                 Profi Degen
                               </span>
                             </div>
                           )}
-                          {entry.rank === 2 && (
+                          {index + 1 === 2 && (
                             <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
                               <span className="text-sm font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                                 Beast Mode
                               </span>
                             </div>
                           )}
-                          {entry.rank === 3 && (
+                          {index + 1 === 3 && (
                             <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
                               <span className="text-sm font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
                                 Alpha Trader
@@ -270,15 +255,15 @@ export const LeaderboardTable = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-medium text-foreground">{currentTradeCount(entry)}</span>
+                      <span className="font-medium text-foreground">{entry.trade_count}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div
                         className={`font-mono font-bold ${
-                          currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
+                          entry.pnl >= 0 ? "text-success" : "text-destructive"
                         }`}
                       >
-                        {currentPnl(entry) >= 0 ? "+$" : "-$"}{Math.abs(currentPnl(entry)).toLocaleString()}
+                        {entry.pnl >= 0 ? "+$" : "-$"}{Math.abs(entry.pnl).toLocaleString()}
                       </div>
                     </td>
                   </tr>
@@ -290,29 +275,29 @@ export const LeaderboardTable = () => {
       </div>
 
       <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
-        {leaderboard.map((entry) => (
+        {leaderboard.map((entry, index) => (
           <Card 
             key={entry.wallet_address} 
-            className={`p-4 ${entry.rank <= 3 ? 'group' : ''}`}
+            className={`p-4 ${index + 1 <= 3 ? 'group' : ''}`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold">{entry.rank}</span>
+                    <span className="text-2xl font-bold">{index + 1}</span>
                     <div className="space-y-1">
                       <button 
                         onClick={() => setSelectedTrader(entry)}
                         className="font-medium text-foreground hover:text-primary transition-colors cursor-pointer text-left"
                       >
-                        {entry.kol_name}
+                        {entry.name}
                       </button>
-                      <div className="text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
+                      <div className="text-sm text-muted-foreground">{entry.trade_count} trades</div>
                     </div>
                   </div>
                 <div className="flex gap-2 relative">
-                  {entry.kol_platform === "X" && entry.kol_social && (
+                  {entry.platform === "X" && entry.social_link && (
                     <a
-                      href={entry.kol_social}
+                      href={entry.social_link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-primary transition-colors"
@@ -320,9 +305,9 @@ export const LeaderboardTable = () => {
                       <Twitter className="h-4 w-4" />
                     </a>
                   )}
-                  {entry.kol_platform === "Telegram" && entry.kol_social && (
+                  {entry.platform === "Telegram" && entry.social_link && (
                     <a
-                      href={entry.kol_social}
+                      href={entry.social_link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-primary transition-colors"
@@ -330,21 +315,21 @@ export const LeaderboardTable = () => {
                       <Send className="h-4 w-4" />
                     </a>
                   )}
-                  {entry.rank === 1 && (
+                  {index + 1 === 1 && (
                     <div className="absolute right-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 whitespace-nowrap z-20">
                       <span className="text-[10px] font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_10px_rgba(147,51,234,0.4)]">
                         Profi Degen
                       </span>
                     </div>
                   )}
-                  {entry.rank === 2 && (
+                  {index + 1 === 2 && (
                     <div className="absolute right-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 whitespace-nowrap z-20">
                       <span className="text-[10px] font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_10px_rgba(147,51,234,0.4)]">
                         Beast Mode
                       </span>
                     </div>
                   )}
-                  {entry.rank === 3 && (
+                  {index + 1 === 3 && (
                     <div className="absolute right-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 whitespace-nowrap z-20">
                       <span className="text-[10px] font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_10px_rgba(147,51,234,0.4)]">
                         Alpha Trader
@@ -356,10 +341,10 @@ export const LeaderboardTable = () => {
               <div className="space-y-2">
                 <div
                   className={`font-mono font-bold ${
-                    currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
+                    entry.pnl >= 0 ? "text-success" : "text-destructive"
                   }`}
                 >
-                  {currentPnl(entry) >= 0 ? "+$" : "-$"}{Math.abs(currentPnl(entry)).toLocaleString()}
+                  {entry.pnl >= 0 ? "+$" : "-$"}{Math.abs(entry.pnl).toLocaleString()}
                 </div>
               </div>
             </div>
