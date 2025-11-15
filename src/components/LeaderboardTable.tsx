@@ -85,10 +85,18 @@ export const LeaderboardTable = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {leaderboard.map((entry) => (
+                {leaderboard.map((entry) => {
+                  const getBgClass = () => {
+                    if (entry.rank === 1) return 'bg-yellow-500/5 hover:bg-yellow-500/10';
+                    if (entry.rank === 2) return 'bg-gray-400/5 hover:bg-gray-400/10';
+                    if (entry.rank === 3) return 'bg-amber-600/5 hover:bg-amber-600/10';
+                    return 'hover:bg-muted/50';
+                  };
+                  
+                  return (
                   <tr 
                     key={entry.wallet_address} 
-                    className={`hover:bg-muted/50 transition-colors ${entry.rank <= 3 ? 'group' : ''}`}
+                    className={`transition-colors ${entry.rank <= 3 ? 'group' : ''} ${getBgClass()}`}
                   >
                     <td className="px-6 py-4">
                       <span className="text-2xl font-bold">{entry.rank}</span>
@@ -154,7 +162,7 @@ export const LeaderboardTable = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
@@ -163,10 +171,18 @@ export const LeaderboardTable = () => {
 
       {/* Mobile view */}
       <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
-        {leaderboard.map((entry) => (
+        {leaderboard.map((entry) => {
+          const getBgClass = () => {
+            if (entry.rank === 1) return 'bg-yellow-500/5 hover:bg-yellow-500/10';
+            if (entry.rank === 2) return 'bg-gray-400/5 hover:bg-gray-400/10';
+            if (entry.rank === 3) return 'bg-amber-600/5 hover:bg-amber-600/10';
+            return '';
+          };
+          
+          return (
           <Card 
             key={entry.wallet_address} 
-            className={`p-4 ${entry.rank <= 3 ? 'group' : ''}`}
+            className={`p-4 ${entry.rank <= 3 ? 'group' : ''} ${getBgClass()}`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -232,7 +248,7 @@ export const LeaderboardTable = () => {
               </div>
             </div>
           </Card>
-        ))}
+        )})}
       </div>
     </div>
   );
