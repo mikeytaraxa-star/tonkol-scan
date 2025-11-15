@@ -6,10 +6,8 @@ const API_BASE = "https://deludedly-faunlike-selma.ngrok-free.dev";
 export const VisitorCounter = () => {
   const [visitors24h, setVisitors24h] = useState(219);
   const [visitors7d, setVisitors7d] = useState(3322);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const fetchVisitorStats = async () => {
-    setIsUpdating(true);
     try {
       const response = await fetch(`${API_BASE}/api/stats`, {
         headers: {
@@ -21,8 +19,6 @@ export const VisitorCounter = () => {
       if (data.visitors_7d !== undefined) setVisitors7d(data.visitors_7d);
     } catch (error) {
       console.error("Error fetching visitor stats:", error);
-    } finally {
-      setTimeout(() => setIsUpdating(false), 1000);
     }
   };
 
@@ -34,10 +30,7 @@ export const VisitorCounter = () => {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 relative">
-      {isUpdating && (
-        <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-success animate-pulse" />
-      )}
+    <div className="flex items-center gap-2">
       <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20">
         <Users className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
         <div className="flex flex-col">
