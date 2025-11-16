@@ -47,7 +47,29 @@ export const TradesTable = () => {
         }
       });
       const data = await response.json();
-      setTrades(data.trades || []);
+      const fetchedTrades = data.trades || [];
+      
+      // Check for duplicates in the last 10 trades
+      const last10 = fetchedTrades.slice(0, 10);
+      const txHashes = last10.map((t: Trade) => t.tx_hash);
+      const uniqueHashes = new Set(txHashes);
+      
+      if (txHashes.length !== uniqueHashes.size) {
+        console.warn("⚠️ DUPLICATES FOUND in last 10 trades!");
+        const duplicates = txHashes.filter((hash, index) => txHashes.indexOf(hash) !== index);
+        console.warn("Duplicate tx_hashes:", duplicates);
+        console.table(last10.map((t: Trade) => ({
+          trader: t.kol_name,
+          type: t.trade_type,
+          token: t.token_symbol,
+          tx_hash: t.tx_hash,
+          time: t.timestamp
+        })));
+      } else {
+        console.log("✅ No duplicates in last 10 trades");
+      }
+      
+      setTrades(fetchedTrades);
     } catch (error) {
       console.error("Failed to fetch trades:", error);
     } finally {
