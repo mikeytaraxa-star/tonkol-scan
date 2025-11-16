@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
 
-const API_BASE = "";
+const API_BASE = "https://represented-sue-idle-hear.trycloudflare.com";
 
 export const VisitorCounter = () => {
   const [visitors7d, setVisitors7d] = useState(3322);
