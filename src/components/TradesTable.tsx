@@ -21,7 +21,7 @@ interface Trade {
   dex_name: string;
 }
 
-const API_BASE = "https://tonkol.pro.ngrok.dev";
+const API_BASE = "";
 
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();

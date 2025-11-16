@@ -16,7 +16,7 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://tonkol.pro.ngrok.dev";
+const API_BASE = "";
 
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
