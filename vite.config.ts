@@ -10,11 +10,11 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       '/api': {
-        target: 'https://tonkol.pro.ngrok.dev',
+        target: 'https://represented-sue-idle-hear.trycloudflare.com',
         changeOrigin: true,
         secure: false,
         headers: {
-          'ngrok-skip-browser-warning': 'true'
+          'X-API-Key': 'sk_project1_abc123'
         }
       }
     }
