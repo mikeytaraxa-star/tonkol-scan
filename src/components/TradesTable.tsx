@@ -49,27 +49,24 @@ export const TradesTable = () => {
       const data = await response.json();
       const fetchedTrades = data.trades || [];
       
-      // Check for duplicates in the last 10 trades
-      const last10 = fetchedTrades.slice(0, 10);
-      const txHashes = last10.map((t: Trade) => t.tx_hash);
-      const uniqueHashes = new Set(txHashes);
+      // Filter out duplicates and trades with amount_ton <= 1
+      const seenTxHashes = new Set<string>();
+      const filteredTrades = fetchedTrades.filter((trade: Trade) => {
+        // Skip if duplicate
+        if (seenTxHashes.has(trade.tx_hash)) {
+          return false;
+        }
+        seenTxHashes.add(trade.tx_hash);
+        
+        // Skip if amount_ton is 0 or less than 1
+        if (trade.amount_ton <= 1) {
+          return false;
+        }
+        
+        return true;
+      });
       
-      if (txHashes.length !== uniqueHashes.size) {
-        console.warn("⚠️ DUPLICATES FOUND in last 10 trades!");
-        const duplicates = txHashes.filter((hash, index) => txHashes.indexOf(hash) !== index);
-        console.warn("Duplicate tx_hashes:", duplicates);
-        console.table(last10.map((t: Trade) => ({
-          trader: t.kol_name,
-          type: t.trade_type,
-          token: t.token_symbol,
-          tx_hash: t.tx_hash,
-          time: t.timestamp
-        })));
-      } else {
-        console.log("✅ No duplicates in last 10 trades");
-      }
-      
-      setTrades(fetchedTrades);
+      setTrades(filteredTrades);
     } catch (error) {
       console.error("Failed to fetch trades:", error);
     } finally {
