@@ -16,7 +16,7 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://represented-sue-idle-hear.trycloudflare.com";
+const API_BASE = "https://apitonkol.pro";
 
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
