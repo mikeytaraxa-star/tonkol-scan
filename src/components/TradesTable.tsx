@@ -165,10 +165,10 @@ export const TradesTable = () => {
                           href="https://t.me/jettradebot?start=tonkol"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground font-bold text-sm hover:scale-110 transition-transform"
+                          className="text-lg hover:scale-110 transition-transform"
                           title="Buy on Jettrade"
                         >
-                          $
+                          💰
                         </a>
                         <a 
                           href={`https://tonviewer.com/${trade.token_address}`}
@@ -246,10 +246,10 @@ export const TradesTable = () => {
                       href="https://t.me/jettradebot?start=tonkol"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground font-bold text-sm hover:scale-110 transition-transform"
+                      className="text-lg hover:scale-110 transition-transform"
                       title="Buy on Jettrade"
                     >
-                      $
+                      💰
                     </a>
                     <a 
                       href={`https://tonviewer.com/${trade.token_address}`}
