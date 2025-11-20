@@ -56,11 +56,11 @@ export const Header = () => {
                       rel="noopener noreferrer"
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      Jettrade Bot
+                      JetTrade Bot
                     </a>
                   </Button>
                   <p className="text-sm text-muted-foreground text-center mt-3">
-                    Jettrade is official partner of Tonkol
+                    JetTrade is official partner of Tonkol
                   </p>
                 </div>
               </DialogContent>

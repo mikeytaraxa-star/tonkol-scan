@@ -166,7 +166,7 @@ export const TradesTable = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-lg hover:scale-110 transition-transform"
-                          title="Buy on Jettrade"
+                          title="Buy on JetTrade"
                         >
                           💰
                         </a>
@@ -247,7 +247,7 @@ export const TradesTable = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-lg hover:scale-110 transition-transform"
-                      title="Buy on Jettrade"
+                      title="Buy on JetTrade"
                     >
                       💰
                     </a>
