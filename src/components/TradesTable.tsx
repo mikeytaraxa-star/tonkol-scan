@@ -160,14 +160,25 @@ export const TradesTable = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <a 
-                        href={`https://tonviewer.com/${trade.token_address}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold text-primary hover:underline"
-                      >
-                        ${trade.token_symbol}
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <a 
+                          href={`https://tonviewer.com/${trade.token_address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-primary hover:underline"
+                        >
+                          ${trade.token_symbol}
+                        </a>
+                        <a
+                          href="https://t.me/jettradebot?start=tonkol"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-lg hover:scale-110 transition-transform"
+                          title="Buy on Jettrade"
+                        >
+                          💰
+                        </a>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-muted-foreground">
@@ -230,14 +241,25 @@ export const TradesTable = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <a 
-                    href={`https://tonviewer.com/${trade.token_address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-primary hover:underline"
-                  >
-                    ${trade.token_symbol}
-                  </a>
+                  <div className="flex items-center justify-end gap-2">
+                    <a 
+                      href={`https://tonviewer.com/${trade.token_address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-primary hover:underline"
+                    >
+                      ${trade.token_symbol}
+                    </a>
+                    <a
+                      href="https://t.me/jettradebot?start=tonkol"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg hover:scale-110 transition-transform"
+                      title="Buy on Jettrade"
+                    >
+                      💰
+                    </a>
+                  </div>
                   <div className="text-sm text-muted-foreground">
                     {formatTimeSince(trade.timestamp)}
                   </div>
