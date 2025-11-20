@@ -45,56 +45,18 @@ export const Header = () => {
                     Select your preferred trading platform
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-3 py-4">
+                <div className="py-4">
                   <Button
                     asChild
                     className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
                   >
                     <a
-                      href="https://t.me/stonks_sniper_bot?start=tonkolreferral"
+                      href="https://t.me/jettradebot?start=tonkol"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      Stonks Bot
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://x1000.finance/?ref=mikey"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      x1000 Trading Terminal
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://t.me/maestro?start=r-mikeyketomi"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      Maestro
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://t.me/swapi?start=TshWZnMJmTc"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      Swapi
+                      Jettrade Bot
                     </a>
                   </Button>
                 </div>
