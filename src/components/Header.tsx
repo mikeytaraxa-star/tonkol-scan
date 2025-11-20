@@ -59,6 +59,9 @@ export const Header = () => {
                       Jettrade Bot
                     </a>
                   </Button>
+                  <p className="text-sm text-muted-foreground text-center mt-3">
+                    Jettrade is official partner of Tonkol
+                  </p>
                 </div>
               </DialogContent>
             </Dialog>
