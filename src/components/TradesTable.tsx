@@ -161,14 +161,6 @@ export const TradesTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <a 
-                          href={`https://tonviewer.com/${trade.token_address}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-semibold text-primary hover:underline"
-                        >
-                          ${trade.token_symbol}
-                        </a>
                         <a
                           href="https://t.me/jettradebot?start=tonkol"
                           target="_blank"
@@ -177,6 +169,14 @@ export const TradesTable = () => {
                           title="Buy on Jettrade"
                         >
                           💰
+                        </a>
+                        <a 
+                          href={`https://tonviewer.com/${trade.token_address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-primary hover:underline"
+                        >
+                          ${trade.token_symbol}
                         </a>
                       </div>
                     </td>
@@ -242,14 +242,6 @@ export const TradesTable = () => {
                 </div>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <a 
-                      href={`https://tonviewer.com/${trade.token_address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-primary hover:underline"
-                    >
-                      ${trade.token_symbol}
-                    </a>
                     <a
                       href="https://t.me/jettradebot?start=tonkol"
                       target="_blank"
@@ -258,6 +250,14 @@ export const TradesTable = () => {
                       title="Buy on Jettrade"
                     >
                       💰
+                    </a>
+                    <a 
+                      href={`https://tonviewer.com/${trade.token_address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-primary hover:underline"
+                    >
+                      ${trade.token_symbol}
                     </a>
                   </div>
                   <div className="text-sm text-muted-foreground">
