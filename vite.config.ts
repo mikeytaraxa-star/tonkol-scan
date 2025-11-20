@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       '/api': {
-        target: 'https://represented-sue-idle-hear.trycloudflare.com',
+        target: 'https://apitonkol.pro',
         changeOrigin: true,
         secure: false,
         headers: {
