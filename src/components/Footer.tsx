@@ -1,4 +1,4 @@
-import { Instagram, Mail, Handshake, FileText } from "lucide-react";
+import { Instagram, Mail, Handshake, FileText, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -43,6 +43,16 @@ export const Footer = () => {
             aria-label="Instagram"
           >
             <Instagram className="h-5 w-5" />
+          </a>
+          
+          <a
+            href="https://x.com/toncoinkol"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Twitter/X"
+          >
+            <Twitter className="h-5 w-5" />
           </a>
           
           <a
