@@ -214,13 +214,14 @@ export const Footer = () => {
             title="Powered by TON.app – explore now"
             target="_blank"
             rel="noopener noreferrer"
+            className="transition-all duration-300 hover:scale-110 hover:opacity-80"
           >
             <img 
               src="https://ton.app/a2/badge/topapp?appId=5142" 
               alt="Position of Tonkol in Social on Ton App" 
               onError={(e) => (e.currentTarget.style.opacity = '0')}
               loading="lazy"
-              className="h-auto max-w-full"
+              className="h-auto w-32"
             />
           </a>
         </div>
