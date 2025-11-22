@@ -221,7 +221,7 @@ export const Footer = () => {
               alt="Position of Tonkol in Social on Ton App" 
               onError={(e) => (e.currentTarget.style.opacity = '0')}
               loading="lazy"
-              className="h-auto w-32"
+              className="h-5 w-auto"
             />
           </a>
         </div>
