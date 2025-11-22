@@ -207,6 +207,23 @@ export const Footer = () => {
             </DialogContent>
           </Dialog>
         </div>
+        
+        <div className="flex justify-center mt-4">
+          <a 
+            href="https://ton.app/social/tonkol?id=5142" 
+            title="Powered by TON.app – explore now"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img 
+              src="https://ton.app/a2/badge/topapp?appId=5142" 
+              alt="Position of Tonkol in Social on Ton App" 
+              onError={(e) => (e.currentTarget.style.opacity = '0')}
+              loading="lazy"
+              className="h-auto max-w-full"
+            />
+          </a>
+        </div>
       </div>
     </footer>
   );
