@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
+import { TrendingUp } from "lucide-react";
 
 interface TokenHeatmap {
   token_symbol: string;
@@ -77,79 +78,130 @@ export const TokenLeaderboard = () => {
     );
   }
 
+  // Calculate color intensity based on volume
+  const getHeatColor = (volume: number, maxVolume: number) => {
+    const intensity = (volume / maxVolume) * 100;
+    if (intensity >= 80) return "from-red-500/20 to-orange-500/20 border-red-500/30";
+    if (intensity >= 60) return "from-orange-500/20 to-yellow-500/20 border-orange-500/30";
+    if (intensity >= 40) return "from-yellow-500/20 to-green-500/20 border-yellow-500/30";
+    if (intensity >= 20) return "from-green-500/20 to-blue-500/20 border-green-500/30";
+    return "from-blue-500/20 to-purple-500/20 border-blue-500/30";
+  };
+
+  // Show only top 5 tokens
+  const topTokens = tokens.slice(0, 5);
+  const maxVolume = topTokens.length > 0 ? topTokens[0].volume_ton : 1;
+
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Desktop View */}
-      <div className="hidden md:block">
-        <Card className="p-4 sm:p-6">
-          <div className="space-y-3">
-            {tokens.map((token, idx) => (
-              <div key={token.token_address} className="flex items-center justify-between py-3 border-b last:border-0">
-                <div className="flex items-center gap-4 flex-1">
-                  <span className="text-sm font-semibold text-muted-foreground w-8">
-                    #{idx + 1}
-                  </span>
-                  <div className="min-w-[200px]">
-                    <a
-                      href={`https://tonviewer.com/${token.token_address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-primary hover:underline"
-                    >
+    <div className="space-y-6">
+      {/* Heat Map Grid - Desktop & Tablet */}
+      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {topTokens.map((token, idx) => (
+          <a
+            key={token.token_address}
+            href={`https://tonviewer.com/${token.token_address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group"
+          >
+            <Card 
+              className={`p-6 relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
+            >
+              <div className="absolute top-3 right-3 text-4xl font-bold text-foreground/5">
+                #{idx + 1}
+              </div>
+              
+              <div className="relative space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
                       ${token.token_symbol}
-                    </a>
-                    <div className="text-sm text-muted-foreground">
+                    </div>
+                    <div className="text-sm text-muted-foreground line-clamp-1">
                       {token.token_name}
                     </div>
                   </div>
+                  <TrendingUp className="w-5 h-5 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
                 </div>
-                <div className="text-right">
-                  <div className="font-mono font-semibold">
-                    {token.volume_ton.toFixed(2)} TON
+
+                <div className="space-y-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold font-mono text-foreground">
+                      {token.volume_ton.toFixed(0)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">TON</span>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    24h Volume
+                  
+                  {/* Volume bar */}
+                  <div className="w-full bg-background/50 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className="h-full bg-primary rounded-full transition-all duration-500"
+                      style={{ width: `${(token.volume_ton / maxVolume) * 100}%` }}
+                    />
+                  </div>
+                  
+                  <div className="text-xs text-muted-foreground">
+                    24h KOL Trading Volume
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </Card>
+            </Card>
+          </a>
+        ))}
       </div>
 
-      {/* Mobile View */}
-      <div className="md:hidden space-y-3">
-        {tokens.map((token, idx) => (
-          <Card key={token.token_address} className="p-4">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-3 flex-1">
-                <span className="text-sm font-semibold text-muted-foreground">
-                  #{idx + 1}
-                </span>
-                <div className="flex-1">
-                  <a
-                    href={`https://tonviewer.com/${token.token_address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-primary hover:underline"
-                  >
-                    ${token.token_symbol}
-                  </a>
-                  <div className="text-sm text-muted-foreground">
-                    {token.token_name}
+      {/* Mobile View - Stacked Cards */}
+      <div className="sm:hidden space-y-3">
+        {topTokens.map((token, idx) => (
+          <a
+            key={token.token_address}
+            href={`https://tonviewer.com/${token.token_address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Card 
+              className={`p-4 relative overflow-hidden transition-all duration-300 active:scale-95 border-2 bg-gradient-to-r ${getHeatColor(token.volume_ton, maxVolume)}`}
+            >
+              <div className="absolute top-2 right-2 text-3xl font-bold text-foreground/5">
+                #{idx + 1}
+              </div>
+              
+              <div className="relative space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1 flex-1">
+                    <div className="text-xl font-bold text-foreground">
+                      ${token.token_symbol}
+                    </div>
+                    <div className="text-xs text-muted-foreground line-clamp-1 pr-2">
+                      {token.token_name}
+                    </div>
+                  </div>
+                  <TrendingUp className="w-4 h-4 text-primary opacity-60 flex-shrink-0 mt-1" />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold font-mono text-foreground">
+                      {token.volume_ton.toFixed(0)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">TON</span>
+                  </div>
+                  
+                  {/* Volume bar */}
+                  <div className="w-full bg-background/50 rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className="h-full bg-primary rounded-full transition-all duration-500"
+                      style={{ width: `${(token.volume_ton / maxVolume) * 100}%` }}
+                    />
+                  </div>
+                  
+                  <div className="text-xs text-muted-foreground">
+                    24h KOL Trading Volume
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="font-mono font-semibold text-sm">
-                  {token.volume_ton.toFixed(2)} TON
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  24h Volume
-                </div>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </a>
         ))}
       </div>
     </div>
