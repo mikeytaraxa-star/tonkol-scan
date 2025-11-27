@@ -78,14 +78,14 @@ export const TokenLeaderboard = () => {
     );
   }
 
-  // Calculate color intensity based on volume
+  // Calculate color intensity based on volume using theme colors
   const getHeatColor = (volume: number, maxVolume: number) => {
     const intensity = (volume / maxVolume) * 100;
-    if (intensity >= 80) return "from-red-500/20 to-orange-500/20 border-red-500/30";
-    if (intensity >= 60) return "from-orange-500/20 to-yellow-500/20 border-orange-500/30";
-    if (intensity >= 40) return "from-yellow-500/20 to-green-500/20 border-yellow-500/30";
-    if (intensity >= 20) return "from-green-500/20 to-blue-500/20 border-green-500/30";
-    return "from-blue-500/20 to-purple-500/20 border-blue-500/30";
+    if (intensity >= 80) return "from-primary/30 to-accent/30 border-primary/50"; // Highest volume - primary blue
+    if (intensity >= 60) return "from-primary/25 to-accent/25 border-primary/40";
+    if (intensity >= 40) return "from-primary/20 to-accent/20 border-primary/30";
+    if (intensity >= 20) return "from-primary/15 to-secondary/20 border-primary/20";
+    return "from-secondary/20 to-muted/30 border-border"; // Lowest volume - lighter blue
   };
 
   // Get box size based on ranking
