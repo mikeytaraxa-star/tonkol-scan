@@ -147,45 +147,6 @@ export const TokenLeaderboard = () => {
               </div>
             ))}
           </div>
-
-          {/* Legend */}
-          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
-            <div className="text-sm font-semibold mb-2 sm:mb-3">Performance Scale</div>
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs sm:text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-red-500"></div>
-                <span className="text-xs text-muted-foreground">&lt; -20%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-orange-500"></div>
-                <span className="text-xs text-muted-foreground">-20% to -10%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-orange-400"></div>
-                <span className="text-xs text-muted-foreground">-10% to -5%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-yellow-300"></div>
-                <span className="text-xs text-muted-foreground">-5% to 0%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-green-300"></div>
-                <span className="text-xs text-muted-foreground">0% to 5%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-green-400"></div>
-                <span className="text-xs text-muted-foreground">5% to 10%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-green-500"></div>
-                <span className="text-xs text-muted-foreground">10% to 20%</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-green-600"></div>
-                <span className="text-xs text-muted-foreground">&gt; 20%</span>
-              </div>
-            </div>
-          </div>
         </Card>
       </div>
 
