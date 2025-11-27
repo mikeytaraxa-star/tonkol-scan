@@ -260,7 +260,7 @@ export function KOLProfileDialog({
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-sm">{holding.token_symbol}</span>
                           {holding.dex_name && (
-                            <span className="text-xs text-muted-foreground">({holding.dex_name})</span>
+                            <span className="text-xs text-muted-foreground">{holding.dex_name}</span>
                           )}
                         </div>
                         <div className="text-xs text-muted-foreground truncate">
@@ -302,7 +302,7 @@ export function KOLProfileDialog({
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-sm">{trade.token_symbol}</span>
                           {trade.dex_name && (
-                            <span className="text-xs text-muted-foreground">({trade.dex_name})</span>
+                            <span className="text-xs text-muted-foreground">{trade.dex_name}</span>
                           )}
                         </div>
                         {trade.token_name && (
