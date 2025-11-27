@@ -71,10 +71,10 @@ export const PriceTracker = () => {
   if (isLoading) {
     return (
       <div className="border-t border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <Card className="bg-primary/5 border-primary/20">
-            <div className="px-6 py-4">
-              <div className="text-center text-muted-foreground">Loading TON price...</div>
+            <div className="px-3 sm:px-6 py-3 sm:py-4">
+              <div className="text-center text-sm text-muted-foreground">Loading TON price...</div>
             </div>
           </Card>
         </div>
@@ -84,58 +84,56 @@ export const PriceTracker = () => {
 
   return (
     <div className="border-t border-border bg-card">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <Card className="bg-primary/5 border-primary/20">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-6">
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold text-foreground font-mono">
-                      ${tonData.price.toFixed(2)}
+          <div className="px-3 sm:px-6 py-3 sm:py-4">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4">
+              <div className="w-full lg:w-auto">
+                <div className="text-xs sm:text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl font-bold text-foreground font-mono">
+                    ${tonData.price.toFixed(2)}
+                  </span>
+                  <div
+                    className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md ${
+                      isPositive
+                        ? "bg-success/10 text-success"
+                        : "bg-destructive/10 text-destructive"
+                    }`}
+                  >
+                    {isPositive ? (
+                      <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                    <span className="font-semibold text-xs sm:text-sm">
+                      {isPositive ? "+" : ""}
+                      {tonData.priceChange24h.toFixed(2)}%
                     </span>
-                    <div
-                      className={`flex items-center gap-1 px-2 py-1 rounded-md ${
-                        isPositive
-                          ? "bg-success/10 text-success"
-                          : "bg-destructive/10 text-destructive"
-                      }`}
-                    >
-                      {isPositive ? (
-                        <TrendingUp className="h-4 w-4" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4" />
-                      )}
-                      <span className="font-semibold text-sm">
-                        {isPositive ? "+" : ""}
-                        {tonData.priceChange24h.toFixed(2)}%
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-8 text-sm">
+              <div className="grid grid-cols-2 lg:flex lg:items-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm w-full lg:w-auto">
                 <div>
-                  <div className="text-muted-foreground mb-1">24h Volume</div>
+                  <div className="text-muted-foreground mb-0.5 sm:mb-1">24h Volume</div>
                   <div className="font-semibold text-foreground">{formatVolume(tonData.volume24h)}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground mb-1">Market Cap</div>
+                  <div className="text-muted-foreground mb-0.5 sm:mb-1">Market Cap</div>
                   <div className="font-semibold text-foreground">{formatVolume(tonData.marketCap)}</div>
                 </div>
-                <div className="hidden sm:block">
-                  <div className="text-muted-foreground mb-1">24h High</div>
+                <div className="hidden md:block">
+                  <div className="text-muted-foreground mb-0.5 sm:mb-1">24h High</div>
                   <div className="font-semibold text-foreground">${tonData.high24h.toFixed(2)}</div>
                 </div>
-                <div className="hidden sm:block">
-                  <div className="text-muted-foreground mb-1">24h Low</div>
+                <div className="hidden md:block">
+                  <div className="text-muted-foreground mb-0.5 sm:mb-1">24h Low</div>
                   <div className="font-semibold text-foreground">${tonData.low24h.toFixed(2)}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full lg:w-auto justify-center lg:justify-start">
                 <div className="h-2 w-2 rounded-full bg-success animate-pulse"></div>
-                <span className="text-sm text-muted-foreground">Live</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Live</span>
               </div>
             </div>
           </div>

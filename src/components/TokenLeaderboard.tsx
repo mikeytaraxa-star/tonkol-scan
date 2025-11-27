@@ -71,10 +71,10 @@ export const TokenLeaderboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Desktop Heat Map */}
       <div className="hidden md:block">
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="space-y-4">
             {tokens.map((token, idx) => (
               <div key={token.token_address} className="space-y-2">
@@ -149,9 +149,9 @@ export const TokenLeaderboard = () => {
           </div>
 
           {/* Legend */}
-          <div className="mt-8 pt-6 border-t">
-            <div className="text-sm font-semibold mb-3">Performance Scale</div>
-            <div className="flex items-center gap-2 flex-wrap">
+          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
+            <div className="text-sm font-semibold mb-2 sm:mb-3">Performance Scale</div>
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs sm:text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded bg-red-500"></div>
                 <span className="text-xs text-muted-foreground">&lt; -20%</span>
