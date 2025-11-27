@@ -263,10 +263,10 @@ export function KOLProfileDialog({
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {holding.invested_ton.toFixed(2)} TON
+                          ${holding.invested_usd.toFixed(2)}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          ${holding.invested_usd.toFixed(2)}
+                          {holding.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} tokens
                         </div>
                       </div>
                     </div>
