@@ -9,6 +9,7 @@ interface Trade {
   token_name?: string;
   trade_type: "buy" | "sell";
   amount: number;
+  amount_ton: number;
   value_usd: number;
   timestamp: string;
 }
@@ -176,7 +177,7 @@ export function KOLProfileDialog({
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <div className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
                   <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
-                  Biggest Win
+                  Biggest Win (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
                   +${stats.stats_7d.biggest_win.toFixed(2)}
@@ -186,7 +187,7 @@ export function KOLProfileDialog({
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <div className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
                   <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
-                  Biggest Loss
+                  Biggest Loss (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
                   -${Math.abs(stats.stats_7d.biggest_loss).toFixed(2)}
@@ -254,10 +255,10 @@ export function KOLProfileDialog({
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {holding.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                          ${holding.invested_usd.toFixed(2)}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          ${holding.invested_usd.toFixed(2)} invested
+                          {holding.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} tokens
                         </div>
                       </div>
                     </div>
@@ -298,10 +299,7 @@ export function KOLProfileDialog({
                     <div className="flex items-center gap-2 sm:gap-4">
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {trade.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          ${trade.value_usd.toFixed(2)}
+                          {trade.amount_ton.toFixed(2)} TON
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground whitespace-nowrap">
