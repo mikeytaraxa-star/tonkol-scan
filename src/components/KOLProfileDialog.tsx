@@ -147,7 +147,7 @@ export function KOLProfileDialog({
                   <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.trade_count}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground">PnL</div>
+                  <div className="text-xs text-muted-foreground">Realized PnL</div>
                   <div className={`text-lg sm:text-xl font-bold ${stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"}`}>
                     {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}${stats.stats_24h.realized_pnl_usd.toFixed(2)}
                   </div>
@@ -172,7 +172,7 @@ export function KOLProfileDialog({
               </div>
 
               <div className="bg-card border rounded-lg p-3 sm:p-4">
-                <div className="text-xs sm:text-sm text-muted-foreground">7d PnL</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">7d Realized PnL</div>
                 <div
                   className={`text-xl sm:text-2xl font-bold ${
                     stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
