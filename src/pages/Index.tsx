@@ -6,11 +6,30 @@ import { TokenLeaderboard } from "@/components/TokenLeaderboard";
 import { PriceTracker } from "@/components/PriceTracker";
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
+import { PullToRefreshWrapper } from "@/components/PullToRefreshWrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy, Flame } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("trades");
+  const [tradesKey, setTradesKey] = useState(0);
+  const [leaderboardKey, setLeaderboardKey] = useState(0);
+  const [tokensKey, setTokensKey] = useState(0);
+
+  const handleRefreshTrades = async () => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setTradesKey(prev => prev + 1);
+  };
+
+  const handleRefreshLeaderboard = async () => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setLeaderboardKey(prev => prev + 1);
+  };
+
+  const handleRefreshTokens = async () => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setTokensKey(prev => prev + 1);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -42,7 +61,14 @@ const Index = () => {
                 Monitor live trading activity from top KOLs on TON
               </p>
             </div>
-            <TradesTable />
+            <div className="lg:hidden">
+              <PullToRefreshWrapper onRefresh={handleRefreshTrades}>
+                <TradesTable key={tradesKey} />
+              </PullToRefreshWrapper>
+            </div>
+            <div className="hidden lg:block">
+              <TradesTable key={tradesKey} />
+            </div>
           </TabsContent>
 
           <TabsContent value="kol-leaderboard" className="space-y-4 animate-fade-in">
@@ -52,7 +78,14 @@ const Index = () => {
                 Top TON KOLs ranked by profit & loss performance
               </p>
             </div>
-            <LeaderboardTable />
+            <div className="lg:hidden">
+              <PullToRefreshWrapper onRefresh={handleRefreshLeaderboard}>
+                <LeaderboardTable key={leaderboardKey} />
+              </PullToRefreshWrapper>
+            </div>
+            <div className="hidden lg:block">
+              <LeaderboardTable key={leaderboardKey} />
+            </div>
           </TabsContent>
 
           <TabsContent value="token-leaderboard" className="space-y-4 animate-fade-in">
@@ -62,7 +95,14 @@ const Index = () => {
                 7-day performance heat map for trending tokens
               </p>
             </div>
-            <TokenLeaderboard />
+            <div className="lg:hidden">
+              <PullToRefreshWrapper onRefresh={handleRefreshTokens}>
+                <TokenLeaderboard key={tokensKey} />
+              </PullToRefreshWrapper>
+            </div>
+            <div className="hidden lg:block">
+              <TokenLeaderboard key={tokensKey} />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
