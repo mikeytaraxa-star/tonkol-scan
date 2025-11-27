@@ -9,8 +9,8 @@ interface Trade {
   token_name?: string;
   trade_type: "buy" | "sell";
   amount: number;
-  amount_ton?: number;
   value_usd: number;
+  value_ton: number;
   timestamp: string;
 }
 
@@ -19,6 +19,7 @@ interface Holding {
   token_name: string;
   amount: number;
   invested_usd: number;
+  invested_ton: number;
 }
 
 interface KOLStats {
@@ -28,19 +29,26 @@ interface KOLStats {
   platform: string | null;
   stats_24h: {
     trade_count: number;
-    realized_pnl: number;
-    volume: number;
+    realized_pnl_usd: number;
+    realized_pnl_ton: number;
+    volume_usd: number;
+    volume_ton: number;
   };
   stats_7d: {
     trade_count: number;
-    realized_pnl: number;
-    volume: number;
+    realized_pnl_usd: number;
+    realized_pnl_ton: number;
+    volume_usd: number;
+    volume_ton: number;
     win_rate: number;
-    biggest_win: number;
-    biggest_loss: number;
-    avg_trade_size: number;
+    biggest_win_usd: number;
+    biggest_win_ton: number;
+    biggest_loss_usd: number;
+    biggest_loss_ton: number;
+    avg_trade_size_usd: number;
+    avg_trade_size_ton: number;
   };
-  pnl_chart: Array<{ date: string; pnl: number; volume: number }>;
+  pnl_chart: Array<{ date: string; pnl_usd: number; pnl_ton: number; volume_usd: number; volume_ton: number }>;
   current_holdings: Holding[];
   recent_trades: Trade[];
 }
@@ -140,13 +148,13 @@ export function KOLProfileDialog({
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">PnL</div>
-                  <div className={`text-lg sm:text-xl font-bold ${stats.stats_24h.realized_pnl >= 0 ? "text-green-500" : "text-red-500"}`}>
-                    {stats.stats_24h.realized_pnl >= 0 ? "+" : ""}${stats.stats_24h.realized_pnl.toFixed(2)}
+                  <div className={`text-lg sm:text-xl font-bold ${stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"}`}>
+                    {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}${stats.stats_24h.realized_pnl_usd.toFixed(2)}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Volume</div>
-                  <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume.toFixed(2)}</div>
+                  <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume_usd.toFixed(2)}</div>
                 </div>
               </div>
             </div>
@@ -167,10 +175,10 @@ export function KOLProfileDialog({
                 <div className="text-xs sm:text-sm text-muted-foreground">7d PnL</div>
                 <div
                   className={`text-xl sm:text-2xl font-bold ${
-                    stats.stats_7d.realized_pnl >= 0 ? "text-green-500" : "text-red-500"
+                    stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
                   }`}
                 >
-                  {stats.stats_7d.realized_pnl >= 0 ? "+" : ""}${stats.stats_7d.realized_pnl.toFixed(2)}
+                  {stats.stats_7d.realized_pnl_usd >= 0 ? "+" : ""}${stats.stats_7d.realized_pnl_usd.toFixed(2)}
                 </div>
               </div>
 
@@ -180,7 +188,7 @@ export function KOLProfileDialog({
                   Biggest Win (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
-                  +${stats.stats_7d.biggest_win.toFixed(2)}
+                  +${stats.stats_7d.biggest_win_usd.toFixed(2)}
                 </div>
               </div>
 
@@ -190,7 +198,7 @@ export function KOLProfileDialog({
                   Biggest Loss (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
-                  -${Math.abs(stats.stats_7d.biggest_loss ?? 0).toFixed(2)}
+                  -${Math.abs(stats.stats_7d.biggest_loss_usd ?? 0).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -198,7 +206,7 @@ export function KOLProfileDialog({
             {/* Average Trade Size */}
             <div className="bg-card border rounded-lg p-3 sm:p-4">
               <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
-              <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size.toFixed(2)}</div>
+              <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size_usd.toFixed(2)}</div>
             </div>
 
             {/* PnL Chart */}
@@ -227,7 +235,7 @@ export function KOLProfileDialog({
                     />
                     <Line
                       type="monotone"
-                      dataKey="pnl"
+                      dataKey="pnl_usd"
                       stroke="hsl(var(--primary))"
                       strokeWidth={2}
                       dot={{ fill: "hsl(var(--primary))", r: 3 }}
@@ -299,7 +307,7 @@ export function KOLProfileDialog({
                     <div className="flex items-center gap-2 sm:gap-4">
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {trade.amount_ton ? `${trade.amount_ton.toFixed(2)} TON` : 'N/A'}
+                          {trade.value_ton.toFixed(2)} TON
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground whitespace-nowrap">
