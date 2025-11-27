@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface TokenHeatmap {
   token_symbol: string;
@@ -80,12 +79,6 @@ export const TokenLeaderboard = () => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="text-center mb-4">
-        <Badge variant="secondary" className="text-sm font-semibold px-4 py-2">
-          KOL Trading Volume (24h)
-        </Badge>
-      </div>
-      
       {/* Desktop View */}
       <div className="hidden md:block">
         <Card className="p-4 sm:p-6">
