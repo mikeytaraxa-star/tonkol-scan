@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Twitter, Send } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import PullToRefresh from "react-simple-pull-to-refresh";
 
 interface Trade {
   token_symbol: string;
@@ -97,6 +98,10 @@ export function KOLProfileDialog({
     }
   };
 
+  const handleRefresh = async () => {
+    await fetchKOLStats();
+  };
+
   const formatTimeSince = (timestamp: string) => {
     const now = new Date();
     const tradeTime = new Date(timestamp);
@@ -138,7 +143,8 @@ export function KOLProfileDialog({
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : stats ? (
-          <div className="space-y-4 sm:space-y-6">
+          <PullToRefresh onRefresh={handleRefresh} pullingContent="">
+            <div className="space-y-4 sm:space-y-6">
             {/* 24h Stats */}
             <div className="bg-card border rounded-lg p-3 sm:p-4">
               <h3 className="text-base sm:text-lg font-semibold mb-3">24h Performance</h3>
@@ -295,7 +301,8 @@ export function KOLProfileDialog({
                 ))}
               </div>
             </div>
-          </div>
+            </div>
+          </PullToRefresh>
         ) : (
           <div className="text-center py-12 text-muted-foreground">
             No data available
