@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Twitter, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { KOLProfileDialog } from "./KOLProfileDialog";
 
 interface Trade {
   kol_name: string;
@@ -37,6 +38,7 @@ export const TradesTable = () => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(Date.now());
+  const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
 
   const fetchTrades = async () => {
     try {
@@ -116,7 +118,12 @@ export const TradesTable = () => {
                   <tr key={trade.tx_hash} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <span className="font-medium text-foreground">{trade.kol_name}</span>
+                        <button
+                          onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
+                          className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer transition-colors"
+                        >
+                          {trade.kol_name}
+                        </button>
                         <div className="flex gap-2">
                           {trade.kol_platform === "X" && trade.kol_social && (
                             <a
@@ -200,7 +207,12 @@ export const TradesTable = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="font-medium text-foreground">{trade.kol_name}</span>
+                  <button
+                    onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
+                    className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer transition-colors"
+                  >
+                    {trade.kol_name}
+                  </button>
                   <div className="flex gap-2">
                     {trade.kol_platform === "X" && trade.kol_social && (
                       <a
@@ -269,6 +281,13 @@ export const TradesTable = () => {
           </Card>
         ))}
       </div>
+
+      <KOLProfileDialog
+        open={selectedKOL !== null}
+        onOpenChange={(open) => !open && setSelectedKOL(null)}
+        walletAddress={selectedKOL?.wallet || ""}
+        kolName={selectedKOL?.name || ""}
+      />
     </div>
   );
 };
