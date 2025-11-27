@@ -190,7 +190,7 @@ export function KOLProfileDialog({
                   Biggest Loss (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
-                  -${Math.abs(stats.stats_7d.biggest_loss).toFixed(2)}
+                  -${Math.abs(stats.stats_7d.biggest_loss ?? 0).toFixed(2)}
                 </div>
               </div>
             </div>
