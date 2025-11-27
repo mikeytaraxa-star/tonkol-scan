@@ -61,14 +61,9 @@ const Index = () => {
                 Monitor live trading activity from top KOLs on TON
               </p>
             </div>
-            <div className="lg:hidden">
-              <PullToRefreshWrapper onRefresh={handleRefreshTrades}>
-                <TradesTable key={tradesKey} />
-              </PullToRefreshWrapper>
-            </div>
-            <div className="hidden lg:block">
+            <PullToRefreshWrapper onRefresh={handleRefreshTrades}>
               <TradesTable key={tradesKey} />
-            </div>
+            </PullToRefreshWrapper>
           </TabsContent>
 
           <TabsContent value="kol-leaderboard" className="space-y-4 animate-fade-in">
@@ -78,14 +73,9 @@ const Index = () => {
                 Top TON KOLs ranked by profit & loss performance
               </p>
             </div>
-            <div className="lg:hidden">
-              <PullToRefreshWrapper onRefresh={handleRefreshLeaderboard}>
-                <LeaderboardTable key={leaderboardKey} />
-              </PullToRefreshWrapper>
-            </div>
-            <div className="hidden lg:block">
+            <PullToRefreshWrapper onRefresh={handleRefreshLeaderboard}>
               <LeaderboardTable key={leaderboardKey} />
-            </div>
+            </PullToRefreshWrapper>
           </TabsContent>
 
           <TabsContent value="token-leaderboard" className="space-y-4 animate-fade-in">
@@ -95,14 +85,9 @@ const Index = () => {
                 Top TON Tokens ranked by trading volume
               </p>
             </div>
-            <div className="lg:hidden">
-              <PullToRefreshWrapper onRefresh={handleRefreshTokens}>
-                <TokenLeaderboard key={tokensKey} />
-              </PullToRefreshWrapper>
-            </div>
-            <div className="hidden lg:block">
+            <PullToRefreshWrapper onRefresh={handleRefreshTokens}>
               <TokenLeaderboard key={tokensKey} />
-            </div>
+            </PullToRefreshWrapper>
           </TabsContent>
         </Tabs>
       </main>
