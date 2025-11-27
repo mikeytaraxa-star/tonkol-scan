@@ -18,9 +18,9 @@ interface Trade {
 interface Holding {
   token_symbol: string;
   token_name: string;
+  token_address?: string;
   amount: number;
-  invested_usd: number;
-  invested_ton: number;
+  dex_name?: string;
 }
 
 interface KOLStats {
@@ -257,7 +257,12 @@ export function KOLProfileDialog({
                       className="flex items-center justify-between p-2 sm:p-3 bg-background rounded-lg border"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="font-semibold text-sm">{holding.token_symbol}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-sm">{holding.token_symbol}</span>
+                          {holding.dex_name && (
+                            <span className="text-xs text-muted-foreground">({holding.dex_name})</span>
+                          )}
+                        </div>
                         <div className="text-xs text-muted-foreground truncate">
                           {holding.token_name}
                         </div>
@@ -294,15 +299,15 @@ export function KOLProfileDialog({
                         {trade.trade_type.toUpperCase()}
                       </Badge>
                       <div className="min-w-0 flex-1">
-                        <div className="font-semibold text-sm truncate">{trade.token_symbol}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-sm">{trade.token_symbol}</span>
+                          {trade.dex_name && (
+                            <span className="text-xs text-muted-foreground">({trade.dex_name})</span>
+                          )}
+                        </div>
                         {trade.token_name && (
                           <div className="text-xs text-muted-foreground truncate">
                             {trade.token_name}
-                          </div>
-                        )}
-                        {trade.dex_name && (
-                          <div className="text-xs text-muted-foreground">
-                            via {trade.dex_name}
                           </div>
                         )}
                       </div>
