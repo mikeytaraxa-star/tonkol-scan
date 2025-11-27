@@ -101,8 +101,11 @@ export const TokenLeaderboard = () => {
     return "p-5"; // Standard padding for others
   };
 
-  // Show only top 5 tokens
-  const topTokens = tokens.slice(0, 5);
+  // Filter out USDT and show only top 5 tokens
+  const filteredTokens = tokens.filter(
+    token => token.token_address !== 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
+  );
+  const topTokens = filteredTokens.slice(0, 5);
   const maxVolume = topTokens.length > 0 ? topTokens[0].volume_ton : 1;
 
   return (
