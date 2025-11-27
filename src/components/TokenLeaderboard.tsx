@@ -126,7 +126,7 @@ export const TokenLeaderboard = () => {
               className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-xl hover:z-10 border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
             >
               <div 
-                className={`absolute top-3 right-3 font-bold text-foreground/5 transition-all duration-300 ${
+                className={`absolute top-3 right-3 font-bold text-primary/20 transition-all duration-300 ${
                   idx === 0 ? 'text-6xl' : idx === 1 ? 'text-5xl' : 'text-4xl'
                 }`}
               >
@@ -205,7 +205,7 @@ export const TokenLeaderboard = () => {
                 idx === 0 ? 'p-6' : 'p-4'
               }`}
             >
-              <div className={`absolute top-2 right-2 font-bold text-foreground/5 ${
+              <div className={`absolute top-2 right-2 font-bold text-primary/20 ${
                 idx === 0 ? 'text-4xl' : 'text-3xl'
               }`}>
                 #{idx + 1}
