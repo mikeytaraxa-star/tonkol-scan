@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
+import { TokenLeaderboard } from "@/components/TokenLeaderboard";
 import { PriceTracker } from "@/components/PriceTracker";
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Activity, Trophy } from "lucide-react";
+import { Activity, Trophy, Flame } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("trades");
@@ -16,14 +17,18 @@ const Index = () => {
       <Header />
       <main className="container mx-auto px-4 py-8 flex-1">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-12">
+          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 h-12">
             <TabsTrigger value="trades" className="text-base font-semibold flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Trades
             </TabsTrigger>
-            <TabsTrigger value="leaderboard" className="text-base font-semibold flex items-center gap-2">
+            <TabsTrigger value="kol-leaderboard" className="text-base font-semibold flex items-center gap-2">
               <Trophy className="h-4 w-4" />
-              Leaderboard
+              KOL Leaderboard
+            </TabsTrigger>
+            <TabsTrigger value="token-leaderboard" className="text-base font-semibold flex items-center gap-2">
+              <Flame className="h-4 w-4" />
+              Token Leaderboard
             </TabsTrigger>
           </TabsList>
 
@@ -37,7 +42,7 @@ const Index = () => {
             <TradesTable />
           </TabsContent>
 
-          <TabsContent value="leaderboard" className="space-y-4 animate-fade-in">
+          <TabsContent value="kol-leaderboard" className="space-y-4 animate-fade-in">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-foreground mb-2">KOL Leaderboard</h2>
               <p className="text-muted-foreground">
@@ -45,6 +50,16 @@ const Index = () => {
               </p>
             </div>
             <LeaderboardTable />
+          </TabsContent>
+
+          <TabsContent value="token-leaderboard" className="space-y-4 animate-fade-in">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Token Leaderboard</h2>
+              <p className="text-muted-foreground">
+                7-day performance heat map for trending tokens
+              </p>
+            </div>
+            <TokenLeaderboard />
           </TabsContent>
         </Tabs>
       </main>
