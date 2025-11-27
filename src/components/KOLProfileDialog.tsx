@@ -11,6 +11,7 @@ interface Trade {
   amount: number;
   value_usd: number;
   value_ton: number;
+  dex_name?: string;
   timestamp: string;
 }
 
@@ -297,6 +298,11 @@ export function KOLProfileDialog({
                         {trade.token_name && (
                           <div className="text-xs text-muted-foreground truncate">
                             {trade.token_name}
+                          </div>
+                        )}
+                        {trade.dex_name && (
+                          <div className="text-xs text-muted-foreground">
+                            via {trade.dex_name}
                           </div>
                         )}
                       </div>
