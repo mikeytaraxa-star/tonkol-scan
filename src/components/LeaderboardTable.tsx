@@ -62,13 +62,18 @@ export const LeaderboardTable = () => {
     timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-center mb-4">
-        <ToggleGroup type="single" value={timeframe} onValueChange={(value) => value && setTimeframe(value as "24h" | "7d")}>
-          <ToggleGroupItem value="24h" aria-label="24 hours">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="flex justify-center mb-3 sm:mb-4">
+        <ToggleGroup 
+          type="single" 
+          value={timeframe} 
+          onValueChange={(value) => value && setTimeframe(value as "24h" | "7d")}
+          className="bg-muted p-1"
+        >
+          <ToggleGroupItem value="24h" aria-label="24 hours" className="text-sm">
             24H
           </ToggleGroupItem>
-          <ToggleGroupItem value="7d" aria-label="7 days">
+          <ToggleGroupItem value="7d" aria-label="7 days" className="text-sm">
             7D
           </ToggleGroupItem>
         </ToggleGroup>
@@ -163,19 +168,19 @@ export const LeaderboardTable = () => {
       </div>
 
       {/* Mobile view */}
-      <div key={`mobile-${timeframe}`} className="md:hidden space-y-4 animate-fade-in">
+      <div key={`mobile-${timeframe}`} className="md:hidden space-y-3 sm:space-y-4 animate-fade-in">
         {leaderboard.map((entry) => (
           <Card 
             key={entry.wallet_address} 
-            className={`p-4 ${entry.rank <= 3 ? 'group' : ''}`}
+            className={`p-3 sm:p-4 ${entry.rank <= 3 ? 'group' : ''}`}
           >
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold">{entry.rank}</span>
-                    <div className="space-y-1">
-                      <div className="font-medium text-foreground">{entry.kol_name}</div>
-                      <div className="text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <span className="text-xl sm:text-2xl font-bold">{entry.rank}</span>
+                    <div className="space-y-0.5 sm:space-y-1">
+                      <div className="font-medium text-sm sm:text-base text-foreground">{entry.kol_name}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
                     </div>
                   </div>
                 <div className="flex gap-2 relative">
@@ -222,9 +227,9 @@ export const LeaderboardTable = () => {
                   )}
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 <div
-                  className={`font-mono font-bold ${
+                  className={`font-mono font-bold text-base sm:text-lg ${
                     currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
                   }`}
                 >
