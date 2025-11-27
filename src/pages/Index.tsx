@@ -92,7 +92,7 @@ const Index = () => {
             <div className="text-center mb-4 sm:mb-6 px-2">
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Token Leaderboard</h2>
               <p className="text-sm sm:text-base text-muted-foreground">
-                7-day performance heat map for trending tokens
+                Top TON Tokens ranked by trading volume
               </p>
             </div>
             <div className="lg:hidden">
