@@ -121,10 +121,10 @@ export function KOLProfileDialog({
               <div className="bg-card border rounded-lg p-4">
                 <div className="text-sm text-muted-foreground">Win Rate</div>
                 <div className="text-2xl font-bold text-primary">
-                  {stats.win_rate.toFixed(1)}%
+                  {(stats.win_rate ?? 0).toFixed(1)}%
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {stats.profitable_trades}/{stats.total_trades} trades
+                  {stats.profitable_trades ?? 0}/{stats.total_trades ?? 0} trades
                 </div>
               </div>
 
@@ -132,10 +132,10 @@ export function KOLProfileDialog({
                 <div className="text-sm text-muted-foreground">Total PnL</div>
                 <div
                   className={`text-2xl font-bold ${
-                    stats.total_pnl >= 0 ? "text-green-500" : "text-red-500"
+                    (stats.total_pnl ?? 0) >= 0 ? "text-green-500" : "text-red-500"
                   }`}
                 >
-                  {stats.total_pnl >= 0 ? "+" : ""}${stats.total_pnl.toFixed(2)}
+                  {(stats.total_pnl ?? 0) >= 0 ? "+" : ""}${(stats.total_pnl ?? 0).toFixed(2)}
                 </div>
               </div>
 
@@ -145,7 +145,7 @@ export function KOLProfileDialog({
                   Biggest Win
                 </div>
                 <div className="text-2xl font-bold text-green-500">
-                  +${stats.biggest_win.toFixed(2)}
+                  +${(stats.biggest_win ?? 0).toFixed(2)}
                 </div>
               </div>
 
@@ -155,13 +155,13 @@ export function KOLProfileDialog({
                   Biggest Loss
                 </div>
                 <div className="text-2xl font-bold text-red-500">
-                  -${Math.abs(stats.biggest_loss).toFixed(2)}
+                  -${Math.abs(stats.biggest_loss ?? 0).toFixed(2)}
                 </div>
               </div>
             </div>
 
             {/* PnL Chart */}
-            {stats.pnl_history && stats.pnl_history.length > 0 && (
+            {stats.pnl_history && Array.isArray(stats.pnl_history) && stats.pnl_history.length > 0 && (
               <div className="bg-card border rounded-lg p-4">
                 <h3 className="text-lg font-semibold mb-4">7-Day PnL History</h3>
                 <ResponsiveContainer width="100%" height={250}>
@@ -199,7 +199,7 @@ export function KOLProfileDialog({
             <div className="bg-card border rounded-lg p-4">
               <h3 className="text-lg font-semibold mb-4">Recent Trades</h3>
               <div className="space-y-3">
-                {stats.recent_trades.slice(0, 10).map((trade, idx) => (
+                {(stats.recent_trades ?? []).slice(0, 10).map((trade, idx) => (
                   <div
                     key={`${trade.tx_hash}-${idx}`}
                     className="flex items-center justify-between p-3 bg-background rounded-lg border"
@@ -224,10 +224,10 @@ export function KOLProfileDialog({
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">
-                        {trade.amount_ton.toFixed(2)} TON
+                        {(trade.amount_ton ?? 0).toFixed(2)} TON
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        ${trade.value_usd.toFixed(2)}
+                        ${(trade.value_usd ?? 0).toFixed(2)}
                       </div>
                     </div>
                     <div className="text-sm text-muted-foreground ml-4">
