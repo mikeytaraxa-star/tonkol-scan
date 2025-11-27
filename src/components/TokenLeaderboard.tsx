@@ -14,6 +14,7 @@ const API_BASE = "https://apitonkol.pro";
 export const TokenLeaderboard = () => {
   const [tokens, setTokens] = useState<TokenHeatmap[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTokens = async () => {
     try {
@@ -23,10 +24,17 @@ export const TokenLeaderboard = () => {
           'ngrok-skip-browser-warning': 'true'
         }
       });
+      
+      if (!response.ok) {
+        throw new Error(`API returned ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       setTokens(data.tokens || []);
+      setError(null);
     } catch (error) {
       console.error("Failed to fetch token heatmap:", error);
+      setError(error instanceof Error ? error.message : "Failed to load token data");
     } finally {
       setIsLoading(false);
     }
@@ -42,6 +50,30 @@ export const TokenLeaderboard = () => {
     return (
       <div className="text-center py-8">
         <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <Card className="p-6">
+          <p className="text-destructive font-semibold mb-2">Unable to load token data</p>
+          <p className="text-sm text-muted-foreground">{error}</p>
+          <p className="text-xs text-muted-foreground mt-4">
+            The /api/tokens/heatmap endpoint may not be available yet on the backend.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
+  if (tokens.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <Card className="p-6">
+          <p className="text-muted-foreground">No token data available</p>
+        </Card>
       </div>
     );
   }
