@@ -1,6 +1,7 @@
 import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { KOLProfileDialog } from "@/components/KOLProfileDialog";
 import { useState, useEffect } from "react";
 
 interface LeaderboardEntry {
@@ -22,6 +23,7 @@ export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<"24h" | "7d">("24h");
+  const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
 
   const fetchLeaderboard = async () => {
     try {
@@ -101,7 +103,12 @@ export const LeaderboardTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <span className="font-medium text-foreground">{entry.kol_name}</span>
+                        <button
+                          onClick={() => setSelectedKOL({ wallet: entry.wallet_address, name: entry.kol_name })}
+                          className="font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
+                        >
+                          {entry.kol_name}
+                        </button>
                         <div className="flex gap-2 relative">
                           {entry.kol_platform === "X" && entry.kol_social && (
                             <a
@@ -179,7 +186,12 @@ export const LeaderboardTable = () => {
                   <div className="flex items-center gap-2 sm:gap-3">
                     <span className="text-xl sm:text-2xl font-bold">{entry.rank}</span>
                     <div className="space-y-0.5 sm:space-y-1">
-                      <div className="font-medium text-sm sm:text-base text-foreground">{entry.kol_name}</div>
+                      <button
+                        onClick={() => setSelectedKOL({ wallet: entry.wallet_address, name: entry.kol_name })}
+                        className="font-medium text-sm sm:text-base text-foreground hover:text-primary transition-colors cursor-pointer text-left"
+                      >
+                        {entry.kol_name}
+                      </button>
                       <div className="text-xs sm:text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
                     </div>
                   </div>
@@ -240,6 +252,13 @@ export const LeaderboardTable = () => {
           </Card>
         ))}
       </div>
+
+      <KOLProfileDialog
+        open={!!selectedKOL}
+        onOpenChange={(open) => !open && setSelectedKOL(null)}
+        walletAddress={selectedKOL?.wallet || ""}
+        kolName={selectedKOL?.name || ""}
+      />
     </div>
   );
 };
