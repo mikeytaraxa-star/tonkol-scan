@@ -6,29 +6,42 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 interface Trade {
   token_symbol: string;
-  token_name: string;
-  token_address: string;
+  token_name?: string;
   trade_type: "buy" | "sell";
-  amount_ton: number;
+  amount: number;
   value_usd: number;
   timestamp: string;
-  tx_hash: string;
-  dex_name: string;
+}
+
+interface Holding {
+  token_symbol: string;
+  token_name: string;
+  amount: number;
+  invested_usd: number;
 }
 
 interface KOLStats {
-  kol_name: string;
-  kol_social: string | null;
-  kol_platform: string | null;
   wallet_address: string;
-  total_trades: number;
-  profitable_trades: number;
-  win_rate: number;
-  biggest_win: number;
-  biggest_loss: number;
-  total_pnl: number;
+  name: string;
+  social_link: string | null;
+  platform: string | null;
+  stats_24h: {
+    trade_count: number;
+    realized_pnl: number;
+    volume: number;
+  };
+  stats_7d: {
+    trade_count: number;
+    realized_pnl: number;
+    volume: number;
+    win_rate: number;
+    biggest_win: number;
+    biggest_loss: number;
+    avg_trade_size: number;
+  };
+  pnl_chart: Array<{ date: string; pnl: number; volume: number }>;
+  current_holdings: Holding[];
   recent_trades: Trade[];
-  pnl_history: Array<{ date: string; pnl: number }>;
 }
 
 interface KOLProfileDialogProps {
@@ -57,10 +70,10 @@ export function KOLProfileDialog({
     setLoading(true);
     try {
       const response = await fetch(
-        `https://apitonkol.pro/api/kol/${walletAddress}/stats?timeframe=7d`,
+        `https://apitonkol.pro/api/kol/${walletAddress}`,
         {
           headers: {
-            "x-api-key": "sk_project1_abc123",
+            "X-API-Key": "sk_project1_abc123",
             "ngrok-skip-browser-warning": "true",
           },
         }
@@ -93,14 +106,14 @@ export function KOLProfileDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <span className="text-xl sm:text-2xl">{kolName}</span>
-            {stats?.kol_social && (
+            {stats?.social_link && (
               <a
-                href={stats.kol_social}
+                href={stats.social_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
-                {stats.kol_platform === "X" ? (
+                {stats.platform === "X" ? (
                   <Twitter className="h-5 w-5" />
                 ) : (
                   <Send className="h-5 w-5" />
@@ -116,26 +129,47 @@ export function KOLProfileDialog({
           </div>
         ) : stats ? (
           <div className="space-y-4 sm:space-y-6">
-            {/* Stats Grid */}
+            {/* 24h Stats */}
+            <div className="bg-card border rounded-lg p-3 sm:p-4">
+              <h3 className="text-base sm:text-lg font-semibold mb-3">24h Performance</h3>
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                <div>
+                  <div className="text-xs text-muted-foreground">Trades</div>
+                  <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.trade_count}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">PnL</div>
+                  <div className={`text-lg sm:text-xl font-bold ${stats.stats_24h.realized_pnl >= 0 ? "text-green-500" : "text-red-500"}`}>
+                    {stats.stats_24h.realized_pnl >= 0 ? "+" : ""}${stats.stats_24h.realized_pnl.toFixed(2)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Volume</div>
+                  <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume.toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* 7d Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-card border rounded-lg p-3 sm:p-4">
-                <div className="text-xs sm:text-sm text-muted-foreground">Win Rate</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">7d Win Rate</div>
                 <div className="text-xl sm:text-2xl font-bold text-primary">
-                  {(stats.win_rate ?? 0).toFixed(1)}%
+                  {stats.stats_7d.win_rate.toFixed(1)}%
                 </div>
                 <div className="text-[10px] sm:text-xs text-muted-foreground">
-                  {stats.profitable_trades ?? 0}/{stats.total_trades ?? 0} trades
+                  {stats.stats_7d.trade_count} trades
                 </div>
               </div>
 
               <div className="bg-card border rounded-lg p-3 sm:p-4">
-                <div className="text-xs sm:text-sm text-muted-foreground">Total PnL</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">7d PnL</div>
                 <div
                   className={`text-xl sm:text-2xl font-bold ${
-                    (stats.total_pnl ?? 0) >= 0 ? "text-green-500" : "text-red-500"
+                    stats.stats_7d.realized_pnl >= 0 ? "text-green-500" : "text-red-500"
                   }`}
                 >
-                  {(stats.total_pnl ?? 0) >= 0 ? "+" : ""}${(stats.total_pnl ?? 0).toFixed(2)}
+                  {stats.stats_7d.realized_pnl >= 0 ? "+" : ""}${stats.stats_7d.realized_pnl.toFixed(2)}
                 </div>
               </div>
 
@@ -145,7 +179,7 @@ export function KOLProfileDialog({
                   Biggest Win
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
-                  +${(stats.biggest_win ?? 0).toFixed(2)}
+                  +${stats.stats_7d.biggest_win.toFixed(2)}
                 </div>
               </div>
 
@@ -155,17 +189,23 @@ export function KOLProfileDialog({
                   Biggest Loss
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
-                  -${Math.abs(stats.biggest_loss ?? 0).toFixed(2)}
+                  -${Math.abs(stats.stats_7d.biggest_loss).toFixed(2)}
                 </div>
               </div>
             </div>
 
+            {/* Average Trade Size */}
+            <div className="bg-card border rounded-lg p-3 sm:p-4">
+              <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
+              <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size.toFixed(2)}</div>
+            </div>
+
             {/* PnL Chart */}
-            {stats.pnl_history && Array.isArray(stats.pnl_history) && stats.pnl_history.length > 0 && (
+            {stats.pnl_chart && Array.isArray(stats.pnl_chart) && stats.pnl_chart.length > 0 && (
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">7-Day PnL History</h3>
                 <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={stats.pnl_history}>
+                  <LineChart data={stats.pnl_chart}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                     <XAxis
                       dataKey="date"
@@ -196,13 +236,43 @@ export function KOLProfileDialog({
               </div>
             )}
 
+            {/* Current Holdings */}
+            {stats.current_holdings && stats.current_holdings.length > 0 && (
+              <div className="bg-card border rounded-lg p-3 sm:p-4">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Current Holdings</h3>
+                <div className="space-y-2 sm:space-y-3">
+                  {stats.current_holdings.map((holding, idx) => (
+                    <div
+                      key={`${holding.token_symbol}-${idx}`}
+                      className="flex items-center justify-between p-2 sm:p-3 bg-background rounded-lg border"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-sm">{holding.token_symbol}</div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {holding.token_name}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold text-sm">
+                          {holding.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${holding.invested_usd.toFixed(2)} invested
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Recent Trades */}
             <div className="bg-card border rounded-lg p-3 sm:p-4">
               <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Recent Trades</h3>
               <div className="space-y-2 sm:space-y-3">
                 {(stats.recent_trades ?? []).slice(0, 10).map((trade, idx) => (
                   <div
-                    key={`${trade.tx_hash}-${idx}`}
+                    key={`${trade.token_symbol}-${trade.timestamp}-${idx}`}
                     className="flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-3 bg-background rounded-lg border gap-2 sm:gap-0"
                   >
                     <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -218,18 +288,20 @@ export function KOLProfileDialog({
                       </Badge>
                       <div className="min-w-0 flex-1">
                         <div className="font-semibold text-sm truncate">{trade.token_symbol}</div>
-                        <div className="text-xs text-muted-foreground truncate">
-                          {trade.token_name}
-                        </div>
+                        {trade.token_name && (
+                          <div className="text-xs text-muted-foreground truncate">
+                            {trade.token_name}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-4">
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {(trade.amount_ton ?? 0).toFixed(2)} TON
+                          {trade.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          ${(trade.value_usd ?? 0).toFixed(2)}
+                          ${trade.value_usd.toFixed(2)}
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground whitespace-nowrap">
