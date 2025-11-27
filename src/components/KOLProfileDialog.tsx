@@ -9,7 +9,7 @@ interface Trade {
   token_name?: string;
   trade_type: "buy" | "sell";
   amount: number;
-  amount_ton: number;
+  amount_ton?: number;
   value_usd: number;
   timestamp: string;
 }
@@ -299,7 +299,7 @@ export function KOLProfileDialog({
                     <div className="flex items-center gap-2 sm:gap-4">
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {trade.amount_ton.toFixed(2)} TON
+                          {trade.amount_ton ? `${trade.amount_ton.toFixed(2)} TON` : 'N/A'}
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground whitespace-nowrap">
