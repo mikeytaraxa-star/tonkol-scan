@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
 
 interface TokenHeatmap {
   token_symbol: string;
@@ -148,9 +147,6 @@ export const TokenLeaderboard = () => {
                       {token.token_name}
                     </div>
                   </div>
-                  <TrendingUp className={`text-primary opacity-60 group-hover:opacity-100 transition-all duration-300 group-hover:rotate-12 ${
-                    idx === 0 ? 'w-7 h-7' : idx === 1 ? 'w-6 h-6' : 'w-5 h-5'
-                  }`} />
                 </div>
 
                 <div className="space-y-2">
@@ -229,9 +225,6 @@ export const TokenLeaderboard = () => {
                       {token.token_name}
                     </div>
                   </div>
-                  <TrendingUp className={`text-primary opacity-60 flex-shrink-0 mt-1 ${
-                    idx === 0 ? 'w-5 h-5' : 'w-4 h-4'
-                  }`} />
                 </div>
 
                 <div className="space-y-2">
