@@ -238,7 +238,7 @@ export function KOLProfileDialog({
                       dataKey="pnl_usd"
                       stroke="hsl(var(--primary))"
                       strokeWidth={2}
-                      dot={{ fill: "hsl(var(--primary))", r: 3 }}
+                      dot={false}
                     />
                   </LineChart>
                 </ResponsiveContainer>
