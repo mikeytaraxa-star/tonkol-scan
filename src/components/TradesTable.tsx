@@ -120,7 +120,7 @@ export const TradesTable = () => {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
-                          className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer transition-colors"
+                          className="font-medium text-foreground hover:text-primary cursor-pointer transition-colors"
                         >
                           {trade.kol_name}
                         </button>
@@ -209,7 +209,7 @@ export const TradesTable = () => {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
-                    className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer transition-colors"
+                    className="font-medium text-foreground hover:text-primary cursor-pointer transition-colors"
                   >
                     {trade.kol_name}
                   </button>
