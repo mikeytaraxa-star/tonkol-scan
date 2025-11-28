@@ -189,7 +189,7 @@ export function KOLProfileDialog({
                   Biggest Win (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
-                  +${stats.stats_7d.biggest_win_usd.toFixed(2)}
+                  +${Math.max(0, stats.stats_7d.biggest_win_usd ?? 0).toFixed(2)}
                 </div>
               </div>
 
@@ -199,7 +199,7 @@ export function KOLProfileDialog({
                   Biggest Loss (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
-                  -${Math.abs(stats.stats_7d.biggest_loss_usd ?? 0).toFixed(2)}
+                  -${Math.abs(Math.min(0, stats.stats_7d.biggest_loss_usd ?? 0)).toFixed(2)}
                 </div>
               </div>
             </div>
