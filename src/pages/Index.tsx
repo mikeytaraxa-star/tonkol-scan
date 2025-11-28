@@ -7,9 +7,6 @@ import { PriceTracker } from "@/components/PriceTracker";
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
 import { PullToRefreshWrapper } from "@/components/PullToRefreshWrapper";
-import { TradesTableSkeleton } from "@/components/skeletons/TradesTableSkeleton";
-import { LeaderboardTableSkeleton } from "@/components/skeletons/LeaderboardTableSkeleton";
-import { TokenLeaderboardSkeleton } from "@/components/skeletons/TokenLeaderboardSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy, Flame } from "lucide-react";
 
@@ -18,32 +15,20 @@ const Index = () => {
   const [tradesKey, setTradesKey] = useState(0);
   const [leaderboardKey, setLeaderboardKey] = useState(0);
   const [tokensKey, setTokensKey] = useState(0);
-  const [isRefreshingTrades, setIsRefreshingTrades] = useState(false);
-  const [isRefreshingLeaderboard, setIsRefreshingLeaderboard] = useState(false);
-  const [isRefreshingTokens, setIsRefreshingTokens] = useState(false);
 
   const handleRefreshTrades = async () => {
-    setIsRefreshingTrades(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setTradesKey(prev => prev + 1);
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setIsRefreshingTrades(false);
   };
 
   const handleRefreshLeaderboard = async () => {
-    setIsRefreshingLeaderboard(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setLeaderboardKey(prev => prev + 1);
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setIsRefreshingLeaderboard(false);
   };
 
   const handleRefreshTokens = async () => {
-    setIsRefreshingTokens(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setTokensKey(prev => prev + 1);
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setIsRefreshingTokens(false);
   };
 
   return (
@@ -77,7 +62,7 @@ const Index = () => {
               </p>
             </div>
             <PullToRefreshWrapper onRefresh={handleRefreshTrades}>
-              {isRefreshingTrades ? <TradesTableSkeleton /> : <TradesTable key={tradesKey} />}
+              <TradesTable key={tradesKey} />
             </PullToRefreshWrapper>
           </TabsContent>
 
@@ -89,7 +74,7 @@ const Index = () => {
               </p>
             </div>
             <PullToRefreshWrapper onRefresh={handleRefreshLeaderboard}>
-              {isRefreshingLeaderboard ? <LeaderboardTableSkeleton /> : <LeaderboardTable key={leaderboardKey} />}
+              <LeaderboardTable key={leaderboardKey} />
             </PullToRefreshWrapper>
           </TabsContent>
 
@@ -101,7 +86,7 @@ const Index = () => {
               </p>
             </div>
             <PullToRefreshWrapper onRefresh={handleRefreshTokens}>
-              {isRefreshingTokens ? <TokenLeaderboardSkeleton /> : <TokenLeaderboard key={tokensKey} />}
+              <TokenLeaderboard key={tokensKey} />
             </PullToRefreshWrapper>
           </TabsContent>
         </Tabs>

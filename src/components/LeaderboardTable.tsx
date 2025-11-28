@@ -22,7 +22,6 @@ const API_BASE = "https://apitonkol.pro";
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [timeframe, setTimeframe] = useState<"24h" | "7d">("24h");
   const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
 
@@ -34,17 +33,10 @@ export const LeaderboardTable = () => {
           'ngrok-skip-browser-warning': 'true'
         }
       });
-      
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
-      }
-      
       const data = await response.json();
       setLeaderboard(data.leaderboard || []);
-      setError(null);
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
-      setError(error instanceof Error ? error.message : "Failed to load leaderboard");
     } finally {
       setIsLoading(false);
     }
@@ -62,29 +54,6 @@ export const LeaderboardTable = () => {
       <div className="text-center py-8">
         <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="p-6 text-center">
-        <p className="text-destructive font-semibold mb-2">Unable to load leaderboard</p>
-        <p className="text-sm text-muted-foreground mb-4">{error}</p>
-        <button
-          onClick={fetchLeaderboard}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-        >
-          Retry
-        </button>
-      </Card>
-    );
-  }
-
-  if (leaderboard.length === 0) {
-    return (
-      <Card className="p-6 text-center">
-        <p className="text-muted-foreground">No leaderboard data available</p>
-      </Card>
     );
   }
 
