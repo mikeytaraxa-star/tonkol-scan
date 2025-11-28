@@ -123,7 +123,7 @@ export const TokenLeaderboard = () => {
             }}
           >
             <Card 
-              className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-xl hover:z-10 border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
+              className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_hsl(var(--primary)/0.6)] hover:z-10 border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
             >
               <div 
                 className={`absolute top-3 right-3 font-extrabold text-primary/20 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-300 ${
@@ -201,7 +201,7 @@ export const TokenLeaderboard = () => {
             }}
           >
             <Card 
-              className={`relative overflow-hidden transition-all duration-500 active:scale-95 border-2 bg-gradient-to-r ${getHeatColor(token.volume_ton, maxVolume)} ${
+              className={`relative overflow-hidden transition-all duration-500 active:shadow-[0_0_25px_hsl(var(--primary)/0.6)] border-2 bg-gradient-to-r ${getHeatColor(token.volume_ton, maxVolume)} ${
                 idx === 0 ? 'p-6' : 'p-4'
               } group`}
             >
