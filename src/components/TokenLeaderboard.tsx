@@ -123,7 +123,7 @@ export const TokenLeaderboard = () => {
             }}
           >
             <Card 
-              className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:z-10 border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
+              className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-300 hover:border-primary hover:shadow-lg border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
             >
               <div 
                 className={`absolute top-3 right-3 font-extrabold text-primary/20 group-hover:text-primary/40 transition-all duration-300 ${
