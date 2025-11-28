@@ -1,4 +1,4 @@
-import loadingLogo from "@/assets/loading-logo.png";
+import loadingAnimation from "@/assets/loading-animation.mp4";
 
 interface LoadingScreenProps {
   isExiting: boolean;
@@ -11,10 +11,13 @@ export const LoadingScreen = ({ isExiting }: LoadingScreenProps) => {
         isExiting ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      <img 
-        src={loadingLogo} 
-        alt="TON KOL" 
-        className="w-32 h-32 animate-pulse"
+      <video 
+        src={loadingAnimation} 
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-64 h-64 object-contain"
       />
     </div>
   );
