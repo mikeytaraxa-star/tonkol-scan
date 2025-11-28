@@ -145,17 +145,30 @@ export function KOLProfileDialog({
               <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <div className="text-xs text-muted-foreground">Trades</div>
-                  <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.trade_count}</div>
+                  <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.trade_count ?? 0}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Realized PnL</div>
-                  <div className={`text-lg sm:text-xl font-bold ${stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"}`}>
-                    {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}${stats.stats_24h.realized_pnl_usd.toFixed(2)}
-                  </div>
+                  {typeof stats.stats_24h.realized_pnl_usd === "number" ? (
+                    <div
+                      className={`text-lg sm:text-xl font-bold ${
+                        stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}$
+                      {stats.stats_24h.realized_pnl_usd.toFixed(2)}
+                    </div>
+                  ) : (
+                    <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                  )}
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Volume</div>
-                  <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume_usd.toFixed(2)}</div>
+                  {typeof stats.stats_24h.volume_usd === "number" ? (
+                    <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume_usd.toFixed(2)}</div>
+                  ) : (
+                    <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -164,23 +177,32 @@ export function KOLProfileDialog({
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <div className="text-xs sm:text-sm text-muted-foreground">7d Win Rate</div>
-                <div className="text-xl sm:text-2xl font-bold text-primary">
-                  {stats.stats_7d.win_rate.toFixed(1)}%
-                </div>
+                {typeof stats.stats_7d.win_rate === "number" ? (
+                  <div className="text-xl sm:text-2xl font-bold text-primary">
+                    {stats.stats_7d.win_rate.toFixed(1)}%
+                  </div>
+                ) : (
+                  <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
+                )}
                 <div className="text-[10px] sm:text-xs text-muted-foreground">
-                  {stats.stats_7d.trade_count} trades
+                  {(stats.stats_7d.trade_count ?? 0)} trades
                 </div>
               </div>
 
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <div className="text-xs sm:text-sm text-muted-foreground">7d Realized PnL</div>
-                <div
-                  className={`text-xl sm:text-2xl font-bold ${
-                    stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {stats.stats_7d.realized_pnl_usd >= 0 ? "+" : ""}${stats.stats_7d.realized_pnl_usd.toFixed(2)}
-                </div>
+                {typeof stats.stats_7d.realized_pnl_usd === "number" ? (
+                  <div
+                    className={`text-xl sm:text-2xl font-bold ${
+                      stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {stats.stats_7d.realized_pnl_usd >= 0 ? "+" : ""}$
+                    {stats.stats_7d.realized_pnl_usd.toFixed(2)}
+                  </div>
+                ) : (
+                  <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
+                )}
               </div>
 
               <div className="bg-card border rounded-lg p-3 sm:p-4">
@@ -207,7 +229,11 @@ export function KOLProfileDialog({
             {/* Average Trade Size */}
             <div className="bg-card border rounded-lg p-3 sm:p-4">
               <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
-              <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size_usd.toFixed(2)}</div>
+              {typeof stats.stats_7d.avg_trade_size_usd === "number" ? (
+                <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size_usd.toFixed(2)}</div>
+              ) : (
+                <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
+              )}
             </div>
 
             {/* PnL Chart */}
