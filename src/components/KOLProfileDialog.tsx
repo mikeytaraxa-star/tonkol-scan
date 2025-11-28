@@ -211,7 +211,9 @@ export function KOLProfileDialog({
                   Biggest Win (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
-                  +${stats.stats_7d.biggest_win_usd.toFixed(2)}
+                  {typeof stats.stats_7d.biggest_win_usd === "number"
+                    ? `+${stats.stats_7d.biggest_win_usd.toFixed(2)}`
+                    : "N/A"}
                 </div>
               </div>
 
@@ -310,7 +312,9 @@ export function KOLProfileDialog({
                     <div className="flex items-center gap-2 sm:gap-4">
                       <div className="text-right">
                         <div className="font-semibold text-sm">
-                          {trade.value_ton.toFixed(2)} TON
+                          {typeof trade.value_ton === "number"
+                            ? `${trade.value_ton.toFixed(2)} TON`
+                            : "N/A"}
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground whitespace-nowrap">
