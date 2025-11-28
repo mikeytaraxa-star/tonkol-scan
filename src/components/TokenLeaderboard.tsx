@@ -96,9 +96,9 @@ export const TokenLeaderboard = () => {
 
   // Get padding based on ranking
   const getPadding = (index: number) => {
-    if (index === 0) return "p-8"; // Most padding for #1
-    if (index === 1) return "p-6"; // Medium padding for #2
-    return "p-5"; // Standard padding for others
+    if (index === 0) return "p-6"; // Most padding for #1
+    if (index === 1) return "p-5"; // Medium padding for #2
+    return "p-4"; // Standard padding for others
   };
 
   // Show only top 5 tokens
@@ -123,11 +123,11 @@ export const TokenLeaderboard = () => {
             }}
           >
             <Card 
-              className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-xl hover:z-10 border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
+              className={`${getPadding(idx)} h-full relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:z-10 border-2 bg-gradient-to-br ${getHeatColor(token.volume_ton, maxVolume)}`}
             >
               <div 
-                className={`absolute top-3 right-3 font-extrabold text-primary/20 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-300 ${
-                  idx === 0 ? 'text-6xl' : idx === 1 ? 'text-5xl' : 'text-4xl'
+                className={`absolute top-3 right-3 font-extrabold text-primary/20 group-hover:text-primary/40 transition-all duration-300 ${
+                  idx === 0 ? 'text-5xl' : idx === 1 ? 'text-4xl' : 'text-3xl'
                 }`}
               >
                 #{idx + 1}
@@ -137,7 +137,7 @@ export const TokenLeaderboard = () => {
                 <div className="flex items-start justify-between">
                   <div className="space-y-1 flex-1">
                     <div className={`font-bold text-foreground group-hover:text-primary transition-colors ${
-                      idx === 0 ? 'text-4xl' : idx === 1 ? 'text-3xl' : 'text-2xl'
+                      idx === 0 ? 'text-3xl' : idx === 1 ? 'text-2xl' : 'text-xl'
                     }`}>
                       ${token.token_symbol}
                     </div>
@@ -152,7 +152,7 @@ export const TokenLeaderboard = () => {
                 <div className="space-y-2">
                   <div className="flex items-baseline gap-2">
                     <span className={`font-bold font-mono text-foreground transition-all duration-300 ${
-                      idx === 0 ? 'text-5xl' : idx === 1 ? 'text-4xl' : 'text-3xl'
+                      idx === 0 ? 'text-4xl' : idx === 1 ? 'text-3xl' : 'text-2xl'
                     }`}>
                       {token.volume_ton.toFixed(0)}
                     </span>
