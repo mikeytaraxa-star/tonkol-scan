@@ -45,23 +45,46 @@ export const Header = () => {
                     Select your preferred trading platform
                   </DialogDescription>
                 </DialogHeader>
-                <div className="py-4">
+                <div className="py-4 space-y-3">
                   <Button
                     asChild
                     className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
                   >
                     <a
-                      href="https://t.me/jettradebot?start=tonkol"
+                      href="https://t.me/dtrade?start=2Be30qmahF"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      JetTrade Bot
+                      DTrade
                     </a>
                   </Button>
-                  <p className="text-sm text-muted-foreground text-center mt-3">
-                    JetTrade is official partner of Tonkol
-                  </p>
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
+                      href="https://t.me/stonks_sniper_bot?start=tonkolreferral"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Stonks
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
+                      href="https://x1000.finance/?ref=mikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      x1000
+                    </a>
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>

@@ -169,11 +169,11 @@ export const TradesTable = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <a
-                          href="https://t.me/jettradebot?start=tonkol"
+                          href="https://t.me/dtrade?start=2Be30qmahF"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-lg hover:scale-110 transition-transform"
-                          title="Buy on JetTrade"
+                          title="Buy on DTrade"
                         >
                           💰
                         </a>
@@ -255,11 +255,11 @@ export const TradesTable = () => {
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2">
                     <a
-                      href="https://t.me/jettradebot?start=tonkol"
+                      href="https://t.me/dtrade?start=2Be30qmahF"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-lg hover:scale-110 transition-transform"
-                      title="Buy on JetTrade"
+                      title="Buy on DTrade"
                     >
                       💰
                     </a>
