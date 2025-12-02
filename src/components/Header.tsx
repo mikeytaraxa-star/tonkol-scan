@@ -64,7 +64,7 @@ export const Header = () => {
                     className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
                   >
                     <a
-                      href="https://t.me/dtrade?start=2Be30qmahF"
+                      href="https://t.me/dtrade?start=mikey"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
