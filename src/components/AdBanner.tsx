@@ -24,12 +24,14 @@ export const AdBanner = () => {
         isExiting ? "max-h-0 py-0 opacity-0 border-y-0" : isEntering ? "max-h-0 py-0 opacity-0" : "max-h-20 opacity-100"
       }`}
     >
-      <div className="container mx-auto flex items-center justify-center gap-3 pr-8">
-        <Megaphone className="h-4 w-4 text-primary shrink-0" />
-        <p className="text-sm text-center text-foreground/90">
-          <span className="font-semibold">Ad Space Available</span>
-          <span className="mx-2 text-muted-foreground">•</span>
-          <span className="text-muted-foreground">
+      <div className="container mx-auto flex items-center justify-center gap-2 sm:gap-3 pr-8">
+        <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
+        <p className="text-xs sm:text-sm text-center text-foreground/90">
+          <span className="font-semibold">Ad Space</span>
+          <span className="hidden sm:inline font-semibold"> Available</span>
+          <span className="mx-1 sm:mx-2 text-muted-foreground">•</span>
+          <span className="text-muted-foreground sm:hidden">Rent this space!</span>
+          <span className="text-muted-foreground hidden sm:inline">
             Promote your project here! Contact us to rent this banner space.
           </span>
         </p>
@@ -37,9 +39,10 @@ export const AdBanner = () => {
           href="https://t.me/mikeyketomi"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-medium bg-primary text-primary-foreground px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
+          className="text-xs font-medium bg-primary text-primary-foreground px-2 sm:px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
         >
-          Rent Now
+          <span className="sm:hidden">Rent</span>
+          <span className="hidden sm:inline">Rent Now</span>
         </a>
       </div>
       <button
