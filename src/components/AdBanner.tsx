@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Megaphone, X } from "lucide-react";
 
 export const AdBanner = () => {
   const [isDismissed, setIsDismissed] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [isEntering, setIsEntering] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsEntering(false), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleDismiss = () => {
     setIsExiting(true);
@@ -14,8 +20,8 @@ export const AdBanner = () => {
 
   return (
     <div 
-      className={`w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border-y border-primary/30 py-3 px-4 relative overflow-hidden transition-all duration-300 ease-out ${
-        isExiting ? "max-h-0 py-0 opacity-0 border-y-0" : "max-h-20"
+      className={`w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border-y border-primary/30 py-3 px-4 relative overflow-hidden transition-all duration-500 ease-out ${
+        isExiting ? "max-h-0 py-0 opacity-0 border-y-0" : isEntering ? "max-h-0 py-0 opacity-0" : "max-h-20 opacity-100"
       }`}
     >
       <div className="container mx-auto flex items-center justify-center gap-3 pr-8">
