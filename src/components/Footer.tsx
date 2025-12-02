@@ -88,11 +88,13 @@ export const Footer = () => {
                 <section>
                   <h3 className="text-lg font-semibold mb-2">Features</h3>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Real-time trade tracking and monitoring</li>
-                    <li>Live leaderboard rankings</li>
-                    <li>Price tracking and market analysis</li>
-                    <li>Community engagement through Telegram</li>
-                    <li>Comprehensive trading statistics</li>
+                    <li>Real-time KOL trade tracking with clickable profiles</li>
+                    <li>KOL Leaderboard with 24h/7d performance stats, win rates, and PnL charts</li>
+                    <li>Token Leaderboard heat map showing top 5 tokens by KOL trading volume</li>
+                    <li>Pull-to-refresh on all tabs for instant data updates</li>
+                    <li>Live TON price tracker</li>
+                    <li>Direct trading links to JetTrade, DTrade, Stonks, and x1000</li>
+                    <li>Mobile-optimized responsive design</li>
                   </ul>
                 </section>
                 
@@ -101,15 +103,19 @@ export const Footer = () => {
                   <div className="space-y-3 text-muted-foreground">
                     <div>
                       <h4 className="font-medium text-foreground">Trades Tab</h4>
-                      <p>View all recent trades in real-time. Monitor wallet addresses, transaction amounts, and timestamps.</p>
+                      <p>View real-time KOL trades. Click on trader names to see detailed profiles with win rates, biggest wins/losses, and recent trade history.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">Leaderboard Tab</h4>
-                      <p>Check top traders ranked by total volume. See who's leading the market.</p>
+                      <h4 className="font-medium text-foreground">KOL Leaderboard Tab</h4>
+                      <p>Rankings of tracked KOLs by trading volume. Click any trader to view their full performance analytics including 7-day PnL charts.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">Price Tracker</h4>
-                      <p>Stay updated with current market prices and trends.</p>
+                      <h4 className="font-medium text-foreground">Token Leaderboard Tab</h4>
+                      <p>Interactive heat map showing the top 5 most traded tokens by KOL volume. Toggle between 24h and 7d timeframes.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Trade on Ton</h4>
+                      <p>Quick access to multiple trading platforms including JetTrade, DTrade, Stonks, and x1000.</p>
                     </div>
                   </div>
                 </section>
