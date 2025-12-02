@@ -1,9 +1,14 @@
-import { Megaphone } from "lucide-react";
+import { useState } from "react";
+import { Megaphone, X } from "lucide-react";
 
 export const AdBanner = () => {
+  const [isDismissed, setIsDismissed] = useState(false);
+
+  if (isDismissed) return null;
+
   return (
-    <div className="w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border-y border-primary/30 py-3 px-4">
-      <div className="container mx-auto flex items-center justify-center gap-3">
+    <div className="w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border-y border-primary/30 py-3 px-4 relative">
+      <div className="container mx-auto flex items-center justify-center gap-3 pr-8">
         <Megaphone className="h-4 w-4 text-primary shrink-0" />
         <p className="text-sm text-center text-foreground/90">
           <span className="font-semibold">Ad Space Available</span>
@@ -21,6 +26,13 @@ export const AdBanner = () => {
           Rent Now
         </a>
       </div>
+      <button
+        onClick={() => setIsDismissed(true)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-primary/20 transition-colors text-muted-foreground hover:text-foreground"
+        aria-label="Dismiss ad banner"
+      >
+        <X className="h-4 w-4" />
+      </button>
     </div>
   );
 };
