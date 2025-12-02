@@ -7,6 +7,7 @@ import { PriceTracker } from "@/components/PriceTracker";
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
 import { PullToRefreshWrapper } from "@/components/PullToRefreshWrapper";
+import { AdBanner } from "@/components/AdBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy, Flame } from "lucide-react";
 
@@ -34,6 +35,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+      <AdBanner />
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
           <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 max-w-2xl mx-auto h-auto sm:h-12 gap-2 sm:gap-0 p-1">
