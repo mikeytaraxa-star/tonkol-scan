@@ -51,6 +51,19 @@ export const Header = () => {
                     className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
                   >
                     <a
+                      href="https://t.me/jettradebot?start=tonkol"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      JetTrade
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
+                  >
+                    <a
                       href="https://t.me/dtrade?start=2Be30qmahF"
                       target="_blank"
                       rel="noopener noreferrer"
