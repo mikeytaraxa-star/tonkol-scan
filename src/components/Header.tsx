@@ -72,6 +72,7 @@ export const Header = () => {
                       DTrade
                     </a>
                   </Button>
+                  <p className="text-xs text-muted-foreground text-center -mt-1">*Tonkol Recommendation*</p>
                   <Button
                     asChild
                     className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
