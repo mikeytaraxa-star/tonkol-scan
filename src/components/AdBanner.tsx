@@ -36,19 +36,26 @@ export const AdBanner = () => {
       <div className="container mx-auto flex items-center justify-center gap-2 sm:gap-3 pr-8">
         <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
         <p className="text-xs sm:text-sm text-center text-foreground/90">
-          <span className="font-semibold">Ad Space</span>
-          <span className="hidden sm:inline font-semibold"> Available</span>
+          <span className="font-semibold text-primary">$GROYPER</span>
           <span className="mx-1 sm:mx-2 text-muted-foreground">•</span>
-          <span className="text-muted-foreground sm:hidden">Rent this space!</span>
+          <span className="text-muted-foreground sm:hidden">First Groyper in crypto 🐸</span>
           <span className="text-muted-foreground hidden sm:inline">
-            Promote your project here! Contact us to rent this banner space.
+            Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
           </span>
         </p>
+        <a
+          href="https://t.me/jettradebot?start=groyper"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-medium bg-primary text-primary-foreground px-2 sm:px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
+        >
+          <span className="sm:hidden">Buy</span>
+          <span className="hidden sm:inline">Buy Now</span>
+        </a>
         <Dialog>
           <DialogTrigger asChild>
-            <button className="text-xs font-medium bg-primary text-primary-foreground px-2 sm:px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0">
-              <span className="sm:hidden">Rent</span>
-              <span className="hidden sm:inline">Rent Now</span>
+            <button className="text-[10px] text-muted-foreground hover:text-foreground transition-colors shrink-0 underline">
+              Ad
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
