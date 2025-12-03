@@ -55,14 +55,14 @@ export const AdBanner = () => {
             <DialogHeader>
               <DialogTitle>Advertise on Tonkol</DialogTitle>
               <DialogDescription>
-                Place your ad on Tonkol and promote your project to 12,000+ visitors for 50 TON per week.
+                Place your ad on Tonkol and promote your project to 4,000+ visitors for 50 TON per week.
               </DialogDescription>
             </DialogHeader>
             
             <ul className="text-sm text-muted-foreground space-y-1.5">
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                Reach 12K+ weekly visitors
+                Reach 4K+ weekly visitors
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
