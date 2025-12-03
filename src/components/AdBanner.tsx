@@ -51,13 +51,33 @@ export const AdBanner = () => {
               <span className="hidden sm:inline">Rent Now</span>
             </button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Advertise on Tonkol</DialogTitle>
               <DialogDescription>
                 Place your ad on Tonkol and promote your project to 12,000+ visitors for 50 TON per week.
               </DialogDescription>
             </DialogHeader>
+            
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-foreground">Ad Preview:</p>
+              <div className="w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border border-primary/30 rounded-lg py-3 px-4">
+                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                  <Megaphone className="h-4 w-4 text-primary shrink-0" />
+                  <p className="text-xs sm:text-sm text-center text-foreground/90">
+                    <span className="font-semibold text-primary">Your Project</span>
+                    <span className="mx-2 text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">
+                      Your promotional message appears here!
+                    </span>
+                  </p>
+                  <span className="text-xs font-medium bg-primary text-primary-foreground px-3 py-1 rounded-full">
+                    CTA
+                  </span>
+                </div>
+              </div>
+            </div>
+            
             <Button asChild className="w-full">
               <a
                 href="https://t.me/mikeyketomi"
