@@ -71,8 +71,8 @@ export const AdBanner = () => {
         </a>
         <Dialog>
           <DialogTrigger asChild>
-            <button className="text-[10px] sm:text-xs font-medium bg-primary text-primary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0">
-              Ad
+            <button className="text-[10px] sm:text-xs font-medium bg-secondary text-secondary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-secondary/80 transition-colors shrink-0">
+              Rent
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
