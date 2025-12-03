@@ -127,7 +127,7 @@ export const Footer = () => {
                   </p>
                   <Button asChild className="w-full">
                     <a
-                      href="https://t.me/toncoinkol"
+                      href="https://t.me/tonkolpro"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
