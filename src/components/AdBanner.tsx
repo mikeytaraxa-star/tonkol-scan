@@ -55,7 +55,7 @@ export const AdBanner = () => {
             <DialogHeader>
               <DialogTitle>Advertise on Tonkol</DialogTitle>
               <DialogDescription>
-                Place your ad on Tonkol and promote your project to 4,000+ visitors for 50 TON per week.
+                Place your ad on Tonkol and promote your project to 4,000+ visitors for 30 TON per week.
               </DialogDescription>
             </DialogHeader>
             
