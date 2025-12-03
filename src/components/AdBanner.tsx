@@ -71,7 +71,7 @@ export const AdBanner = () => {
         </a>
         <Dialog>
           <DialogTrigger asChild>
-            <button className="text-[9px] sm:text-[10px] text-muted-foreground hover:text-foreground transition-colors shrink-0 underline">
+            <button className="text-[10px] sm:text-xs font-medium bg-primary text-primary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0">
               Ad
             </button>
           </DialogTrigger>
