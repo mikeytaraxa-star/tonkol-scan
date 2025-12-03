@@ -59,6 +59,25 @@ export const AdBanner = () => {
               </DialogDescription>
             </DialogHeader>
             
+            <ul className="text-sm text-muted-foreground space-y-1.5">
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                Reach 12K+ weekly visitors
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                Prime banner placement
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                Custom CTA button
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                Full week exposure
+              </li>
+            </ul>
+            
             <div className="space-y-3">
               <p className="text-sm font-medium text-foreground">Ad Preview:</p>
               <div className="w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border border-primary/30 rounded-lg py-3 px-4">
