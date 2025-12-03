@@ -121,6 +121,33 @@ export const Footer = () => {
                 </section>
                 
                 <section>
+                  <h3 className="text-lg font-semibold mb-2">Tonkol API</h3>
+                  <p className="text-muted-foreground mb-3">
+                    Access KOL trading data programmatically through our API.
+                  </p>
+                  <div className="space-y-3 text-muted-foreground">
+                    <div>
+                      <h4 className="font-medium text-foreground">Base URL</h4>
+                      <code className="text-xs bg-muted px-2 py-1 rounded">https://apitonkol.pro</code>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Endpoints</h4>
+                      <ul className="list-disc list-inside space-y-1 text-sm mt-1">
+                        <li><code className="text-xs bg-muted px-1 rounded">GET /api/trades/recent</code> - Recent KOL trades</li>
+                        <li><code className="text-xs bg-muted px-1 rounded">GET /api/kol/leaderboard</code> - KOL leaderboard rankings</li>
+                        <li><code className="text-xs bg-muted px-1 rounded">GET /api/kol/&#123;wallet&#125;</code> - KOL profile details</li>
+                        <li><code className="text-xs bg-muted px-1 rounded">GET /api/tokens/heatmap</code> - Token volume heatmap</li>
+                        <li><code className="text-xs bg-muted px-1 rounded">GET /api/stats</code> - Platform statistics</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Authentication</h4>
+                      <p className="text-sm">API key required via <code className="text-xs bg-muted px-1 rounded">X-API-Key</code> header. Contact us for access.</p>
+                    </div>
+                  </div>
+                </section>
+                
+                <section>
                   <h3 className="text-lg font-semibold mb-2">Join Our Community</h3>
                   <p className="text-muted-foreground mb-3">
                     Connect with us on Telegram to stay updated with the latest news, features, and community discussions.
