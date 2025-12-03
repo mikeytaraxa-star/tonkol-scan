@@ -1,4 +1,4 @@
-import { Mail, Handshake, FileText, Twitter } from "lucide-react";
+import { Mail, Handshake, FileText, Twitter, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,6 +55,73 @@ export const Footer = () => {
                   rel="noopener noreferrer"
                 >
                   Contact Mikey on Telegram
+                </a>
+              </Button>
+            </DialogContent>
+          </Dialog>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Advertise"
+              >
+                <Megaphone className="h-5 w-5" />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Advertise on Tonkol</DialogTitle>
+                <DialogDescription>
+                  Place your ad on Tonkol and promote your project to 4,000+ visitors for 30 TON per week.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <ul className="text-sm text-muted-foreground space-y-1.5">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  Reach 4K+ weekly visitors
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  Prime banner placement
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  Custom CTA button
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  Full week exposure
+                </li>
+              </ul>
+              
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-foreground">Ad Preview:</p>
+                <div className="w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border border-primary/30 rounded-lg py-3 px-4">
+                  <div className="flex items-center justify-center gap-2 sm:gap-3">
+                    <Megaphone className="h-4 w-4 text-primary shrink-0" />
+                    <p className="text-xs sm:text-sm text-center text-foreground/90">
+                      <span className="font-semibold text-primary">Your Project</span>
+                      <span className="mx-2 text-muted-foreground">•</span>
+                      <span className="text-muted-foreground">
+                        Your promotional message appears here!
+                      </span>
+                    </p>
+                    <span className="text-xs font-medium bg-primary text-primary-foreground px-3 py-1 rounded-full">
+                      CTA
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <Button asChild className="w-full">
+                <a
+                  href="https://t.me/mikeyketomi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Contact Founder
                 </a>
               </Button>
             </DialogContent>
