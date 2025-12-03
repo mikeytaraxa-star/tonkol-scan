@@ -35,14 +35,32 @@ export const AdBanner = () => {
     >
       <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-3 pr-6 sm:pr-8">
         <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
-        <p className="text-[10px] sm:text-sm text-center text-foreground/90 leading-tight">
+        
+        {/* Desktop view - static */}
+        <p className="hidden sm:block text-sm text-center text-foreground/90 leading-tight">
           <span className="font-semibold text-primary">$GROYP</span>
-          <span className="mx-1 text-muted-foreground">•</span>
-          <span className="text-muted-foreground sm:hidden">1st Groyper 🐸</span>
-          <span className="text-muted-foreground hidden sm:inline">
+          <span className="mx-2 text-muted-foreground">•</span>
+          <span className="text-muted-foreground">
             Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
           </span>
         </p>
+        
+        {/* Mobile view - marquee animation */}
+        <div className="sm:hidden overflow-hidden flex-1 min-w-0">
+          <p className="text-[11px] text-foreground/90 whitespace-nowrap animate-marquee inline-block">
+            <span className="font-semibold text-primary">$GROYP</span>
+            <span className="mx-1.5 text-muted-foreground">•</span>
+            <span className="text-muted-foreground">
+              Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
+            </span>
+            <span className="mx-4"></span>
+            <span className="font-semibold text-primary">$GROYP</span>
+            <span className="mx-1.5 text-muted-foreground">•</span>
+            <span className="text-muted-foreground">
+              Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
+            </span>
+          </p>
+        </div>
         <a
           href="https://t.me/jettradebot?start=groyper"
           target="_blank"
