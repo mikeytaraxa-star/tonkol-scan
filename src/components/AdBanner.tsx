@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 import { Megaphone, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const AdBanner = () => {
   const [isDismissed, setIsDismissed] = useState(false);
@@ -35,15 +44,31 @@ export const AdBanner = () => {
             Promote your project here! Contact us to rent this banner space.
           </span>
         </p>
-        <a
-          href="https://t.me/mikeyketomi"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs font-medium bg-primary text-primary-foreground px-2 sm:px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
-        >
-          <span className="sm:hidden">Rent</span>
-          <span className="hidden sm:inline">Rent Now</span>
-        </a>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="text-xs font-medium bg-primary text-primary-foreground px-2 sm:px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0">
+              <span className="sm:hidden">Rent</span>
+              <span className="hidden sm:inline">Rent Now</span>
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Advertise on Tonkol</DialogTitle>
+              <DialogDescription>
+                Place your ad on Tonkol and promote your project to 12,000+ visitors for 50 TON per week.
+              </DialogDescription>
+            </DialogHeader>
+            <Button asChild className="w-full">
+              <a
+                href="https://t.me/mikeyketomi"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contact Founder
+              </a>
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
       <button
         onClick={handleDismiss}
