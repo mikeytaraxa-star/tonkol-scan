@@ -29,16 +29,16 @@ export const AdBanner = () => {
 
   return (
     <div 
-      className={`w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border-y border-primary/30 py-3 px-4 relative overflow-hidden transition-all duration-500 ease-out ${
+      className={`w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border-y border-primary/30 py-2 px-2 sm:py-3 sm:px-4 relative overflow-hidden transition-all duration-500 ease-out ${
         isExiting ? "max-h-0 py-0 opacity-0 border-y-0" : isEntering ? "max-h-0 py-0 opacity-0" : "max-h-20 opacity-100"
       }`}
     >
-      <div className="container mx-auto flex items-center justify-center gap-2 sm:gap-3 pr-8">
+      <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-3 pr-6 sm:pr-8">
         <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
-        <p className="text-xs sm:text-sm text-center text-foreground/90">
+        <p className="text-[10px] sm:text-sm text-center text-foreground/90 leading-tight">
           <span className="font-semibold text-primary">$GROYPER</span>
-          <span className="mx-1 sm:mx-2 text-muted-foreground">•</span>
-          <span className="text-muted-foreground sm:hidden">First Groyper in crypto 🐸</span>
+          <span className="mx-1 text-muted-foreground">•</span>
+          <span className="text-muted-foreground sm:hidden">1st Groyper 🐸</span>
           <span className="text-muted-foreground hidden sm:inline">
             Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
           </span>
@@ -47,14 +47,13 @@ export const AdBanner = () => {
           href="https://t.me/jettradebot?start=groyper"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-medium bg-primary text-primary-foreground px-2 sm:px-3 py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
+          className="text-[10px] sm:text-xs font-medium bg-primary text-primary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
         >
-          <span className="sm:hidden">Buy</span>
-          <span className="hidden sm:inline">Buy Now</span>
+          Buy
         </a>
         <Dialog>
           <DialogTrigger asChild>
-            <button className="text-[10px] text-muted-foreground hover:text-foreground transition-colors shrink-0 underline">
+            <button className="text-[9px] sm:text-[10px] text-muted-foreground hover:text-foreground transition-colors shrink-0 underline">
               Ad
             </button>
           </DialogTrigger>
@@ -118,10 +117,10 @@ export const AdBanner = () => {
       </div>
       <button
         onClick={handleDismiss}
-        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-primary/20 transition-colors text-muted-foreground hover:text-foreground"
+        className="absolute right-1.5 sm:right-3 top-1/2 -translate-y-1/2 p-0.5 sm:p-1 rounded-full hover:bg-primary/20 transition-colors text-muted-foreground hover:text-foreground"
         aria-label="Dismiss ad banner"
       >
-        <X className="h-4 w-4" />
+        <X className="h-3 w-3 sm:h-4 sm:w-4" />
       </button>
     </div>
   );
