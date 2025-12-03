@@ -36,7 +36,7 @@ export const AdBanner = () => {
       <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-3 pr-6 sm:pr-8">
         <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
         <p className="text-[10px] sm:text-sm text-center text-foreground/90 leading-tight">
-          <span className="font-semibold text-primary">$GROYPER</span>
+          <span className="font-semibold text-primary">$GROYP</span>
           <span className="mx-1 text-muted-foreground">•</span>
           <span className="text-muted-foreground sm:hidden">1st Groyper 🐸</span>
           <span className="text-muted-foreground hidden sm:inline">
