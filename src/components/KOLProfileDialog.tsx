@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, Twitter, Send } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -69,6 +70,7 @@ export function KOLProfileDialog({
 }: KOLProfileDialogProps) {
   const [stats, setStats] = useState<KOLStats | null>(null);
   const [loading, setLoading] = useState(false);
+  const [performanceTimeframe, setPerformanceTimeframe] = useState<"24h" | "7d">("24h");
 
   useEffect(() => {
     if (open && walletAddress) {
@@ -139,35 +141,82 @@ export function KOLProfileDialog({
           </div>
         ) : stats ? (
           <div className="space-y-4 sm:space-y-6">
-            {/* 24h Stats */}
+            {/* Performance Stats with Toggle */}
             <div className="bg-card border rounded-lg p-3 sm:p-4">
-              <h3 className="text-base sm:text-lg font-semibold mb-3">24h Performance</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base sm:text-lg font-semibold">Performance</h3>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant={performanceTimeframe === "24h" ? "default" : "outline"}
+                    onClick={() => setPerformanceTimeframe("24h")}
+                    className="h-7 px-3 text-xs"
+                  >
+                    24h
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={performanceTimeframe === "7d" ? "default" : "outline"}
+                    onClick={() => setPerformanceTimeframe("7d")}
+                    className="h-7 px-3 text-xs"
+                  >
+                    7d
+                  </Button>
+                </div>
+              </div>
               <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <div className="text-xs text-muted-foreground">Trades</div>
-                  <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.trade_count ?? 0}</div>
+                  <div className="text-lg sm:text-xl font-bold">
+                    {performanceTimeframe === "24h" 
+                      ? (stats.stats_24h.trade_count ?? 0)
+                      : (stats.stats_7d.trade_count ?? 0)}
+                  </div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Realized PnL</div>
-                  {typeof stats.stats_24h.realized_pnl_usd === "number" ? (
-                    <div
-                      className={`text-lg sm:text-xl font-bold ${
-                        stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
-                      }`}
-                    >
-                      {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}$
-                      {stats.stats_24h.realized_pnl_usd.toFixed(2)}
-                    </div>
+                  {performanceTimeframe === "24h" ? (
+                    typeof stats.stats_24h.realized_pnl_usd === "number" ? (
+                      <div
+                        className={`text-lg sm:text-xl font-bold ${
+                          stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}$
+                        {stats.stats_24h.realized_pnl_usd.toFixed(2)}
+                      </div>
+                    ) : (
+                      <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                    )
                   ) : (
-                    <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                    typeof stats.stats_7d.realized_pnl_usd === "number" ? (
+                      <div
+                        className={`text-lg sm:text-xl font-bold ${
+                          stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        {stats.stats_7d.realized_pnl_usd >= 0 ? "+" : ""}$
+                        {stats.stats_7d.realized_pnl_usd.toFixed(2)}
+                      </div>
+                    ) : (
+                      <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                    )
                   )}
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Volume</div>
-                  {typeof stats.stats_24h.volume_usd === "number" ? (
-                    <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume_usd.toFixed(2)}</div>
+                  {performanceTimeframe === "24h" ? (
+                    typeof stats.stats_24h.volume_usd === "number" ? (
+                      <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume_usd.toFixed(2)}</div>
+                    ) : (
+                      <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                    )
                   ) : (
-                    <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                    typeof stats.stats_7d.volume_usd === "number" ? (
+                      <div className="text-lg sm:text-xl font-bold">${stats.stats_7d.volume_usd.toFixed(2)}</div>
+                    ) : (
+                      <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
+                    )
                   )}
                 </div>
               </div>
@@ -190,16 +239,9 @@ export function KOLProfileDialog({
               </div>
 
               <div className="bg-card border rounded-lg p-3 sm:p-4">
-                <div className="text-xs sm:text-sm text-muted-foreground">7d Realized PnL</div>
-                {typeof stats.stats_7d.realized_pnl_usd === "number" ? (
-                  <div
-                    className={`text-xl sm:text-2xl font-bold ${
-                      stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    {stats.stats_7d.realized_pnl_usd >= 0 ? "+" : ""}$
-                    {stats.stats_7d.realized_pnl_usd.toFixed(2)}
-                  </div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
+                {typeof stats.stats_7d.avg_trade_size_usd === "number" ? (
+                  <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size_usd.toFixed(2)}</div>
                 ) : (
                   <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
                 )}
@@ -226,16 +268,6 @@ export function KOLProfileDialog({
                   -${Math.abs(stats.stats_7d.biggest_loss_usd ?? 0).toFixed(2)}
                 </div>
               </div>
-            </div>
-
-            {/* Average Trade Size */}
-            <div className="bg-card border rounded-lg p-3 sm:p-4">
-              <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
-              {typeof stats.stats_7d.avg_trade_size_usd === "number" ? (
-                <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size_usd.toFixed(2)}</div>
-              ) : (
-                <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
-              )}
             </div>
 
             {/* PnL Chart */}
