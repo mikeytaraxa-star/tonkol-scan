@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Twitter, Send } from "lucide-react";
+import { TrendingUp, TrendingDown, Twitter, Send, Diamond } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Trade {
@@ -176,7 +176,7 @@ export function KOLProfileDialog({
                         }`}
                       >
                         {stats.stats_24h.pnl_ton >= 0 ? "+" : ""}
-                        {stats.stats_24h.pnl_ton.toFixed(2)} <span className="text-sm font-medium">TON</span>
+                        {stats.stats_24h.pnl_ton.toFixed(2)} <Diamond className="inline h-4 w-4 text-primary" />
                       </div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
@@ -189,7 +189,7 @@ export function KOLProfileDialog({
                         }`}
                       >
                         {stats.stats_7d.pnl_ton >= 0 ? "+" : ""}
-                        {stats.stats_7d.pnl_ton.toFixed(2)} <span className="text-sm font-medium">TON</span>
+                        {stats.stats_7d.pnl_ton.toFixed(2)} <Diamond className="inline h-4 w-4 text-primary" />
                       </div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
@@ -200,13 +200,13 @@ export function KOLProfileDialog({
                   <div className="text-xs text-muted-foreground">Volume</div>
                   {performanceTimeframe === "24h" ? (
                     typeof stats.stats_24h.volume_ton === "number" ? (
-                      <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.volume_ton.toFixed(2)} <span className="text-sm font-medium">TON</span></div>
+                      <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.volume_ton.toFixed(2)} <Diamond className="inline h-4 w-4 text-primary" /></div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
                     )
                   ) : (
                     typeof stats.stats_7d.volume_ton === "number" ? (
-                      <div className="text-lg sm:text-xl font-bold">{stats.stats_7d.volume_ton.toFixed(2)} <span className="text-sm font-medium">TON</span></div>
+                      <div className="text-lg sm:text-xl font-bold">{stats.stats_7d.volume_ton.toFixed(2)} <Diamond className="inline h-4 w-4 text-primary" /></div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
                     )
@@ -234,7 +234,7 @@ export function KOLProfileDialog({
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
                 {typeof stats.stats_7d.avg_trade_size_ton === "number" ? (
-                  <div className="text-xl sm:text-2xl font-bold">{stats.stats_7d.avg_trade_size_ton.toFixed(2)} <span className="text-sm font-medium">TON</span></div>
+                  <div className="text-xl sm:text-2xl font-bold">{stats.stats_7d.avg_trade_size_ton.toFixed(2)} <Diamond className="inline h-4 w-4 text-primary" /></div>
                 ) : (
                   <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
                 )}
@@ -247,7 +247,7 @@ export function KOLProfileDialog({
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
                   {typeof stats.stats_7d.biggest_win_ton === "number"
-                    ? <>{`+${stats.stats_7d.biggest_win_ton.toFixed(2)}`} <span className="text-sm font-medium">TON</span></>
+                    ? <>{`+${stats.stats_7d.biggest_win_ton.toFixed(2)}`} <Diamond className="inline h-4 w-4 text-primary" /></>
                     : "N/A"}
                 </div>
               </div>
@@ -259,7 +259,7 @@ export function KOLProfileDialog({
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
                   {typeof stats.stats_7d.biggest_loss_ton === "number"
-                    ? <>{stats.stats_7d.biggest_loss_ton.toFixed(2)} <span className="text-sm font-medium">TON</span></>
+                    ? <>{stats.stats_7d.biggest_loss_ton.toFixed(2)} <Diamond className="inline h-4 w-4 text-primary" /></>
                     : "N/A"}
                 </div>
               </div>
