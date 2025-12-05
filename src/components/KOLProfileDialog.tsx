@@ -31,23 +31,16 @@ interface KOLStats {
   platform: string | null;
   stats_24h: {
     trade_count: number;
-    realized_pnl_usd: number;
-    realized_pnl_ton: number;
-    volume_usd: number;
+    pnl_ton: number;
     volume_ton: number;
   };
   stats_7d: {
     trade_count: number;
-    realized_pnl_usd: number;
-    realized_pnl_ton: number;
-    volume_usd: number;
+    pnl_ton: number;
     volume_ton: number;
     win_rate: number;
-    biggest_win_usd: number;
     biggest_win_ton: number;
-    biggest_loss_usd: number;
     biggest_loss_ton: number;
-    avg_trade_size_usd: number;
     avg_trade_size_ton: number;
   };
   pnl_chart: Array<{ date: string; pnl_usd: number; pnl_ton: number; volume_usd: number; volume_ton: number }>;
@@ -174,29 +167,29 @@ export function KOLProfileDialog({
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground">Realized PnL</div>
+                  <div className="text-xs text-muted-foreground">Unrealized PnL</div>
                   {performanceTimeframe === "24h" ? (
-                    typeof stats.stats_24h.realized_pnl_usd === "number" ? (
+                    typeof stats.stats_24h.pnl_ton === "number" ? (
                       <div
                         className={`text-lg sm:text-xl font-bold ${
-                          stats.stats_24h.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
+                          stats.stats_24h.pnl_ton >= 0 ? "text-green-500" : "text-red-500"
                         }`}
                       >
-                        {stats.stats_24h.realized_pnl_usd >= 0 ? "+" : ""}$
-                        {stats.stats_24h.realized_pnl_usd.toFixed(2)}
+                        {stats.stats_24h.pnl_ton >= 0 ? "+" : ""}
+                        {stats.stats_24h.pnl_ton.toFixed(2)} TON
                       </div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
                     )
                   ) : (
-                    typeof stats.stats_7d.realized_pnl_usd === "number" ? (
+                    typeof stats.stats_7d.pnl_ton === "number" ? (
                       <div
                         className={`text-lg sm:text-xl font-bold ${
-                          stats.stats_7d.realized_pnl_usd >= 0 ? "text-green-500" : "text-red-500"
+                          stats.stats_7d.pnl_ton >= 0 ? "text-green-500" : "text-red-500"
                         }`}
                       >
-                        {stats.stats_7d.realized_pnl_usd >= 0 ? "+" : ""}$
-                        {stats.stats_7d.realized_pnl_usd.toFixed(2)}
+                        {stats.stats_7d.pnl_ton >= 0 ? "+" : ""}
+                        {stats.stats_7d.pnl_ton.toFixed(2)} TON
                       </div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
@@ -206,14 +199,14 @@ export function KOLProfileDialog({
                 <div>
                   <div className="text-xs text-muted-foreground">Volume</div>
                   {performanceTimeframe === "24h" ? (
-                    typeof stats.stats_24h.volume_usd === "number" ? (
-                      <div className="text-lg sm:text-xl font-bold">${stats.stats_24h.volume_usd.toFixed(2)}</div>
+                    typeof stats.stats_24h.volume_ton === "number" ? (
+                      <div className="text-lg sm:text-xl font-bold">{stats.stats_24h.volume_ton.toFixed(2)} TON</div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
                     )
                   ) : (
-                    typeof stats.stats_7d.volume_usd === "number" ? (
-                      <div className="text-lg sm:text-xl font-bold">${stats.stats_7d.volume_usd.toFixed(2)}</div>
+                    typeof stats.stats_7d.volume_ton === "number" ? (
+                      <div className="text-lg sm:text-xl font-bold">{stats.stats_7d.volume_ton.toFixed(2)} TON</div>
                     ) : (
                       <div className="text-lg sm:text-xl font-bold text-muted-foreground">N/A</div>
                     )
@@ -240,8 +233,8 @@ export function KOLProfileDialog({
 
               <div className="bg-card border rounded-lg p-3 sm:p-4">
                 <div className="text-xs sm:text-sm text-muted-foreground">Avg Trade Size (7d)</div>
-                {typeof stats.stats_7d.avg_trade_size_usd === "number" ? (
-                  <div className="text-xl sm:text-2xl font-bold">${stats.stats_7d.avg_trade_size_usd.toFixed(2)}</div>
+                {typeof stats.stats_7d.avg_trade_size_ton === "number" ? (
+                  <div className="text-xl sm:text-2xl font-bold">{stats.stats_7d.avg_trade_size_ton.toFixed(2)} TON</div>
                 ) : (
                   <div className="text-xl sm:text-2xl font-bold text-muted-foreground">N/A</div>
                 )}
@@ -253,8 +246,8 @@ export function KOLProfileDialog({
                   Biggest Win (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-green-500">
-                  {typeof stats.stats_7d.biggest_win_usd === "number"
-                    ? `+${stats.stats_7d.biggest_win_usd.toFixed(2)}`
+                  {typeof stats.stats_7d.biggest_win_ton === "number"
+                    ? `+${stats.stats_7d.biggest_win_ton.toFixed(2)} TON`
                     : "N/A"}
                 </div>
               </div>
@@ -265,7 +258,9 @@ export function KOLProfileDialog({
                   Biggest Loss (7d)
                 </div>
                 <div className="text-xl sm:text-2xl font-bold text-red-500">
-                  -${Math.abs(stats.stats_7d.biggest_loss_usd ?? 0).toFixed(2)}
+                  {typeof stats.stats_7d.biggest_loss_ton === "number"
+                    ? `${stats.stats_7d.biggest_loss_ton.toFixed(2)} TON`
+                    : "N/A"}
                 </div>
               </div>
             </div>
