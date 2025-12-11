@@ -38,37 +38,29 @@ export const AdBanner = () => {
         
         {/* Desktop view - static */}
         <p className="hidden sm:block text-sm text-center text-foreground/90 leading-tight">
-          <span className="font-semibold text-primary">$GROYP</span>
+          <span className="font-semibold text-primary">Your Ad Here</span>
           <span className="mx-2 text-muted-foreground">•</span>
           <span className="text-muted-foreground">
-            Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
+            Promote your project to 4,000+ weekly visitors 🚀
           </span>
         </p>
         
         {/* Mobile view - marquee animation */}
         <div className="sm:hidden overflow-hidden flex-1 min-w-0">
           <p className="text-[11px] text-foreground/90 whitespace-nowrap animate-marquee inline-block">
-            <span className="font-semibold text-primary">$GROYP</span>
+            <span className="font-semibold text-primary">Your Ad Here</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
             <span className="text-muted-foreground">
-              Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
+              Promote your project to 4,000+ weekly visitors 🚀
             </span>
             <span className="mx-4"></span>
-            <span className="font-semibold text-primary">$GROYP</span>
+            <span className="font-semibold text-primary">Your Ad Here</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
             <span className="text-muted-foreground">
-              Oldest living memecoin on Ton 💎 The very first Groyper in crypto 🐸 Saving the world from the cult ✊
+              Promote your project to 4,000+ weekly visitors 🚀
             </span>
           </p>
         </div>
-        <a
-          href="https://t.me/jettradebot?start=groyper"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[10px] sm:text-xs font-medium bg-primary text-primary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-primary/90 transition-colors shrink-0"
-        >
-          Buy
-        </a>
         <Dialog>
           <DialogTrigger asChild>
             <button className="text-[10px] sm:text-xs font-medium bg-secondary text-secondary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-secondary/80 transition-colors shrink-0">
