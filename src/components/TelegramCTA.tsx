@@ -23,7 +23,7 @@ export const TelegramCTA = () => {
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-lg">
           <p className="text-foreground text-xs sm:text-sm md:text-base font-medium text-center sm:text-left flex-1">
-            Track fresh launches on TON with real-time alerts
+            Track launches on TON with real-time alerts
           </p>
           <Button asChild className="w-full sm:w-40 text-sm">
             <a 
