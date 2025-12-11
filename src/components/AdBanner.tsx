@@ -41,7 +41,7 @@ export const AdBanner = () => {
           <span className="font-semibold text-primary">Your Ad Here</span>
           <span className="mx-2 text-muted-foreground">•</span>
           <span className="text-muted-foreground">
-            Promote your project to 4,000+ weekly visitors 🚀
+            Promote your project to 4,000+ weekly visitors
           </span>
         </p>
         
@@ -51,13 +51,13 @@ export const AdBanner = () => {
             <span className="font-semibold text-primary">Your Ad Here</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
             <span className="text-muted-foreground">
-              Promote your project to 4,000+ weekly visitors 🚀
+              Promote your project to 4,000+ weekly visitors
             </span>
             <span className="mx-4"></span>
             <span className="font-semibold text-primary">Your Ad Here</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
             <span className="text-muted-foreground">
-              Promote your project to 4,000+ weekly visitors 🚀
+              Promote your project to 4,000+ weekly visitors
             </span>
           </p>
         </div>
