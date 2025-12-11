@@ -124,13 +124,13 @@ export const Header = () => {
                     <div className="flex items-start gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2" />
                       <p className="text-sm text-foreground">
-                        <span className="font-semibold">10k+ followers</span> on X
+                        <span className="font-semibold">5k+ followers</span> on X
                       </p>
                     </div>
                     <div className="flex items-start gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2" />
                       <p className="text-sm text-foreground">
-                        <span className="font-semibold">$500,000 trading volume</span> on TON
+                        <span className="font-semibold">$100,000 trading volume</span> on TON
                       </p>
                     </div>
                     <div className="flex items-start gap-2">
@@ -142,7 +142,7 @@ export const Header = () => {
                     <div className="flex items-start gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2" />
                       <p className="text-sm text-foreground">
-                        <span className="font-semibold">5k+ members</span> on Telegram
+                        <span className="font-semibold">2k+ members</span> on Telegram
                       </p>
                     </div>
                   </div>
