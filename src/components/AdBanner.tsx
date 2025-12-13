@@ -14,6 +14,12 @@ const ads = [
     cta: "Join Now",
     link: "https://t.me/daretelegram",
   },
+  {
+    text: "Fu game for FU money. Play frens. Bet Crypto. Win.",
+    highlight: "RPS FU",
+    cta: "Play Now",
+    link: "https://t.me/rpsfu_bot/rpsfu?startapp=ref_7491048574",
+  },
 ];
 
 export const AdBanner = () => {
