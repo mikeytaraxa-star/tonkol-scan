@@ -4,7 +4,7 @@ import { Megaphone, X } from "lucide-react";
 const ads = [
   {
     text: "Crack cookies. Climb the ranks. Earn real rewards in our launch event. Everyone wins.",
-    highlight: "Fortune Cookie",
+    highlight: "Cookie Cracker",
     cta: "Play Now",
     link: "https://t.me/a_fortune_cookie_bot/cookie?startapp=449feg",
   },
