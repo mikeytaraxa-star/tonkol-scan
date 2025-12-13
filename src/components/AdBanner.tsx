@@ -1,24 +1,45 @@
 import { useState, useEffect } from "react";
 import { Megaphone, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
+const ads = [
+  {
+    text: "Crack cookies. Climb the ranks. Earn real rewards in our launch event. Everyone wins.",
+    highlight: "Fortune Cookie",
+    cta: "Play Now",
+    link: "https://t.me/a_fortune_cookie_bot/cookie?startapp=449feg",
+  },
+  {
+    text: "Join Dare - Biggest Challenge Platform on Telegram.",
+    highlight: "Dare",
+    cta: "Join Now",
+    link: "https://t.me/daretelegram",
+  },
+];
 
 export const AdBanner = () => {
   const [isDismissed, setIsDismissed] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [isSliding, setIsSliding] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsEntering(false), 50);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsSliding(true);
+      setTimeout(() => {
+        setCurrentAdIndex((prev) => (prev + 1) % ads.length);
+        setIsSliding(false);
+      }, 500);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentAd = ads[currentAdIndex];
 
   const handleDismiss = () => {
     setIsExiting(true);
@@ -33,97 +54,43 @@ export const AdBanner = () => {
         isExiting ? "max-h-0 py-0 opacity-0 border-y-0" : isEntering ? "max-h-0 py-0 opacity-0" : "max-h-20 opacity-100"
       }`}
     >
-      <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-3 pr-6 sm:pr-8">
+      <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-3 pr-6 sm:pr-8 overflow-hidden">
         <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
         
-        {/* Desktop view - static */}
-        <p className="hidden sm:block text-sm text-center text-foreground/90 leading-tight">
-          <span className="font-semibold text-primary">Your Ad Here</span>
-          <span className="mx-2 text-muted-foreground">•</span>
-          <span className="text-muted-foreground">
-            Promote your project to 4,000+ weekly visitors
-          </span>
-        </p>
+        {/* Desktop view - sliding ads */}
+        <div className="hidden sm:block overflow-hidden flex-1">
+          <p 
+            className={`text-sm text-center text-foreground/90 leading-tight transition-transform duration-500 ease-in-out ${
+              isSliding ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
+            }`}
+          >
+            <span className="font-semibold text-primary">{currentAd.highlight}</span>
+            <span className="mx-2 text-muted-foreground">•</span>
+            <span className="text-muted-foreground">{currentAd.text}</span>
+          </p>
+        </div>
         
         {/* Mobile view - marquee animation */}
         <div className="sm:hidden overflow-hidden flex-1 min-w-0">
           <p className="text-[11px] text-foreground/90 whitespace-nowrap animate-marquee inline-block">
-            <span className="font-semibold text-primary">Your Ad Here</span>
+            <span className="font-semibold text-primary">{currentAd.highlight}</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
-            <span className="text-muted-foreground">
-              Promote your project to 4,000+ weekly visitors
-            </span>
+            <span className="text-muted-foreground">{currentAd.text}</span>
             <span className="mx-4"></span>
-            <span className="font-semibold text-primary">Your Ad Here</span>
+            <span className="font-semibold text-primary">{currentAd.highlight}</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
-            <span className="text-muted-foreground">
-              Promote your project to 4,000+ weekly visitors
-            </span>
+            <span className="text-muted-foreground">{currentAd.text}</span>
           </p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className="text-[10px] sm:text-xs font-medium bg-secondary text-secondary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-secondary/80 transition-colors shrink-0">
-              Rent
-            </button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Advertise on Tonkol</DialogTitle>
-              <DialogDescription>
-                Place your ad on Tonkol and promote your project to 4,000+ visitors for 30 TON per week.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <ul className="text-sm text-muted-foreground space-y-1.5">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                Reach 4K+ weekly visitors
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                Prime banner placement
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                Custom CTA button
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                Full week exposure
-              </li>
-            </ul>
-            
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-foreground">Ad Preview:</p>
-              <div className="w-full bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 border border-primary/30 rounded-lg py-3 px-4">
-                <div className="flex items-center justify-center gap-2 sm:gap-3">
-                  <Megaphone className="h-4 w-4 text-primary shrink-0" />
-                  <p className="text-xs sm:text-sm text-center text-foreground/90">
-                    <span className="font-semibold text-primary">Your Project</span>
-                    <span className="mx-2 text-muted-foreground">•</span>
-                    <span className="text-muted-foreground">
-                      Your promotional message appears here!
-                    </span>
-                  </p>
-                  <span className="text-xs font-medium bg-primary text-primary-foreground px-3 py-1 rounded-full">
-                    CTA
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <Button asChild className="w-full">
-              <a
-                href="https://t.me/mikeyketomi"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Contact Founder
-              </a>
-            </Button>
-          </DialogContent>
-        </Dialog>
+        
+        <a
+          href={currentAd.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] sm:text-xs font-medium bg-primary text-primary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-primary/80 transition-colors shrink-0"
+        >
+          {currentAd.cta}
+        </a>
       </div>
       <button
         onClick={handleDismiss}
