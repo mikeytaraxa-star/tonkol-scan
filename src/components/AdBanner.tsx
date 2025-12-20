@@ -3,22 +3,10 @@ import { Megaphone, X } from "lucide-react";
 
 const ads = [
   {
-    text: "Crack cookies. Climb the ranks. Earn real rewards in our launch event. Everyone wins.",
-    highlight: "Cookie Cracker",
-    cta: "Play Now",
-    link: "https://t.me/a_fortune_cookie_bot/cookie?startapp=449feg",
-  },
-  {
-    text: "Join Dare - Biggest Challenge Platform on Telegram.",
-    highlight: "Dare",
-    cta: "Join Now",
-    link: "https://t.me/daretelegram",
-  },
-  {
-    text: "Fu game for FU money. Play frens. Bet Crypto. Win.",
-    highlight: "RPS FU",
-    cta: "Play Now",
-    link: "https://t.me/rpsfu_bot/rpsfu?startapp=ref_7491048574",
+    text: "Advertise your project to thousands of TON users. Premium placement available.",
+    highlight: "Rent this Spot",
+    cta: "Contact Us",
+    link: "https://t.me/nickmura",
   },
 ];
 
