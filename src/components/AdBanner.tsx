@@ -1,39 +1,22 @@
 import { useState, useEffect } from "react";
 import { Megaphone, X } from "lucide-react";
 
-const ads = [
-  {
-    text: "Advertise your project to thousands of TON users. Premium placement available.",
-    highlight: "Rent this Spot",
-    cta: "Contact Us",
-    link: "https://t.me/nickmura",
-  },
-];
+const ad = {
+  text: "Advertise your project to thousands of TON users. Premium placement available.",
+  highlight: "Rent this Spot",
+  cta: "Contact Us",
+  link: "https://t.me/nickmura",
+};
 
 export const AdBanner = () => {
   const [isDismissed, setIsDismissed] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
-  const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [isSliding, setIsSliding] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsEntering(false), 50);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsSliding(true);
-      setTimeout(() => {
-        setCurrentAdIndex((prev) => (prev + 1) % ads.length);
-        setIsSliding(false);
-      }, 500);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const currentAd = ads[currentAdIndex];
 
   const handleDismiss = () => {
     setIsExiting(true);
@@ -51,39 +34,31 @@ export const AdBanner = () => {
       <div className="container mx-auto flex items-center justify-center gap-1.5 sm:gap-3 pr-6 sm:pr-8 overflow-hidden">
         <Megaphone className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
         
-        {/* Desktop view - sliding ads */}
+        {/* Desktop view */}
         <div className="hidden sm:block overflow-hidden flex-1">
-          <p 
-            className={`text-sm text-center text-foreground/90 leading-tight transition-transform duration-500 ease-in-out ${
-              isSliding ? "-translate-x-full opacity-0" : "translate-x-0 opacity-100"
-            }`}
-          >
-            <span className="font-semibold text-primary">{currentAd.highlight}</span>
+          <p className="text-sm text-center text-foreground/90 leading-tight">
+            <span className="font-semibold text-primary">{ad.highlight}</span>
             <span className="mx-2 text-muted-foreground">•</span>
-            <span className="text-muted-foreground">{currentAd.text}</span>
+            <span className="text-muted-foreground">{ad.text}</span>
           </p>
         </div>
         
-        {/* Mobile view - marquee animation */}
+        {/* Mobile view */}
         <div className="sm:hidden overflow-hidden flex-1 min-w-0">
-          <p className="text-[11px] text-foreground/90 whitespace-nowrap animate-marquee inline-block">
-            <span className="font-semibold text-primary">{currentAd.highlight}</span>
+          <p className="text-[11px] text-foreground/90 text-center">
+            <span className="font-semibold text-primary">{ad.highlight}</span>
             <span className="mx-1.5 text-muted-foreground">•</span>
-            <span className="text-muted-foreground">{currentAd.text}</span>
-            <span className="mx-4"></span>
-            <span className="font-semibold text-primary">{currentAd.highlight}</span>
-            <span className="mx-1.5 text-muted-foreground">•</span>
-            <span className="text-muted-foreground">{currentAd.text}</span>
+            <span className="text-muted-foreground">{ad.text}</span>
           </p>
         </div>
         
         <a
-          href={currentAd.link}
+          href={ad.link}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[10px] sm:text-xs font-medium bg-primary text-primary-foreground px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full hover:bg-primary/80 transition-colors shrink-0"
         >
-          {currentAd.cta}
+          {ad.cta}
         </a>
       </div>
       <button
