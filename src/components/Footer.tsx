@@ -223,18 +223,17 @@ export const Footer = () => {
           </Dialog>
           
           <a 
-            href="https://ton.app/social/tonkol?id=5142" 
-            title="Powered by TON.app – explore now"
+            href="https://dyor.io/dapps/social/tonkol?utm_source=dapp-badge" 
             target="_blank"
             rel="noopener noreferrer"
             className="transition-all duration-300 hover:scale-110 hover:opacity-80"
           >
             <img 
-              src="https://ton.app/a2/badge/topapp?appId=5142" 
-              alt="Position of Tonkol in Social on Ton App" 
-              onError={(e) => (e.currentTarget.style.opacity = '0')}
+              src="https://dyor.io/client/api/dapp/rank/tonkol?theme=light" 
+              alt="Tonkol Badge" 
+              height={64}
               loading="lazy"
-              className="h-5 w-auto"
+              className="h-16 w-auto"
             />
           </a>
         </div>
