@@ -40,52 +40,85 @@ export const TradesTable = () => {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
 
-  const fetchTrades = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/trades/recent?timeframe=24h&limit=100`, {
-        headers: {
-          'X-API-Key': 'sk_project1_abc123',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      const data = await response.json();
-      const fetchedTrades = data.trades || [];
-      
-      // Filter out duplicates and trades with amount_ton <= 1
-      const seenTxHashes = new Set<string>();
-      const filteredTrades = fetchedTrades.filter((trade: Trade) => {
-        // Skip if duplicate
-        if (seenTxHashes.has(trade.tx_hash)) {
-          return false;
-        }
-        seenTxHashes.add(trade.tx_hash);
-        
-        // Skip if amount_ton is 0 or less than 1
-        if (trade.amount_ton <= 1) {
-          return false;
-        }
-        
-        return true;
-      });
-      
-      setTrades(filteredTrades);
-    } catch (error) {
-      console.error("Failed to fetch trades:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const filterTrade = (trade: Trade): boolean => {
+    // Skip if amount_ton is 0 or less than 1
+    return trade.amount_ton > 1;
   };
 
   useEffect(() => {
-    fetchTrades();
-    const tradeInterval = setInterval(fetchTrades, 45000); // Refresh every 45s
-    
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+    const seenTxHashes = new Set<string>();
+
+    // 1. Fetch initial trades
+    const fetchInitialTrades = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/trades/recent?limit=50`, {
+          headers: {
+            'X-API-Key': 'sk_project1_abc123',
+            'ngrok-skip-browser-warning': 'true'
+          }
+        });
+        const data = await response.json();
+        const fetchedTrades = data.trades || [];
+        
+        // Filter and deduplicate
+        const filteredTrades = fetchedTrades.filter((trade: Trade) => {
+          if (seenTxHashes.has(trade.tx_hash)) return false;
+          seenTxHashes.add(trade.tx_hash);
+          return filterTrade(trade);
+        });
+        
+        setTrades(filteredTrades);
+      } catch (error) {
+        console.error("Failed to fetch initial trades:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // 2. Connect WebSocket for live updates
+    const connectWebSocket = () => {
+      ws = new WebSocket("wss://apitonkol.pro/ws/trades/full?api_key=sk_project1_abc123");
+
+      ws.onmessage = (event) => {
+        try {
+          const newTrade: Trade = JSON.parse(event.data);
+          
+          // Skip if duplicate or doesn't pass filter
+          if (seenTxHashes.has(newTrade.tx_hash) || !filterTrade(newTrade)) {
+            return;
+          }
+          
+          seenTxHashes.add(newTrade.tx_hash);
+          setTrades(prev => [newTrade, ...prev].slice(0, 50)); // Keep max 50
+        } catch (error) {
+          console.error("Failed to parse WebSocket message:", error);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket closed, reconnecting in 3 seconds...");
+        reconnectTimeout = setTimeout(connectWebSocket, 3000);
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        ws?.close();
+      };
+    };
+
+    fetchInitialTrades();
+    connectWebSocket();
+
+    // Time update interval
     const timeInterval = setInterval(() => {
       setCurrentTime(Date.now());
     }, 1000);
 
     return () => {
-      clearInterval(tradeInterval);
+      ws?.close();
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
       clearInterval(timeInterval);
     };
   }, []);
