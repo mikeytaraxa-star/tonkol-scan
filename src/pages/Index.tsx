@@ -6,31 +6,12 @@ import { TokenLeaderboard } from "@/components/TokenLeaderboard";
 import { PriceTracker } from "@/components/PriceTracker";
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
-import { PullToRefreshWrapper } from "@/components/PullToRefreshWrapper";
 import { AdBanner } from "@/components/AdBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy, Flame } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("trades");
-  const [tradesKey, setTradesKey] = useState(0);
-  const [leaderboardKey, setLeaderboardKey] = useState(0);
-  const [tokensKey, setTokensKey] = useState(0);
-
-  const handleRefreshTrades = async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setTradesKey(prev => prev + 1);
-  };
-
-  const handleRefreshLeaderboard = async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setLeaderboardKey(prev => prev + 1);
-  };
-
-  const handleRefreshTokens = async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setTokensKey(prev => prev + 1);
-  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -61,9 +42,7 @@ const Index = () => {
                 Monitor live trading activity from top KOLs on TON
               </p>
             </div>
-            <PullToRefreshWrapper onRefresh={handleRefreshTrades}>
-              <TradesTable key={tradesKey} />
-            </PullToRefreshWrapper>
+            <TradesTable />
           </TabsContent>
 
           <TabsContent value="kol-leaderboard" className="space-y-4 animate-fade-in">
@@ -73,9 +52,7 @@ const Index = () => {
                 Top TON KOLs ranked by profit & loss performance
               </p>
             </div>
-            <PullToRefreshWrapper onRefresh={handleRefreshLeaderboard}>
-              <LeaderboardTable key={leaderboardKey} />
-            </PullToRefreshWrapper>
+            <LeaderboardTable />
           </TabsContent>
 
           <TabsContent value="token-leaderboard" className="space-y-4 animate-fade-in">
@@ -85,9 +62,7 @@ const Index = () => {
                 Top TON Tokens ranked by trading volume
               </p>
             </div>
-            <PullToRefreshWrapper onRefresh={handleRefreshTokens}>
-              <TokenLeaderboard key={tokensKey} />
-            </PullToRefreshWrapper>
+            <TokenLeaderboard />
           </TabsContent>
         </Tabs>
       </main>
