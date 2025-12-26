@@ -158,7 +158,6 @@ export const Footer = () => {
                     <li>Real-time KOL trade tracking with clickable profiles</li>
                     <li>KOL Leaderboard with 24h/7d performance stats, win rates, and PnL charts</li>
                     <li>Token Leaderboard heat map showing top 5 tokens by KOL trading volume</li>
-                    <li>Pull-to-refresh on all tabs for instant data updates</li>
                     <li>Live TON price tracker</li>
                     <li>Direct trading links to JetTrade, DTrade, Stonks, and x1000</li>
                     <li>Mobile-optimized responsive design</li>

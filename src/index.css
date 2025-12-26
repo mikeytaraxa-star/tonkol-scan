@@ -127,11 +127,3 @@ All colors MUST be HSL.
   }
 }
 
-/* Pull to refresh custom styles */
-.pull-to-refresh-wrapper {
-  min-height: 100px;
-}
-
-.pull-to-refresh-wrapper > div {
-  overflow: visible !important;
-}
