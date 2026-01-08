@@ -248,12 +248,16 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           <div className="bg-muted/50 rounded-xl p-4 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">You pay</span>
-              {isConnected && (
-                <span className="text-xs text-muted-foreground">
-                  Balance: {isLoadingBalance ? "..." : `${balance?.toFixed(2) ?? "0"} TON`}
-                </span>
-              )}
             </div>
+            
+            {isConnected && (
+              <div className="flex items-center justify-between bg-primary/10 rounded-lg px-3 py-2">
+                <span className="text-sm font-medium text-foreground">Wallet Balance</span>
+                <span className="text-sm font-bold text-primary">
+                  {isLoadingBalance ? "Loading..." : `${balance?.toFixed(2) ?? "0"} TON`}
+                </span>
+              </div>
+            )}
             
             <div className="relative">
               <Input
