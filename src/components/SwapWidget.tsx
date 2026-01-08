@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useTonConnectUI, TonConnectButton } from '@tonconnect/ui-react';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 import omnistonWidgetLoader, { type OmnistonWidget } from '@ston-fi/omniston-widget-loader';
-import { ArrowLeftRight } from 'lucide-react';
 
 export function SwapWidget() {
   const [tonconnect] = useTonConnectUI();
@@ -36,17 +35,19 @@ export function SwapWidget() {
   }, [tonconnect]);
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <ArrowLeftRight className="h-5 w-5 text-primary" />
-        <span className="text-sm text-muted-foreground">Powered by STON.fi</span>
-      </div>
-      <div className="flex justify-center mb-4">
-        <TonConnectButton />
-      </div>
+    <div className="flex flex-col items-center w-full">
       <div
         ref={containerRef}
-        className="w-full max-w-[500px] mx-auto"
+        className="w-full max-w-[500px] mx-auto swap-widget-container"
+        style={{
+          '--ston-widget-bg': 'hsl(210 45% 12%)',
+          '--ston-widget-bg-secondary': 'hsl(210 40% 20%)',
+          '--ston-widget-text': 'hsl(195 50% 95%)',
+          '--ston-widget-text-secondary': 'hsl(201 20% 65%)',
+          '--ston-widget-accent': 'hsl(201 100% 46%)',
+          '--ston-widget-border': 'hsl(210 40% 20%)',
+          '--ston-widget-radius': '0.5rem',
+        } as React.CSSProperties}
       />
     </div>
   );
