@@ -2,9 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Loader2, Wallet, ArrowDown, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, Wallet, ArrowDown, CheckCircle, XCircle, Settings2 } from "lucide-react";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { toast } from "sonner";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface SwapDialogProps {
   open: boolean;
@@ -20,6 +25,7 @@ interface SwapQuote {
 }
 
 const PRESET_AMOUNTS = [25, 50, 100] as const;
+const SLIPPAGE_OPTIONS = [0.5, 1, 3, 5] as const;
 const HOUSE_FEE_WALLET = "UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-";
 const TON_ADDRESS = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 
@@ -28,6 +34,9 @@ type SwapStatus = "idle" | "loading" | "success" | "error";
 export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: SwapDialogProps) => {
   const [customAmount, setCustomAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [slippage, setSlippage] = useState<number>(1);
+  const [customSlippage, setCustomSlippage] = useState<string>("");
+  const [showSettings, setShowSettings] = useState(false);
   const [quote, setQuote] = useState<SwapQuote | null>(null);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [swapStatus, setSwapStatus] = useState<SwapStatus>("idle");
@@ -42,6 +51,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
   } = useTonConnect();
 
   const activeAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
+  const activeSlippage = customSlippage ? parseFloat(customSlippage) : slippage;
 
   // Convert raw address format for STON.fi
   const formatTokenAddress = (addr: string) => {
@@ -51,8 +61,8 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     return addr;
   };
 
-  // Fetch quote when amount changes
-  const fetchQuote = useCallback(async (amount: number) => {
+  // Fetch quote when amount or slippage changes
+  const fetchQuote = useCallback(async (amount: number, slippageTolerance: number) => {
     if (!amount || amount <= 0 || !tokenAddress) return;
 
     setIsLoadingQuote(true);
@@ -64,7 +74,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           offer_address: TON_ADDRESS,
           ask_address: formatTokenAddress(tokenAddress),
           units: String(Math.floor(amount * 1e9)),
-          slippage_tolerance: "0.05",
+          slippage_tolerance: (slippageTolerance / 100).toFixed(4),
         }),
       });
 
@@ -102,11 +112,11 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     }
 
     const timeout = setTimeout(() => {
-      fetchQuote(activeAmount);
+      fetchQuote(activeAmount, activeSlippage);
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [activeAmount, fetchQuote]);
+  }, [activeAmount, activeSlippage, fetchQuote]);
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -115,6 +125,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
       setSelectedAmount(null);
       setQuote(null);
       setSwapStatus("idle");
+      setShowSettings(false);
     }
   }, [open]);
 
@@ -123,8 +134,21 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     setCustomAmount("");
   };
 
+  const handleSlippageClick = (value: number) => {
+    setSlippage(value);
+    setCustomSlippage("");
+  };
+
+  const handleCustomSlippageChange = (value: string) => {
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      const numValue = parseFloat(value);
+      if (value === "" || (!isNaN(numValue) && numValue <= 50 && numValue >= 0)) {
+        setCustomSlippage(value);
+      }
+    }
+  };
+
   const handleCustomAmountChange = (value: string) => {
-    // Validate input
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       const numValue = parseFloat(value);
       if (value === "" || (!isNaN(numValue) && numValue <= 10000)) {
@@ -148,8 +172,6 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     setSwapStatus("loading");
 
     try {
-      // For direct swaps, we'll use STON.fi API to get the swap route
-      // Then execute via TonConnect
       const response = await fetch("https://api.ston.fi/v1/swap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -157,14 +179,13 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           offer_address: TON_ADDRESS,
           ask_address: formatTokenAddress(tokenAddress),
           units: String(Math.floor(activeAmount * 1e9)),
-          slippage_tolerance: "0.05",
+          slippage_tolerance: (activeSlippage / 100).toFixed(4),
           referral_address: HOUSE_FEE_WALLET,
           referral_fee_percent: "0.01",
         }),
       });
 
       if (!response.ok) {
-        // Fallback to opening STON.fi directly
         const stonfiUrl = new URL("https://app.ston.fi/swap");
         stonfiUrl.searchParams.set("chartVisible", "false");
         stonfiUrl.searchParams.set("ft", "TON");
@@ -174,14 +195,13 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
         
         window.open(stonfiUrl.toString(), "_blank", "noopener,noreferrer");
         setSwapStatus("success");
-        toast.success("Redirected to STON.fi to complete swap");
+        toast.success("Redirected to complete swap");
         setTimeout(() => onOpenChange(false), 1000);
         return;
       }
 
       const swapData = await response.json();
       
-      // Execute transaction via TonConnect
       await tonConnectUI.sendTransaction({
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [{
@@ -197,12 +217,10 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     } catch (error: any) {
       console.error("Swap failed:", error);
       
-      // Check if user rejected
       if (error?.message?.includes("rejected") || error?.message?.includes("cancelled")) {
         toast.error("Transaction cancelled");
         setSwapStatus("idle");
       } else {
-        // Fallback to STON.fi web interface
         const stonfiUrl = new URL("https://app.ston.fi/swap");
         stonfiUrl.searchParams.set("chartVisible", "false");
         stonfiUrl.searchParams.set("ft", "TON");
@@ -212,7 +230,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
         
         window.open(stonfiUrl.toString(), "_blank", "noopener,noreferrer");
         setSwapStatus("idle");
-        toast.info("Opened STON.fi to complete your swap");
+        toast.info("Opened external swap to complete");
       }
     }
   };
@@ -228,7 +246,51 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-5 py-4">
+        <div className="space-y-4 py-4">
+          {/* Slippage Settings */}
+          <Collapsible open={showSettings} onOpenChange={setShowSettings}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-full justify-between text-muted-foreground hover:text-foreground">
+                <span className="flex items-center gap-2">
+                  <Settings2 className="h-4 w-4" />
+                  Slippage Tolerance
+                </span>
+                <span className="text-sm font-medium text-foreground">{activeSlippage}%</span>
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-2">
+              <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+                <div className="flex gap-2">
+                  {SLIPPAGE_OPTIONS.map((value) => (
+                    <Button
+                      key={value}
+                      variant={slippage === value && !customSlippage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleSlippageClick(value)}
+                      className="flex-1 text-xs"
+                    >
+                      {value}%
+                    </Button>
+                  ))}
+                </div>
+                <div className="relative">
+                  <Input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Custom"
+                    value={customSlippage}
+                    onChange={(e) => handleCustomSlippageChange(e.target.value)}
+                    className="pr-8 text-sm h-9"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                </div>
+                {activeSlippage > 5 && (
+                  <p className="text-xs text-amber-500">High slippage may result in unfavorable rates</p>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
           {/* From Section */}
           <div className="bg-muted/50 rounded-xl p-4 space-y-3">
             <div className="flex justify-between items-center">
@@ -240,7 +302,6 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
               )}
             </div>
             
-            {/* Custom Amount Input */}
             <div className="relative">
               <Input
                 type="text"
@@ -255,7 +316,6 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
               </span>
             </div>
 
-            {/* Preset Buttons */}
             <div className="flex gap-2">
               {PRESET_AMOUNTS.map((amount) => (
                 <Button
@@ -315,7 +375,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           </div>
 
           {/* Action Button */}
-          <div className="space-y-3">
+          <div className="pt-2">
             {!isConnected ? (
               <Button onClick={connect} className="w-full h-12 text-base font-semibold">
                 <Wallet className="h-5 w-5 mr-2" />
@@ -351,22 +411,6 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
                 )}
               </Button>
             )}
-          </div>
-
-          {/* Fee disclosure */}
-          <div className="text-center space-y-2">
-            <p className="text-xs text-muted-foreground">
-              Powered by STON.fi • 1% platform fee
-            </p>
-            <a
-              href={`https://app.ston.fi/swap?ft=TON&tt=${formatTokenAddress(tokenAddress)}&referral_address=${HOUSE_FEE_WALLET}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-            >
-              Open in STON.fi
-              <ExternalLink className="h-3 w-3" />
-            </a>
           </div>
         </div>
       </DialogContent>
