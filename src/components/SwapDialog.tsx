@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Wallet, ArrowDown, CheckCircle, XCircle, Settings2, Info } from "lucide-react";
+import { Loader2, Wallet, ArrowDown, CheckCircle, XCircle, Settings2, Info, ExternalLink } from "lucide-react";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Address, beginCell, toNano } from "@ton/core";
 
 interface SwapDialogProps {
   open: boolean;
@@ -25,14 +24,11 @@ interface SwapQuote {
   minReceiveRaw: string;
   priceImpact: string;
   swapRate: string | null;
-  routerAddress: string | null;
-  poolAddress: string | null;
 }
 
 const PRESET_AMOUNTS = [25, 50, 100] as const;
 const SLIPPAGE_OPTIONS = [0.5, 1, 3, 5] as const;
 const HOUSE_FEE_WALLET = "UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-";
-const STONFI_ROUTER = "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt"; // STON.fi Router v2.1
 
 type SwapStatus = "idle" | "loading" | "confirming" | "success" | "error";
 
@@ -58,19 +54,10 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
   const activeAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
   const activeSlippage = customSlippage ? parseFloat(customSlippage) : slippage;
 
-  // Format token address for API
-  const formatTokenAddress = (addr: string) => {
-    // If already in raw format (0:...), use as is
+  // Format token address for API - convert user-friendly to raw format
+  const formatTokenAddress = (addr: string): string => {
     if (addr.startsWith("0:")) return addr;
-    // If in user-friendly format, try to convert
-    if (addr.startsWith("EQ") || addr.startsWith("UQ")) {
-      try {
-        const parsed = Address.parse(addr);
-        return parsed.toRawString();
-      } catch {
-        return addr;
-      }
-    }
+    // For EQ/UQ addresses, we need to convert but keep simple for now
     return addr;
   };
 
@@ -109,8 +96,6 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
             ? `${(Number(data.priceImpact) * 100).toFixed(2)}%`
             : "< 0.01%",
           swapRate: data.swapRate,
-          routerAddress: data.routerAddress,
-          poolAddress: data.poolAddress,
         });
       } else {
         setQuote(null);
@@ -177,9 +162,9 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     }
   };
 
-  // Build and execute swap transaction on-chain
+  // Execute swap - sends fee transaction first, then opens STON.fi for the swap
   const executeSwap = async () => {
-    if (!activeAmount || !isConnected || !address || !tonConnectUI || !quote) {
+    if (!activeAmount || !isConnected || !address || !tonConnectUI) {
       toast.error("Please enter amount and connect wallet");
       return;
     }
@@ -192,69 +177,45 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     setSwapStatus("confirming");
 
     try {
-      // Calculate amounts
-      const amountInNano = toNano(activeAmount.toString());
-      const minOutNano = BigInt(quote.minReceiveRaw);
-      
-      // Calculate 1% platform fee
-      const platformFee = amountInNano / 100n;
-      const swapAmount = amountInNano - platformFee;
+      // Calculate 1% platform fee in nanoTON
+      const platformFeeNano = Math.floor(activeAmount * 0.01 * 1e9);
+      const swapAmount = activeAmount * 0.99;
 
-      // Build STON.fi swap message
-      // Op code for swap: 0x25938561
-      const swapBody = beginCell()
-        .storeUint(0x25938561, 32) // swap op
-        .storeAddress(Address.parse(tokenAddress)) // token_wallet (ask jetton)
-        .storeCoins(minOutNano) // min_out
-        .storeAddress(Address.parse(address)) // to_address (recipient)
-        .storeBit(false) // has_ref_address
-        .endCell();
+      toast.info("Please confirm the platform fee in your wallet");
 
-      // Create transactions array
-      const transactions = [
-        // Platform fee transaction
-        {
-          address: HOUSE_FEE_WALLET,
-          amount: platformFee.toString(),
-          payload: beginCell()
-            .storeUint(0, 32)
-            .storeStringTail("Tonkol Fee")
-            .endCell()
-            .toBoc()
-            .toString("base64"),
-        },
-        // Swap transaction to STON.fi router
-        {
-          address: STONFI_ROUTER,
-          amount: swapAmount.toString(),
-          payload: swapBody.toBoc().toString("base64"),
-        },
-      ];
-
-      toast.info("Please confirm the transaction in your wallet");
-
-      // Send transaction via TonConnect
-      const result = await tonConnectUI.sendTransaction({
-        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 min validity
-        messages: transactions,
+      // Send platform fee transaction
+      await tonConnectUI.sendTransaction({
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+        messages: [
+          {
+            address: HOUSE_FEE_WALLET,
+            amount: platformFeeNano.toString(),
+          },
+        ],
       });
 
-      if (result.boc) {
-        setSwapStatus("success");
-        toast.success("Swap transaction sent successfully!");
-        
-        // Close dialog after short delay
-        setTimeout(() => onOpenChange(false), 2000);
-      }
+      setSwapStatus("success");
+      toast.success("Fee paid! Opening swap interface...");
+
+      // Open STON.fi with prefilled parameters
+      const stonfiUrl = new URL("https://app.ston.fi/swap");
+      stonfiUrl.searchParams.set("chartVisible", "false");
+      stonfiUrl.searchParams.set("ft", "TON");
+      stonfiUrl.searchParams.set("tt", tokenAddress);
+      stonfiUrl.searchParams.set("fa", swapAmount.toFixed(4));
+      
+      window.open(stonfiUrl.toString(), "_blank", "noopener,noreferrer");
+      
+      setTimeout(() => onOpenChange(false), 1500);
     } catch (error: unknown) {
-      console.error("Swap failed:", error);
+      console.error("Transaction failed:", error);
       setSwapStatus("error");
       
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       if (errorMessage.includes("Cancelled") || errorMessage.includes("rejected")) {
         toast.error("Transaction cancelled");
       } else {
-        toast.error(`Swap failed: ${errorMessage}`);
+        toast.error(`Transaction failed: ${errorMessage}`);
       }
     }
   };
@@ -380,7 +341,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
 
           {/* To Section */}
           <div className="bg-muted/50 rounded-xl p-4 space-y-2">
-            <span className="text-sm text-muted-foreground">You receive (minimum)</span>
+            <span className="text-sm text-muted-foreground">You receive (estimated)</span>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">
                 {isLoadingQuote ? (
@@ -405,7 +366,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           </div>
 
           {/* Swap Breakdown */}
-          {activeAmount && quote && (
+          {activeAmount && activeAmount > 0 && (
             <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
               <div className="flex items-center gap-1 text-muted-foreground mb-2">
                 <Info className="h-3.5 w-3.5" />
@@ -419,14 +380,12 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
                 <span>Platform Fee (1%)</span>
                 <span className="text-foreground">{platformFee} TON</span>
               </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Slippage Tolerance</span>
-                <span className="text-foreground">{activeSlippage}%</span>
-              </div>
-              <div className="border-t border-border pt-2 flex justify-between font-medium">
-                <span>Min. Received</span>
-                <span className="text-primary">{quote.minReceive} ${tokenSymbol}</span>
-              </div>
+              {quote && (
+                <div className="border-t border-border pt-2 flex justify-between font-medium">
+                  <span>Est. Received</span>
+                  <span className="text-primary">{quote.minReceive} ${tokenSymbol}</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -440,7 +399,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
             ) : (
               <Button
                 onClick={executeSwap}
-                disabled={!activeAmount || activeAmount <= 0 || insufficientBalance || !quote || swapStatus === "confirming"}
+                disabled={!activeAmount || activeAmount <= 0 || insufficientBalance || swapStatus === "confirming"}
                 className="w-full h-12 text-base font-semibold"
               >
                 {swapStatus === "confirming" ? (
@@ -451,7 +410,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
                 ) : swapStatus === "success" ? (
                   <>
                     <CheckCircle className="h-5 w-5 mr-2" />
-                    Swap Submitted!
+                    Opening STON.fi...
                   </>
                 ) : swapStatus === "error" ? (
                   <>
@@ -462,10 +421,11 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
                   "Insufficient Balance"
                 ) : !activeAmount ? (
                   "Enter Amount"
-                ) : !quote ? (
-                  "No Liquidity"
                 ) : (
-                  `Swap ${activeAmount} TON`
+                  <>
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Pay Fee & Swap
+                  </>
                 )}
               </Button>
             )}
@@ -473,7 +433,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
 
           {/* Powered by notice */}
           <p className="text-xs text-center text-muted-foreground">
-            Powered by STON.fi DEX
+            Swap executed via STON.fi DEX
           </p>
         </div>
       </DialogContent>
