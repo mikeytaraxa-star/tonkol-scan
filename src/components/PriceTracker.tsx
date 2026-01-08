@@ -2,39 +2,30 @@ import { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown, CreditCard } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
 
 interface TONData {
   price: number;
   priceChange24h: number;
-  sparklineData: number[];
 }
 
 export const PriceTracker = () => {
   const [tonData, setTonData] = useState<TONData>({
     price: 0,
     priceChange24h: 0,
-    sparklineData: [],
   });
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchTONPrice = async () => {
     try {
-      // Fetch price with sparkline data
       const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/the-open-network?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=true"
+        "https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd&include_24hr_change=true"
       );
       const data = await response.json();
       
-      if (data.market_data) {
-        const sparkline = data.market_data.sparkline_7d?.price || [];
-        // Get last 24 data points for a cleaner sparkline
-        const last24Points = sparkline.slice(-24);
-        
+      if (data["the-open-network"]) {
         setTonData({
-          price: data.market_data.current_price?.usd || 0,
-          priceChange24h: data.market_data.price_change_percentage_24h || 0,
-          sparklineData: last24Points,
+          price: data["the-open-network"].usd,
+          priceChange24h: data["the-open-network"].usd_24h_change || 0,
         });
         setIsLoading(false);
       }
@@ -45,17 +36,11 @@ export const PriceTracker = () => {
 
   useEffect(() => {
     fetchTONPrice();
-    // Update every 30 seconds
     const interval = setInterval(fetchTONPrice, 30000);
     return () => clearInterval(interval);
   }, []);
 
   const isPositive = tonData.priceChange24h >= 0;
-
-  // Transform sparkline data for recharts
-  const chartData = tonData.sparklineData.map((price, index) => ({
-    value: price,
-  }));
 
   if (isLoading) {
     return (
@@ -78,47 +63,30 @@ export const PriceTracker = () => {
           <div className="px-3 sm:px-6 py-3 sm:py-4">
             <div className="flex items-center justify-between gap-4">
               {/* Price and Change */}
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div>
-                  <div className="text-xs sm:text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <span className="text-xl sm:text-2xl font-bold text-foreground font-mono">
-                      ${tonData.price.toFixed(2)}
+              <div>
+                <div className="text-xs sm:text-sm text-muted-foreground mb-1">Toncoin (TON)</div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl font-bold text-foreground font-mono">
+                    ${tonData.price.toFixed(2)}
+                  </span>
+                  <div
+                    className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md ${
+                      isPositive
+                        ? "bg-success/10 text-success"
+                        : "bg-destructive/10 text-destructive"
+                    }`}
+                  >
+                    {isPositive ? (
+                      <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                    <span className="font-semibold text-xs sm:text-sm">
+                      {isPositive ? "+" : ""}
+                      {tonData.priceChange24h.toFixed(2)}%
                     </span>
-                    <div
-                      className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md ${
-                        isPositive
-                          ? "bg-success/10 text-success"
-                          : "bg-destructive/10 text-destructive"
-                      }`}
-                    >
-                      {isPositive ? (
-                        <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                      ) : (
-                        <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
-                      )}
-                      <span className="font-semibold text-xs sm:text-sm">
-                        {isPositive ? "+" : ""}
-                        {tonData.priceChange24h.toFixed(2)}%
-                      </span>
-                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Sparkline Chart */}
-              <div className="hidden sm:block w-32 h-12">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke={isPositive ? "hsl(var(--success))" : "hsl(var(--destructive))"}
-                      strokeWidth={2}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
               </div>
 
               {/* Buy TON Button */}

@@ -25,19 +25,6 @@ interface Trade {
   timestamp: string;
 }
 
-interface KOL {
-  name: string;
-  pnl_7d_ton?: number;
-  volume_7d_ton?: number;
-  win_rate?: number;
-}
-
-interface Token {
-  symbol: string;
-  volume_ton?: number;
-  trade_count?: number;
-}
-
 async function sendTelegramMessage(chatId: number, text: string, parseMode = 'HTML') {
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   await fetch(url, {
@@ -61,32 +48,6 @@ async function fetchRecentTrades(): Promise<Trade[]> {
     return data.trades || [];
   } catch (error) {
     console.error('Error fetching trades:', error);
-    return [];
-  }
-}
-
-async function fetchLeaderboard(): Promise<KOL[]> {
-  try {
-    const response = await fetch(`${API_BASE}/api/kol/leaderboard?limit=10`, {
-      headers: { 'X-API-Key': API_KEY },
-    });
-    const data = await response.json();
-    return data.leaderboard || [];
-  } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-    return [];
-  }
-}
-
-async function fetchTrendingTokens(): Promise<Token[]> {
-  try {
-    const response = await fetch(`${API_BASE}/api/tokens/heatmap?timeframe=24h`, {
-      headers: { 'X-API-Key': API_KEY },
-    });
-    const data = await response.json();
-    return data.tokens?.slice(0, 5) || [];
-  } catch (error) {
-    console.error('Error fetching tokens:', error);
     return [];
   }
 }
@@ -124,65 +85,12 @@ async function handleTradeCommand(chatId: number) {
   await sendTelegramMessage(chatId, message);
 }
 
-async function handleLeaderboardCommand(chatId: number) {
-  const kols = await fetchLeaderboard();
-  
-  if (kols.length === 0) {
-    await sendTelegramMessage(chatId, '❌ No leaderboard data found.');
-    return;
-  }
-
-  let message = '🏆 <b>Top 10 KOLs on Tonkol</b>\n\n';
-  
-  kols.slice(0, 10).forEach((kol, index) => {
-    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-    const pnl = kol.pnl_7d_ton ?? 0;
-    const pnlEmoji = pnl >= 0 ? '📈' : '📉';
-    const winRate = kol.win_rate ? `${(kol.win_rate * 100).toFixed(0)}%` : 'N/A';
-    
-    message += `${medal} <b>${kol.name}</b>\n`;
-    message += `   ${pnlEmoji} 7d PnL: ${pnl.toFixed(2)} TON\n`;
-    message += `   🎯 Win Rate: ${winRate}\n\n`;
-  });
-
-  message += '🔗 <a href="https://tonkol.pro">View on Tonkol</a>';
-  
-  await sendTelegramMessage(chatId, message);
-}
-
-async function handleTrendingCommand(chatId: number) {
-  const tokens = await fetchTrendingTokens();
-  
-  if (tokens.length === 0) {
-    await sendTelegramMessage(chatId, '❌ No trending tokens found.');
-    return;
-  }
-
-  let message = '🔥 <b>Trending Tokens (24h)</b>\n\n';
-  
-  tokens.forEach((token, index) => {
-    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-    const volume = token.volume_ton ?? 0;
-    const trades = token.trade_count ?? 0;
-    
-    message += `${medal} <b>$${token.symbol}</b>\n`;
-    message += `   💰 Volume: ${volume.toFixed(2)} TON\n`;
-    message += `   📊 Trades: ${trades}\n\n`;
-  });
-
-  message += '🔗 <a href="https://tonkol.pro">View on Tonkol</a>';
-  
-  await sendTelegramMessage(chatId, message);
-}
-
 async function handleStartCommand(chatId: number, firstName?: string) {
   const greeting = firstName ? `Hello ${firstName}! ` : 'Hello! ';
   const message = `${greeting}👋 Welcome to <b>Tonkol Bot</b>!\n\n` +
     `I help you track what TON KOLs are trading.\n\n` +
     `<b>Available Commands:</b>\n` +
-    `/trade - Show recent 10 trades\n` +
-    `/lb - Show top 10 KOL leaderboard\n` +
-    `/trending - Show trending tokens\n\n` +
+    `/trade - Show recent 10 trades\n\n` +
     `🔗 Visit <a href="https://tonkol.pro">tonkol.pro</a> for the full experience!`;
   
   await sendTelegramMessage(chatId, message);
@@ -210,10 +118,6 @@ serve(async (req) => {
       await handleStartCommand(chatId, firstName);
     } else if (text === '/trade' || text === '/trades') {
       await handleTradeCommand(chatId);
-    } else if (text === '/lb' || text === '/leaderboard') {
-      await handleLeaderboardCommand(chatId);
-    } else if (text === '/trending' || text === '/tokens') {
-      await handleTrendingCommand(chatId);
     }
 
     return new Response('OK', { status: 200, headers: corsHeaders });
