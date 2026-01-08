@@ -33,9 +33,8 @@ interface SwapQuote {
 const PRESET_AMOUNTS = [25, 50, 100] as const;
 const SLIPPAGE_OPTIONS = [0.5, 1, 3, 5] as const;
 
-// STON.fi mainnet addresses
-const ROUTER_ADDRESS = "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt"; // DEX v2.1 Router
-const PTON_ADDRESS = "EQBnGWMCf3-FZZq1W4IWcWiGAc3PHuZ0_H-7sad2oY00o83S"; // pTON v2.1
+// STON.fi mainnet contracts
+// Note: this app uses the legacy v1 router defaults from the SDK (v2.1 requires a different router contract address).
 
 // Platform fee wallet (1%)
 const PLATFORM_FEE_WALLET = "UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-";
@@ -199,15 +198,13 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
         endpoint: "https://toncenter.com/api/v2/jsonRPC",
       });
 
-      // Parse addresses first
-      const routerAddress = Address.parse(ROUTER_ADDRESS);
-      const ptonAddress = Address.parse(PTON_ADDRESS);
+      // Parse addresses needed for tx params
       const userAddress = Address.parse(address);
       const jettonAddress = Address.parse(tokenAddress);
 
-      // Create router and proxyTon with Address objects
-      const router = client.open(new DEX.v2_1.Router(routerAddress));
-      const proxyTon = new pTON.v2_1(ptonAddress);
+      // Use legacy STON.fi v1 router + pTON defaults from the SDK (mainnet)
+      const router = client.open(new DEX.v1.Router());
+      const proxyTon = new pTON.v1();
 
       // Get swap transaction params
       const txParams = await router.getSwapTonToJettonTxParams({
