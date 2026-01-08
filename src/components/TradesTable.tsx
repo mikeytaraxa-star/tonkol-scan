@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Twitter, Send, ShoppingCart } from "lucide-react";
+import { Twitter, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -207,9 +207,8 @@ export const TradesTable = () => {
                         <Button
                           size="sm"
                           onClick={() => setSwapToken({ symbol: trade.token_symbol, address: trade.token_address })}
-                          className="h-7 px-2.5 text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                          className="h-7 px-3 text-xs font-semibold bg-primary hover:bg-accent text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95"
                         >
-                          <ShoppingCart className="h-3 w-3 mr-1" />
                           Buy
                         </Button>
                         <a 
@@ -292,9 +291,8 @@ export const TradesTable = () => {
                     <Button
                       size="sm"
                       onClick={() => setSwapToken({ symbol: trade.token_symbol, address: trade.token_address })}
-                      className="h-7 px-2.5 text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                      className="h-7 px-3 text-xs font-semibold bg-primary hover:bg-accent text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95"
                     >
-                      <ShoppingCart className="h-3 w-3 mr-1" />
                       Buy
                     </Button>
                     <a 

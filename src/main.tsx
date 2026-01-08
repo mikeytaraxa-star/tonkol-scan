@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { TonConnectUIProvider } from '@tonconnect/ui-react'
 import App from './App.tsx'
 import './index.css'
 import TelegramAnalytics from '@telegram-apps/analytics'
@@ -10,8 +11,12 @@ TelegramAnalytics.init({
   appName: 'Tonkol',
 });
 
+const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <TonConnectUIProvider manifestUrl={manifestUrl}>
+      <App />
+    </TonConnectUIProvider>
   </React.StrictMode>,
 )
