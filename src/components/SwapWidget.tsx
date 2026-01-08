@@ -15,18 +15,32 @@ export function SwapWidget() {
 
     const initWidget = async () => {
       try {
-        if (!containerRef.current) return;
+        console.log('SwapWidget: Starting initialization...');
+        console.log('SwapWidget: containerRef:', containerRef.current);
+        console.log('SwapWidget: tonconnect:', tonconnect);
         
+        if (!containerRef.current) {
+          console.log('SwapWidget: No container ref, aborting');
+          return;
+        }
+        
+        console.log('SwapWidget: Loading omniston widget loader...');
         const OmnistonWidgetConstructor = await omnistonWidgetLoader.load();
+        console.log('SwapWidget: Loader loaded successfully');
         
-        if (!isMounted || !containerRef.current) return;
+        if (!isMounted || !containerRef.current) {
+          console.log('SwapWidget: Component unmounted or no container, aborting');
+          return;
+        }
 
         // Unmount existing widget if any
         if (widgetRef.current) {
+          console.log('SwapWidget: Unmounting existing widget');
           widgetRef.current.unmount();
           widgetRef.current = null;
         }
 
+        console.log('SwapWidget: Creating widget instance...');
         widgetRef.current = new OmnistonWidgetConstructor({
           tonconnect: {
             type: 'integrated',
@@ -40,11 +54,13 @@ export function SwapWidget() {
           },
         });
 
+        console.log('SwapWidget: Mounting widget...');
         widgetRef.current.mount(containerRef.current);
+        console.log('SwapWidget: Widget mounted successfully');
         setIsLoading(false);
         setError(null);
       } catch (err) {
-        console.error('Failed to load swap widget:', err);
+        console.error('SwapWidget: Failed to load swap widget:', err);
         setError('Failed to load swap widget');
         setIsLoading(false);
       }
