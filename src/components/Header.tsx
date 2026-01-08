@@ -22,9 +22,9 @@ export const Header = () => {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink">
             <img src={logo} alt="Tonkol" className="h-8 w-8 sm:h-12 sm:w-12 flex-shrink-0" />
-            <div className="min-w-0">
+            <div className="min-w-0 hidden sm:block">
               <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">Tonkol</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Know what KOLs are trading</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Know what KOLs are trading</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">

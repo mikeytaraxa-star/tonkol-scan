@@ -186,8 +186,11 @@ export const TradesTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <Badge
-                        variant={trade.trade_type === "buy" ? "default" : "destructive"}
-                        className="uppercase font-semibold"
+                        className={`uppercase font-semibold ${
+                          trade.trade_type === "buy" 
+                            ? "bg-green-500/20 text-green-500 hover:bg-green-500/30" 
+                            : "bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30"
+                        }`}
                       >
                         {trade.trade_type}
                       </Badge>
@@ -271,8 +274,11 @@ export const TradesTable = () => {
                   </div>
                 </div>
                 <Badge
-                  variant={trade.trade_type === "buy" ? "default" : "destructive"}
-                  className="uppercase font-semibold"
+                  className={`uppercase font-semibold ${
+                    trade.trade_type === "buy" 
+                      ? "bg-green-500/20 text-green-500 hover:bg-green-500/30" 
+                      : "bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30"
+                  }`}
                 >
                   {trade.trade_type}
                 </Badge>
