@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { Address } from "npm:@ton/core";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,6 +9,53 @@ const corsHeaders = {
 // Native TON address in raw format
 const TON_ADDRESS = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 
+const buildAskAddressCandidates = (tokenAddress: string): string[] => {
+  const candidates = new Set<string>();
+  if (tokenAddress) candidates.add(tokenAddress);
+
+  try {
+    const parsed = Address.parse(tokenAddress);
+    candidates.add(parsed.toRawString());
+    candidates.add(parsed.toString({ urlSafe: true, bounceable: true, testOnly: false }));
+    candidates.add(parsed.toString({ urlSafe: true, bounceable: false, testOnly: false }));
+  } catch {
+    // ignore parse errors; we'll just try the original string
+  }
+
+  return Array.from(candidates);
+};
+
+const simulateSwap = async (askAddress: string, offerUnits: string, slippageTolerance: string) => {
+  const stonfiUrl = `https://api.ston.fi/v1/swap/simulate`;
+  console.log('Calling STON.fi:', stonfiUrl, 'ask:', askAddress);
+
+  const res = await fetch(stonfiUrl, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      offer_address: TON_ADDRESS,
+      ask_address: askAddress,
+      units: offerUnits,
+      slippage_tolerance: slippageTolerance,
+    }),
+  });
+
+  const text = await res.text();
+  if (!res.ok) {
+    return { ok: false as const, status: res.status, body: text };
+  }
+
+  try {
+    const json = JSON.parse(text);
+    return { ok: true as const, data: json };
+  } catch {
+    return { ok: false as const, status: res.status, body: text };
+  }
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -15,7 +63,7 @@ serve(async (req) => {
 
   try {
     const { tokenAddress, amount, slippage } = await req.json();
-    
+
     if (!tokenAddress || !amount) {
       return new Response(
         JSON.stringify({ error: 'Missing tokenAddress or amount' }),
@@ -29,38 +77,42 @@ serve(async (req) => {
     const offerUnits = String(Math.floor(amount * 1e9));
     const slippageTolerance = ((slippage || 1) / 100).toFixed(4);
 
-    // Use STON.fi REST API v1 with GET query params
-    const params = new URLSearchParams({
-      offer_address: TON_ADDRESS,
-      ask_address: tokenAddress,
-      units: offerUnits,
-      slippage_tolerance: slippageTolerance,
-    });
+    const candidates = buildAskAddressCandidates(tokenAddress);
+    console.log('Ask address candidates:', candidates);
 
-    const stonfiUrl = `https://api.ston.fi/v1/swap/simulate?${params.toString()}`;
-    console.log('Calling STON.fi:', stonfiUrl);
+    let lastFailure: { status?: number; body?: string; askAddress?: string } | null = null;
 
-    const stonfiResponse = await fetch(stonfiUrl, {
-      method: "GET",
-      headers: { 
-        "Accept": "application/json",
-      },
-    });
+    for (const askAddress of candidates) {
+      const result = await simulateSwap(askAddress, offerUnits, slippageTolerance);
+      if (!result.ok) {
+        console.log('STON.fi simulate failed for', askAddress, 'status:', result.status);
+        lastFailure = { status: result.status, body: result.body, askAddress };
+        continue;
+      }
 
-    if (stonfiResponse.ok) {
-      const data = await stonfiResponse.json();
-      console.log('STON.fi response:', JSON.stringify(data));
-      
+      const data = result.data;
+      console.log('STON.fi response for', askAddress, ':', JSON.stringify(data));
+
       const askUnits = data.ask_units || "0";
       const minAskUnits = data.min_ask_units || askUnits;
-      
+
+      // Some pairs don't return swap_rate; derive a basic unit ratio as a fallback
+      let swapRate: string | null = data.swap_rate || null;
+      if (!swapRate) {
+        const offerN = Number(offerUnits);
+        const askN = Number(askUnits);
+        if (Number.isFinite(offerN) && Number.isFinite(askN) && offerN > 0) {
+          swapRate = String(askN / offerN);
+        }
+      }
+
       return new Response(
         JSON.stringify({
           success: true,
           askUnits,
           minAskUnits,
           priceImpact: data.price_impact || "0",
-          swapRate: data.swap_rate || null,
+          swapRate,
           feeAddress: data.fee_address || null,
           feeUnits: data.fee_units || "0",
           feePercent: data.fee_percent || "0",
@@ -71,64 +123,17 @@ serve(async (req) => {
       );
     }
 
-    const status = stonfiResponse.status;
-    const errorText = await stonfiResponse.text();
-    console.log('STON.fi failed, status:', status);
-    console.log('STON.fi error:', errorText);
-
-    // Try reverse lookup - maybe token address format is different
-    // Try with 0: prefix removed or added
-    let altAddress = tokenAddress;
-    if (tokenAddress.startsWith("0:")) {
-      altAddress = tokenAddress.substring(2);
-    } else if (!tokenAddress.startsWith("EQ") && !tokenAddress.startsWith("UQ")) {
-      altAddress = "0:" + tokenAddress;
-    }
-
-    if (altAddress !== tokenAddress) {
-      const altParams = new URLSearchParams({
-        offer_address: TON_ADDRESS,
-        ask_address: altAddress,
-        units: offerUnits,
-        slippage_tolerance: slippageTolerance,
-      });
-
-      const altUrl = `https://api.ston.fi/v1/swap/simulate?${altParams.toString()}`;
-      console.log('Trying alternate address format:', altUrl);
-
-      const altResponse = await fetch(altUrl, {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-      });
-
-      if (altResponse.ok) {
-        const data = await altResponse.json();
-        console.log('STON.fi alt response:', JSON.stringify(data));
-        
-        return new Response(
-          JSON.stringify({
-            success: true,
-            askUnits: data.ask_units || "0",
-            minAskUnits: data.min_ask_units || data.ask_units || "0",
-            priceImpact: data.price_impact || "0",
-            swapRate: data.swap_rate || null,
-            routerAddress: data.router_address || null,
-            poolAddress: data.pool_address || null,
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-    }
+    console.log('All STON.fi candidates failed. Last failure:', lastFailure);
 
     return new Response(
       JSON.stringify({
         success: false,
         error: 'Could not fetch quote from DEX',
         message: 'Token may not have liquidity on STON.fi or address format is incorrect',
+        debug: lastFailure,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error in stonfi-quote function:', error);
@@ -138,3 +143,4 @@ serve(async (req) => {
     );
   }
 });
+
