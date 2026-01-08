@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { Twitter, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { KOLProfileDialog } from "./KOLProfileDialog";
-import { SwapDialog } from "./SwapDialog";
 
 interface Trade {
   kol_name: string;
@@ -41,7 +39,6 @@ export const TradesTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
-  const [swapToken, setSwapToken] = useState<{ symbol: string; address: string } | null>(null);
 
   const filterTrade = (trade: Trade): boolean => {
     // Skip if amount_ton is 0 or less than 1
@@ -186,11 +183,8 @@ export const TradesTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <Badge
-                        className={`uppercase font-semibold ${
-                          trade.trade_type === "buy" 
-                            ? "bg-green-500/20 text-green-500 hover:bg-green-500/30" 
-                            : "bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30"
-                        }`}
+                        variant={trade.trade_type === "buy" ? "default" : "destructive"}
+                        className="uppercase font-semibold"
                       >
                         {trade.trade_type}
                       </Badge>
@@ -207,13 +201,15 @@ export const TradesTable = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => setSwapToken({ symbol: trade.token_symbol, address: trade.token_address })}
-                          className="h-7 px-3 text-xs font-semibold bg-primary hover:bg-accent text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95"
+                        <a
+                          href="https://t.me/dtrade?start=mikey"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-lg hover:scale-110 transition-transform"
+                          title="Buy on DTrade"
                         >
-                          Buy
-                        </Button>
+                          💰
+                        </a>
                         <a 
                           href={`https://tonviewer.com/${trade.token_address}`}
                           target="_blank"
@@ -274,11 +270,8 @@ export const TradesTable = () => {
                   </div>
                 </div>
                 <Badge
-                  className={`uppercase font-semibold ${
-                    trade.trade_type === "buy" 
-                      ? "bg-green-500/20 text-green-500 hover:bg-green-500/30" 
-                      : "bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30"
-                  }`}
+                  variant={trade.trade_type === "buy" ? "default" : "destructive"}
+                  className="uppercase font-semibold"
                 >
                   {trade.trade_type}
                 </Badge>
@@ -294,13 +287,15 @@ export const TradesTable = () => {
                 </div>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => setSwapToken({ symbol: trade.token_symbol, address: trade.token_address })}
-                      className="h-7 px-3 text-xs font-semibold bg-primary hover:bg-accent text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95"
+                    <a
+                      href="https://t.me/dtrade?start=mikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg hover:scale-110 transition-transform"
+                      title="Buy on DTrade"
                     >
-                      Buy
-                    </Button>
+                      💰
+                    </a>
                     <a 
                       href={`https://tonviewer.com/${trade.token_address}`}
                       target="_blank"
@@ -310,7 +305,7 @@ export const TradesTable = () => {
                       ${trade.token_symbol}
                     </a>
                   </div>
-                  <div className="text-sm text-muted-foreground mt-1">
+                  <div className="text-sm text-muted-foreground">
                     {formatTimeSince(trade.timestamp)}
                   </div>
                 </div>
@@ -325,13 +320,6 @@ export const TradesTable = () => {
         onOpenChange={(open) => !open && setSelectedKOL(null)}
         walletAddress={selectedKOL?.wallet || ""}
         kolName={selectedKOL?.name || ""}
-      />
-
-      <SwapDialog
-        open={swapToken !== null}
-        onOpenChange={(open) => !open && setSwapToken(null)}
-        tokenSymbol={swapToken?.symbol || ""}
-        tokenAddress={swapToken?.address || ""}
       />
     </div>
   );
