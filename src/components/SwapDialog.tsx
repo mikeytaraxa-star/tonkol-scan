@@ -168,6 +168,12 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
 
     setIsSwapping(true);
     try {
+      // Dynamically import heavy TON/SDK deps to avoid breaking initial render
+      const [{ DEX, pTON }, { TonClient, toNano, Address }] = await Promise.all([
+        import("@ston-fi/sdk"),
+        import("@ton/ton"),
+      ]);
+
       // Calculate amounts
       const totalAmountTon = activeAmount;
       const platformFee = totalAmountTon * PLATFORM_FEE_PERCENT;
