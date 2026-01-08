@@ -127,3 +127,16 @@ All colors MUST be HSL.
   }
 }
 
+/* STON.fi Swap Widget Theme Overrides */
+.swap-widget-container {
+  --omniston-primary: hsl(201 100% 46%);
+  --omniston-primary-hover: hsl(201 100% 40%);
+  --omniston-bg: hsl(210 45% 12%);
+  --omniston-bg-secondary: hsl(210 40% 20%);
+  --omniston-text: hsl(195 50% 95%);
+  --omniston-text-secondary: hsl(201 20% 65%);
+  --omniston-border: hsl(210 40% 20%);
+  --omniston-success: hsl(145 70% 45%);
+  --omniston-error: hsl(0 84% 60%);
+}
+
