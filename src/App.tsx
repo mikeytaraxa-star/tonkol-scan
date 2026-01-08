@@ -34,6 +34,7 @@ const App = () => {
     return <LoadingScreen isExiting={isExiting} />;
   }
 
+
   return (
     <TonConnectUIProvider manifestUrl={`${window.location.origin}/tonconnect-manifest.json`}>
       <QueryClientProvider client={queryClient}>
