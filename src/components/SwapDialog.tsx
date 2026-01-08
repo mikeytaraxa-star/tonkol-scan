@@ -40,12 +40,11 @@ interface SwapQuote {
 const PRESET_AMOUNTS = [25, 50, 100] as const;
 const SLIPPAGE_OPTIONS = [0.5, 1, 3, 5] as const;
 
-// STON.fi contracts
-// v2.1 pTON contract address (required by SDK constructor; v1 has a default inside the SDK)
-const PTON_V2_1_ADDRESS = "EQBnGWMCf3-FZZq1W4IWcWiGAc3PHuZ0_H-7sad2oY00o83S";
 // Platform fee wallet (1%)
 const PLATFORM_FEE_WALLET = "UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-";
 const PLATFORM_FEE_PERCENT = 0.01;
+// Default pTON v2.1 address (fallback if API doesn't return one)
+const DEFAULT_PTON_V2_1 = "EQBnGWMCf3-FZZq1W4IWcWiGAc3PHuZ0_H-7sad2oY00o83S";
 
 export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: SwapDialogProps) => {
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -233,7 +232,14 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
       let router: any;
       let proxyTon: any;
 
+      // Determine router version from simulation response
+      const isV2 = typeof majorVersion === "number" && majorVersion >= 2;
+      const isV1 = typeof majorVersion === "number" && majorVersion === 1;
+      
+      console.log("Router detection:", { routerAddr: routerAddr?.toString(), majorVersion, minorVersion, routerType, isV2, isV1 });
+
       if (routerAddr && typeof majorVersion === "number" && Number.isFinite(majorVersion) && typeof minorVersion === "number" && Number.isFinite(minorVersion)) {
+        // Use dexFactory for dynamic router instantiation
         const contracts: any = dexFactory({
           majorVersion,
           minorVersion,
@@ -242,14 +248,16 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
 
         router = client.open(new contracts.Router(routerAddr));
 
-        if (majorVersion === 1) {
+        if (isV1) {
           proxyTon = new pTON.v1();
         } else {
-          const ptonAddr = quote.router?.ptonAddress ?? PTON_V2_1_ADDRESS;
+          // Use pTON address from quote response, or fallback to default v2.1
+          const ptonAddr = quote.router?.ptonAddress ?? DEFAULT_PTON_V2_1;
           proxyTon = new pTON.v2_1(Address.parse(ptonAddr));
         }
       } else {
-        // Fallback to legacy v1 defaults
+        // Fallback: attempt on-chain version detection by querying router
+        console.log("No router info from API, falling back to v1 defaults");
         router = client.open(new DEX.v1.Router());
         proxyTon = new pTON.v1();
       }

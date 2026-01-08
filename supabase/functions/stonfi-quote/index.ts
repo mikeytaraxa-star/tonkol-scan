@@ -80,11 +80,22 @@ const pickRouterInfo = (sim: any) => {
   const minorVersion = info?.minor_version ?? info?.minorVersion ?? null;
   const routerType = info?.router_type ?? info?.routerType ?? null;
 
+  // Extract pTON address from simulation response (v2.1 pools include this)
+  const ptonAddress =
+    sim?.pton_address ??
+    sim?.ptonAddress ??
+    sim?.proxy_ton_address ??
+    sim?.proxyTonAddress ??
+    sim?.swaps?.[0]?.pton_address ??
+    sim?.swaps?.[0]?.ptonAddress ??
+    null;
+
   return {
     address: routerAddress,
     majorVersion: typeof majorVersion === "number" ? majorVersion : Number(majorVersion ?? NaN),
     minorVersion: typeof minorVersion === "number" ? minorVersion : Number(minorVersion ?? NaN),
     routerType: typeof routerType === "string" ? routerType : null,
+    ptonAddress: ptonAddress,
   };
 };
 
@@ -138,7 +149,8 @@ serve(async (req) => {
 
     const router = pickRouterInfo(simData);
 
-    console.log("Sim response(router):", router);
+    console.log("Sim response - askUnits:", askUnits, "minAskUnits:", minAskUnits, "swapRate:", swapRate);
+    console.log("Sim response - router:", JSON.stringify(router));
 
     return new Response(
       JSON.stringify({
