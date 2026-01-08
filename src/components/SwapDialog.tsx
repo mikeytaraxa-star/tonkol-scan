@@ -199,12 +199,15 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
         endpoint: "https://toncenter.com/api/v2/jsonRPC",
       });
 
-      const router = client.open(DEX.v2_1.Router.CPI.create(ROUTER_ADDRESS));
-      const proxyTon = pTON.v2_1.create(PTON_ADDRESS);
-
-      // Parse addresses
+      // Parse addresses first
+      const routerAddress = Address.parse(ROUTER_ADDRESS);
+      const ptonAddress = Address.parse(PTON_ADDRESS);
       const userAddress = Address.parse(address);
       const jettonAddress = Address.parse(tokenAddress);
+
+      // Create router and proxyTon with Address objects
+      const router = client.open(new DEX.v2_1.Router(routerAddress));
+      const proxyTon = new pTON.v2_1(ptonAddress);
 
       // Get swap transaction params
       const txParams = await router.getSwapTonToJettonTxParams({
