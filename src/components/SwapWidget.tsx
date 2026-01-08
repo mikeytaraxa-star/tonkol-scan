@@ -21,6 +21,8 @@ export function SwapWidget() {
         widget: {
           defaultBidAsset: 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c', // TON
           defaultAskAsset: 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO', // STON
+          referrerAddress: 'UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-',
+          referrerFeeBps: 100, // 1% fee (100 basis points)
         },
       });
 
