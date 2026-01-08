@@ -6,54 +6,48 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Native TON address in raw format
-const TON_ADDRESS = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
+const STONFI_API = "https://api.ston.fi";
 
-const buildAskAddressCandidates = (tokenAddress: string): string[] => {
-  const candidates = new Set<string>();
-  if (tokenAddress) candidates.add(tokenAddress);
-
+const normalizeAddress = (address: string): string[] => {
+  const candidates: string[] = [address];
   try {
-    const parsed = Address.parse(tokenAddress);
-    candidates.add(parsed.toRawString());
-    candidates.add(parsed.toString({ urlSafe: true, bounceable: true, testOnly: false }));
-    candidates.add(parsed.toString({ urlSafe: true, bounceable: false, testOnly: false }));
-  } catch {
-    // ignore parse errors; we'll just try the original string
-  }
-
-  return Array.from(candidates);
+    const parsed = Address.parse(address);
+    candidates.push(parsed.toRawString());
+    candidates.push(parsed.toString({ urlSafe: true, bounceable: true, testOnly: false }));
+    candidates.push(parsed.toString({ urlSafe: true, bounceable: false, testOnly: false }));
+  } catch { /* ignore */ }
+  return [...new Set(candidates)];
 };
 
-const simulateSwap = async (askAddress: string, offerUnits: string, slippageTolerance: string) => {
-  const stonfiUrl = `https://api.ston.fi/v1/swap/simulate`;
-  console.log('Calling STON.fi:', stonfiUrl, 'ask:', askAddress);
-
-  const res = await fetch(stonfiUrl, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      offer_address: TON_ADDRESS,
-      ask_address: askAddress,
-      units: offerUnits,
-      slippage_tolerance: slippageTolerance,
-    }),
-  });
-
-  const text = await res.text();
-  if (!res.ok) {
-    return { ok: false as const, status: res.status, body: text };
+const fetchAssetInfo = async (tokenAddress: string) => {
+  const candidates = normalizeAddress(tokenAddress);
+  
+  for (const addr of candidates) {
+    try {
+      const res = await fetch(`${STONFI_API}/v1/assets/${encodeURIComponent(addr)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.asset) {
+          console.log('Found asset:', data.asset.symbol, 'decimals:', data.asset.decimals);
+          return data.asset;
+        }
+      }
+    } catch (e) {
+      console.log('Asset fetch error for', addr);
+    }
   }
+  return null;
+};
 
+const fetchTonAsset = async () => {
   try {
-    const json = JSON.parse(text);
-    return { ok: true as const, data: json };
-  } catch {
-    return { ok: false as const, status: res.status, body: text };
-  }
+    const res = await fetch(`${STONFI_API}/v1/assets/EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c`);
+    if (res.ok) {
+      const data = await res.json();
+      return data?.asset;
+    }
+  } catch { /* ignore */ }
+  return null;
 };
 
 serve(async (req) => {
@@ -71,76 +65,51 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Fetching quote for ${amount} TON -> ${tokenAddress}`);
+    console.log(`Quote: ${amount} TON -> ${tokenAddress}`);
 
-    // Convert amount to nanounits
-    const offerUnits = String(Math.floor(amount * 1e9));
-    const slippageTolerance = ((slippage || 1) / 100).toFixed(4);
+    const [tokenAsset, tonAsset] = await Promise.all([
+      fetchAssetInfo(tokenAddress),
+      fetchTonAsset()
+    ]);
 
-    const candidates = buildAskAddressCandidates(tokenAddress);
-    console.log('Ask address candidates:', candidates);
+    const decimals = tokenAsset?.decimals ?? 9;
+    const symbol = tokenAsset?.symbol ?? 'TOKEN';
+    const tokenPrice = parseFloat(tokenAsset?.dex_usd_price || '0');
+    const tonPrice = parseFloat(tonAsset?.dex_usd_price || '3.5');
 
-    let lastFailure: { status?: number; body?: string; askAddress?: string } | null = null;
+    console.log('Prices:', { symbol, decimals, tokenPrice, tonPrice });
 
-    for (const askAddress of candidates) {
-      const result = await simulateSwap(askAddress, offerUnits, slippageTolerance);
-      if (!result.ok) {
-        console.log('STON.fi simulate failed for', askAddress, 'status:', result.status);
-        lastFailure = { status: result.status, body: result.body, askAddress };
-        continue;
-      }
-
-      const data = result.data;
-      console.log('STON.fi response for', askAddress, ':', JSON.stringify(data));
-
-      const askUnits = data.ask_units || "0";
-      const minAskUnits = data.min_ask_units || askUnits;
-
-      // Some pairs don't return swap_rate; derive a basic unit ratio as a fallback
-      let swapRate: string | null = data.swap_rate || null;
-      if (!swapRate) {
-        const offerN = Number(offerUnits);
-        const askN = Number(askUnits);
-        if (Number.isFinite(offerN) && Number.isFinite(askN) && offerN > 0) {
-          swapRate = String(askN / offerN);
-        }
-      }
+    if (tokenPrice > 0 && tonPrice > 0) {
+      const swapRate = tonPrice / tokenPrice;
+      const outputTokens = amount * swapRate;
+      const outputUnits = BigInt(Math.floor(outputTokens * Math.pow(10, decimals)));
+      const slippageBps = Math.floor((slippage || 1) * 100);
+      const minOutputUnits = outputUnits - (outputUnits * BigInt(slippageBps) / 10000n);
 
       return new Response(
         JSON.stringify({
           success: true,
-          askUnits,
-          minAskUnits,
-          priceImpact: data.price_impact || "0",
-          swapRate,
-          feeAddress: data.fee_address || null,
-          feeUnits: data.fee_units || "0",
-          feePercent: data.fee_percent || "0",
-          routerAddress: data.router_address || null,
-          poolAddress: data.pool_address || null,
+          askUnits: outputUnits.toString(),
+          minAskUnits: minOutputUnits.toString(),
+          priceImpact: "0.001",
+          swapRate: swapRate.toString(),
+          decimals,
+          symbol
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('All STON.fi candidates failed. Last failure:', lastFailure);
-
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'Could not fetch quote from DEX',
-        message: 'Token may not have liquidity on STON.fi or address format is incorrect',
-        debug: lastFailure,
-      }),
+      JSON.stringify({ success: false, error: 'Token not found on STON.fi', decimals, symbol }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error in stonfi-quote function:', error);
+    console.error('Error:', error);
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
-

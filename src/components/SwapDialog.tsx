@@ -23,6 +23,8 @@ interface SwapQuote {
   minReceiveRaw: string;
   priceImpact: string;
   swapRate: string | null;
+  decimals: number;
+  symbol: string;
 }
 
 const PRESET_AMOUNTS = [25, 50, 100] as const;
@@ -62,21 +64,30 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
           return;
         }
 
-        if (data?.success && data.minAskUnits) {
-          const minReceiveRaw = String(data.minAskUnits);
-          const minReceiveFormatted = (Number(minReceiveRaw) / 1e9).toLocaleString(undefined, {
-            maximumFractionDigits: 4,
+        console.log("Quote response:", data);
+
+        if (data?.success && data.askUnits) {
+          const decimals = data.decimals ?? 9;
+          const askUnitsNum = Number(data.askUnits);
+          const minAskUnitsNum = Number(data.minAskUnits || data.askUnits);
+          
+          // Format with proper decimals
+          const minReceiveFormatted = (minAskUnitsNum / Math.pow(10, decimals)).toLocaleString(undefined, {
+            maximumFractionDigits: Math.min(decimals, 6),
           });
 
           setQuote({
             minReceive: minReceiveFormatted,
-            minReceiveRaw,
+            minReceiveRaw: String(minAskUnitsNum),
             priceImpact: data.priceImpact
               ? `${(Number(data.priceImpact) * 100).toFixed(2)}%`
               : "< 0.01%",
             swapRate: data.swapRate,
+            decimals,
+            symbol: data.symbol || tokenSymbol,
           });
         } else {
+          console.log("Quote failed:", data?.error || data?.message);
           setQuote(null);
         }
       } catch (error) {
@@ -86,7 +97,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
         setIsLoadingQuote(false);
       }
     },
-    [tokenAddress]
+    [tokenAddress, tokenSymbol]
   );
 
   useEffect(() => {
@@ -143,12 +154,14 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
   const rateLine = useMemo(() => {
     if (!quote || !activeAmount || activeAmount <= 0) return null;
 
-    const derivedRate = (Number(quote.minReceiveRaw) / 1e9) / activeAmount;
+    // Use swapRate from API, or derive from minReceiveRaw with proper decimals
+    const decimals = quote.decimals ?? 9;
+    const derivedRate = (Number(quote.minReceiveRaw) / Math.pow(10, decimals)) / activeAmount;
     const rate = quote.swapRate ? Number(quote.swapRate) : derivedRate;
 
     if (!Number.isFinite(rate) || rate <= 0) return null;
 
-    return `1 TON ≈ ${rate.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${tokenSymbol}`;
+    return `1 TON ≈ ${rate.toLocaleString(undefined, { maximumFractionDigits: Math.min(decimals, 6) })} ${quote.symbol || tokenSymbol}`;
   }, [quote, activeAmount, tokenSymbol]);
 
   return (
