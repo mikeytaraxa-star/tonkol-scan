@@ -28,14 +28,21 @@ interface SwapQuote {
   swapRate: string | null;
   decimals: number;
   symbol: string;
+  router?: {
+    address: string | null;
+    majorVersion: number | null;
+    minorVersion: number | null;
+    routerType: string | null;
+    ptonAddress?: string | null;
+  };
 }
 
 const PRESET_AMOUNTS = [25, 50, 100] as const;
 const SLIPPAGE_OPTIONS = [0.5, 1, 3, 5] as const;
 
-// STON.fi mainnet contracts
-// Note: this app uses the legacy v1 router defaults from the SDK (v2.1 requires a different router contract address).
-
+// STON.fi contracts
+// v2.1 pTON contract address (required by SDK constructor; v1 has a default inside the SDK)
+const PTON_V2_1_ADDRESS = "EQBnGWMCf3-FZZq1W4IWcWiGAc3PHuZ0_H-7sad2oY00o83S";
 // Platform fee wallet (1%)
 const PLATFORM_FEE_WALLET = "UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-";
 const PLATFORM_FEE_PERCENT = 0.01;
@@ -95,6 +102,19 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
             swapRate: data.swapRate,
             decimals,
             symbol: data.symbol || tokenSymbol,
+            router: data.router
+              ? {
+                  address: data.router.address ?? null,
+                  majorVersion: Number.isFinite(Number(data.router.majorVersion))
+                    ? Number(data.router.majorVersion)
+                    : null,
+                  minorVersion: Number.isFinite(Number(data.router.minorVersion))
+                    ? Number(data.router.minorVersion)
+                    : null,
+                  routerType: data.router.routerType ?? null,
+                  ptonAddress: data.router.ptonAddress ?? null,
+                }
+              : undefined,
           });
         } else {
           console.log("Quote failed:", data?.error || data?.message);
@@ -168,7 +188,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     setIsSwapping(true);
     try {
       // Dynamically import heavy TON/SDK deps to avoid breaking initial render
-      const [{ DEX, pTON }, { TonClient, toNano, Address }] = await Promise.all([
+      const [{ DEX, pTON, dexFactory }, { TonClient, toNano, Address }] = await Promise.all([
         import("@ston-fi/sdk"),
         import("@ton/ton"),
       ]);
@@ -177,11 +197,11 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
       const totalAmountTon = activeAmount;
       const platformFee = totalAmountTon * PLATFORM_FEE_PERCENT;
       const swapAmount = totalAmountTon - platformFee;
-      
+
       // Convert to nanoTON
       const swapNano = toNano(swapAmount.toFixed(9));
       const feeNano = toNano(platformFee.toFixed(9));
-      
+
       // Get minimum output with slippage
       const minAskAmount = quote.minReceiveRaw;
 
@@ -190,10 +210,11 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
         platformFee,
         swapAmount,
         minAskAmount,
-        tokenAddress
+        tokenAddress,
+        router: quote.router,
       });
 
-      // Initialize TonClient and STON.fi router
+      // Initialize TonClient
       const client = new TonClient({
         endpoint: "https://toncenter.com/api/v2/jsonRPC",
       });
@@ -202,10 +223,36 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
       const userAddress = Address.parse(address);
       const jettonAddress = Address.parse(tokenAddress);
 
-      // Use legacy STON.fi v1 router + pTON defaults from the SDK (mainnet)
-      const router = client.open(new DEX.v1.Router());
-      const proxyTon = new pTON.v1();
+      // Auto-detect router version/type from the quote simulation result
+      // (SDK doesn't expose a simple router.getRouterVersion in this build; we use API-provided routerInfo instead.)
+      const routerAddr = quote.router?.address ? Address.parse(quote.router.address) : null;
+      const majorVersion = quote.router?.majorVersion ?? null;
+      const minorVersion = quote.router?.minorVersion ?? null;
+      const routerType = quote.router?.routerType ?? undefined;
 
+      let router: any;
+      let proxyTon: any;
+
+      if (routerAddr && typeof majorVersion === "number" && Number.isFinite(majorVersion) && typeof minorVersion === "number" && Number.isFinite(minorVersion)) {
+        const contracts: any = dexFactory({
+          majorVersion,
+          minorVersion,
+          routerType,
+        });
+
+        router = client.open(new contracts.Router(routerAddr));
+
+        if (majorVersion === 1) {
+          proxyTon = new pTON.v1();
+        } else {
+          const ptonAddr = quote.router?.ptonAddress ?? PTON_V2_1_ADDRESS;
+          proxyTon = new pTON.v2_1(Address.parse(ptonAddr));
+        }
+      } else {
+        // Fallback to legacy v1 defaults
+        router = client.open(new DEX.v1.Router());
+        proxyTon = new pTON.v1();
+      }
       // Get swap transaction params
       const txParams = await router.getSwapTonToJettonTxParams({
         userWalletAddress: userAddress,
