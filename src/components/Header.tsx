@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { VisitorCounter } from "@/components/VisitorCounter";
+import { WalletButton } from "@/components/WalletButton";
 
 export const Header = () => {
   const [getListedOpen, setGetListedOpen] = useState(false);
-  const [tradeOpen, setTradeOpen] = useState(false);
 
   return (
     <header className="border-b border-border bg-card">
@@ -29,78 +29,8 @@ export const Header = () => {
           </div>
           <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             <VisitorCounter />
-            <Dialog open={tradeOpen} onOpenChange={setTradeOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  className="bg-primary hover:bg-accent text-primary-foreground font-semibold text-xs sm:text-sm px-2 sm:px-4 h-8 sm:h-10"
-                >
-                  <span className="hidden sm:inline">Trade on Ton</span>
-                  <span className="sm:hidden">Trade</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Choose Trading Platform</DialogTitle>
-                  <DialogDescription className="sr-only">
-                    Select your preferred trading platform
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-3">
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://t.me/jettradebot?start=tonkol"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      JetTrade
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://t.me/dtrade?start=mikey"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      DTrade
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://t.me/stonks_sniper_bot?start=tonkolreferral"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      Stonks
-                    </a>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-primary hover:bg-accent text-primary-foreground font-semibold"
-                  >
-                    <a
-                      href="https://x1000.finance/?ref=mikey"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      x1000
-                    </a>
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            
+            <WalletButton />
             
             <Dialog open={getListedOpen} onOpenChange={setGetListedOpen}>
               <DialogTrigger asChild>
