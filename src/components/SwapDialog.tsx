@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Wallet, ArrowDown, CheckCircle, XCircle, Settings2 } from "lucide-react";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Collapsible,
   CollapsibleContent,
@@ -27,7 +28,6 @@ interface SwapQuote {
 const PRESET_AMOUNTS = [25, 50, 100] as const;
 const SLIPPAGE_OPTIONS = [0.5, 1, 3, 5] as const;
 const HOUSE_FEE_WALLET = "UQCYrkH5kI1ZJXACzI8f5XHLffqTQeA4PcL_MYwH20QmEzX-";
-const TON_ADDRESS = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 
 type SwapStatus = "idle" | "loading" | "success" | "error";
 
@@ -61,36 +61,33 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     return addr;
   };
 
-  // Fetch quote when amount or slippage changes
+  // Fetch quote using edge function
   const fetchQuote = useCallback(async (amount: number, slippageTolerance: number) => {
     if (!amount || amount <= 0 || !tokenAddress) return;
 
     setIsLoadingQuote(true);
     try {
-      const response = await fetch("https://api.ston.fi/v1/swap/simulate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          offer_address: TON_ADDRESS,
-          ask_address: formatTokenAddress(tokenAddress),
-          units: String(Math.floor(amount * 1e9)),
-          slippage_tolerance: (slippageTolerance / 100).toFixed(4),
-        }),
+      const { data, error } = await supabase.functions.invoke('stonfi-quote', {
+        body: {
+          tokenAddress: formatTokenAddress(tokenAddress),
+          amount,
+          slippage: slippageTolerance,
+        },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const minReceiveRaw = data.min_ask_units 
-          ? Number(data.min_ask_units) / 1e9
-          : data.ask_units 
-            ? Number(data.ask_units) / 1e9
-            : 0;
-        
+      if (error) {
+        console.error('Quote error:', error);
+        setQuote(null);
+        return;
+      }
+
+      if (data?.success && data.minAskUnits) {
+        const minReceiveRaw = Number(data.minAskUnits) / 1e9;
         setQuote({
           minReceive: minReceiveRaw.toLocaleString(undefined, { maximumFractionDigits: 4 }),
           minReceiveRaw,
-          priceImpact: data.price_impact 
-            ? `${(Number(data.price_impact) * 100).toFixed(2)}%`
+          priceImpact: data.priceImpact 
+            ? `${(Number(data.priceImpact) * 100).toFixed(2)}%`
             : "< 0.01%",
         });
       } else {
@@ -172,66 +169,22 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
     setSwapStatus("loading");
 
     try {
-      const response = await fetch("https://api.ston.fi/v1/swap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          offer_address: TON_ADDRESS,
-          ask_address: formatTokenAddress(tokenAddress),
-          units: String(Math.floor(activeAmount * 1e9)),
-          slippage_tolerance: (activeSlippage / 100).toFixed(4),
-          referral_address: HOUSE_FEE_WALLET,
-          referral_fee_percent: "0.01",
-        }),
-      });
-
-      if (!response.ok) {
-        const stonfiUrl = new URL("https://app.ston.fi/swap");
-        stonfiUrl.searchParams.set("chartVisible", "false");
-        stonfiUrl.searchParams.set("ft", "TON");
-        stonfiUrl.searchParams.set("tt", formatTokenAddress(tokenAddress));
-        stonfiUrl.searchParams.set("fa", activeAmount.toString());
-        stonfiUrl.searchParams.set("referral_address", HOUSE_FEE_WALLET);
-        
-        window.open(stonfiUrl.toString(), "_blank", "noopener,noreferrer");
-        setSwapStatus("success");
-        toast.success("Redirected to complete swap");
-        setTimeout(() => onOpenChange(false), 1000);
-        return;
-      }
-
-      const swapData = await response.json();
+      // Open STON.fi with prefilled parameters
+      const stonfiUrl = new URL("https://app.ston.fi/swap");
+      stonfiUrl.searchParams.set("chartVisible", "false");
+      stonfiUrl.searchParams.set("ft", "TON");
+      stonfiUrl.searchParams.set("tt", formatTokenAddress(tokenAddress));
+      stonfiUrl.searchParams.set("fa", activeAmount.toString());
+      stonfiUrl.searchParams.set("referral_address", HOUSE_FEE_WALLET);
       
-      await tonConnectUI.sendTransaction({
-        validUntil: Math.floor(Date.now() / 1000) + 300,
-        messages: [{
-          address: swapData.router_address || "EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt",
-          amount: String(Math.floor(activeAmount * 1e9)),
-          payload: swapData.payload || "",
-        }],
-      });
-
+      window.open(stonfiUrl.toString(), "_blank", "noopener,noreferrer");
       setSwapStatus("success");
-      toast.success(`Successfully swapped ${activeAmount} TON for ${tokenSymbol}!`);
-      setTimeout(() => onOpenChange(false), 2000);
-    } catch (error: any) {
+      toast.success("Opened swap interface");
+      setTimeout(() => onOpenChange(false), 1000);
+    } catch (error: unknown) {
       console.error("Swap failed:", error);
-      
-      if (error?.message?.includes("rejected") || error?.message?.includes("cancelled")) {
-        toast.error("Transaction cancelled");
-        setSwapStatus("idle");
-      } else {
-        const stonfiUrl = new URL("https://app.ston.fi/swap");
-        stonfiUrl.searchParams.set("chartVisible", "false");
-        stonfiUrl.searchParams.set("ft", "TON");
-        stonfiUrl.searchParams.set("tt", formatTokenAddress(tokenAddress));
-        stonfiUrl.searchParams.set("fa", activeAmount.toString());
-        stonfiUrl.searchParams.set("referral_address", HOUSE_FEE_WALLET);
-        
-        window.open(stonfiUrl.toString(), "_blank", "noopener,noreferrer");
-        setSwapStatus("idle");
-        toast.info("Opened external swap to complete");
-      }
+      setSwapStatus("error");
+      toast.error("Failed to initiate swap");
     }
   };
 
@@ -390,7 +343,7 @@ export const SwapDialog = ({ open, onOpenChange, tokenSymbol, tokenAddress }: Sw
                 {swapStatus === "loading" ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Confirming...
+                    Opening...
                   </>
                 ) : swapStatus === "success" ? (
                   <>
