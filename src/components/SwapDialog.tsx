@@ -6,8 +6,8 @@ import { Loader2, Wallet, ArrowDown, Settings2, Info, CheckCircle2 } from "lucid
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { DEX, pTON } from "@ston-fi/sdk";
-import { TonClient, toNano, Address } from "@ton/ton";
+// NOTE: @ston-fi/sdk and @ton/ton are dynamically imported inside executeSwap
+// to avoid crashing initial render in environments without required polyfills.
 import {
   Collapsible,
   CollapsibleContent,
