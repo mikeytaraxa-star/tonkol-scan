@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      posted_ton_pools: {
+        Row: {
+          created_at: string
+          id: string
+          pool_address: string
+          token_name: string | null
+          token_symbol: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pool_address: string
+          token_name?: string | null
+          token_symbol?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pool_address?: string
+          token_name?: string | null
+          token_symbol?: string | null
+        }
+        Relationships: []
+      }
+      tonkol_launches_channels: {
+        Row: {
+          added_at: string
+          chat_id: string
+          chat_title: string | null
+          id: string
+        }
+        Insert: {
+          added_at?: string
+          chat_id: string
+          chat_title?: string | null
+          id?: string
+        }
+        Update: {
+          added_at?: string
+          chat_id?: string
+          chat_title?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
