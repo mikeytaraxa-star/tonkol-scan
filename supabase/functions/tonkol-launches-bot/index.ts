@@ -114,6 +114,10 @@ const TON_LAUNCHPAD_DEXES = [
   "tonmeme"
 ];
 
+// FDV filtering thresholds
+const MIN_FDV_USD = 100;
+const MAX_FDV_USD = 10000;
+
 async function sendTelegramMessage(
   chatId: string | number, 
   text: string, 
@@ -127,7 +131,7 @@ async function sendTelegramMessage(
       chat_id: chatId,
       text: text,
       parse_mode: parseMode,
-      disable_web_page_preview: true, // Disable link previews
+      disable_web_page_preview: true,
     };
     
     if (replyMarkup) {
@@ -145,6 +149,42 @@ async function sendTelegramMessage(
     return result;
   } catch (error) {
     console.error(`Error sending message to ${chatId}:`, error);
+    return null;
+  }
+}
+
+async function sendTelegramPhoto(
+  chatId: string | number,
+  photoUrl: string,
+  caption: string,
+  parseMode: string = "HTML",
+  replyMarkup?: object
+) {
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
+  
+  try {
+    const body: Record<string, unknown> = {
+      chat_id: chatId,
+      photo: photoUrl,
+      caption: caption,
+      parse_mode: parseMode,
+    };
+    
+    if (replyMarkup) {
+      body.reply_markup = replyMarkup;
+    }
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    
+    const result = await response.json();
+    console.log(`Photo sent to ${chatId}:`, result.ok ? "success" : result.description);
+    return result;
+  } catch (error) {
+    console.error(`Error sending photo to ${chatId}:`, error);
     return null;
   }
 }
@@ -174,11 +214,12 @@ async function fetchNewTonPools(): Promise<FetchPoolsResult> {
     const pools: GeckoPool[] = data.data || [];
     const included: GeckoPoolIncluded[] = data.included || [];
     
-    // Filter to only launchpad DEXes and exclude USDT
+    // Filter to only launchpad DEXes, exclude USDT, and apply FDV filter
     const filteredPools = pools.filter(pool => {
       const dexId = pool.relationships?.dex?.data?.id || "";
       const dexName = dexId.split("_").pop()?.toLowerCase() || "";
       const poolName = pool.attributes.name?.toUpperCase() || "";
+      const fdv = parseFloat(pool.attributes.fdv_usd || "0");
       
       // Check if from a launchpad
       const isLaunchpad = TON_LAUNCHPAD_DEXES.some(lpDex => dexName.includes(lpDex));
@@ -186,10 +227,13 @@ async function fetchNewTonPools(): Promise<FetchPoolsResult> {
       // Exclude USDT pairs
       const hasUsdt = poolName.includes("USDT") || poolName.includes("USD₮");
       
-      return isLaunchpad && !hasUsdt;
+      // FDV filter: must be between MIN and MAX
+      const fdvInRange = fdv >= MIN_FDV_USD && fdv <= MAX_FDV_USD;
+      
+      return isLaunchpad && !hasUsdt && fdvInRange;
     });
     
-    console.log(`Fetched ${pools.length} pools, filtered to ${filteredPools.length} launchpad pools (excluding USDT)`);
+    console.log(`Fetched ${pools.length} pools, filtered to ${filteredPools.length} launchpad pools (FDV $${MIN_FDV_USD}-$${MAX_FDV_USD}, excluding USDT)`);
     return { pools: filteredPools, included };
   } catch (error) {
     console.error("Error fetching from GeckoTerminal:", error);
@@ -200,6 +244,7 @@ async function fetchNewTonPools(): Promise<FetchPoolsResult> {
 interface FormatPoolResult {
   message: string;
   replyMarkup: object;
+  imageUrl?: string;
 }
 
 function formatPoolMessage(pool: GeckoPool, included: GeckoPoolIncluded[]): FormatPoolResult {
@@ -213,6 +258,7 @@ function formatPoolMessage(pool: GeckoPool, included: GeckoPoolIncluded[]): Form
   const baseToken = included.find(t => t.id === baseTokenId);
   const tokenSymbol = baseToken?.attributes?.symbol || poolName.split("/")[0] || "TOKEN";
   const tokenAddress = baseToken?.attributes?.address || "";
+  const imageUrl = baseToken?.attributes?.image_url || "";
   
   const priceUsd = parseFloat(attrs.base_token_price_usd || "0");
   const fdv = parseFloat(attrs.fdv_usd || "0");
@@ -261,7 +307,7 @@ function formatPoolMessage(pool: GeckoPool, included: GeckoPoolIncluded[]): Form
     ]
   };
 
-  return { message, replyMarkup };
+  return { message, replyMarkup, imageUrl: imageUrl || undefined };
 }
 
 async function checkAndPostNewPools() {
@@ -307,11 +353,17 @@ async function checkAndPostNewPools() {
   let postedCount = 0;
   
   for (const pool of newPools.slice(0, 5)) { // Limit to 5 new posts per check
-    const { message, replyMarkup } = formatPoolMessage(pool, included);
+    const { message, replyMarkup, imageUrl } = formatPoolMessage(pool, included);
     
     // Post to all channels
     for (const channel of channels) {
-      await sendTelegramMessage(channel.chat_id, message, "HTML", replyMarkup);
+      if (imageUrl) {
+        // Send with photo if available
+        await sendTelegramPhoto(channel.chat_id, imageUrl, message, "HTML", replyMarkup);
+      } else {
+        // Fallback to text message
+        await sendTelegramMessage(channel.chat_id, message, "HTML", replyMarkup);
+      }
       await new Promise(resolve => setTimeout(resolve, 500)); // Rate limiting
     }
     
