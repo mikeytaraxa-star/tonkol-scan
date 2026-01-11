@@ -92,19 +92,52 @@ interface GeckoPool {
   };
 }
 
-async function sendTelegramMessage(chatId: string | number, text: string, parseMode: string = "HTML") {
+interface GeckoPoolIncluded {
+  id: string;
+  type: string;
+  attributes: {
+    name: string;
+    symbol: string;
+    address: string;
+    image_url?: string;
+  };
+}
+
+// TON Launchpads DEX IDs (from GeckoTerminal)
+const TON_LAUNCHPAD_DEXES = [
+  "gaspump",
+  "blum",
+  "tonpump",
+  "ton-pump",
+  "wagmi",
+  "ton-meme",
+  "tonmeme"
+];
+
+async function sendTelegramMessage(
+  chatId: string | number, 
+  text: string, 
+  parseMode: string = "HTML",
+  replyMarkup?: object
+) {
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   
   try {
+    const body: Record<string, unknown> = {
+      chat_id: chatId,
+      text: text,
+      parse_mode: parseMode,
+      disable_web_page_preview: true, // Disable link previews
+    };
+    
+    if (replyMarkup) {
+      body.reply_markup = replyMarkup;
+    }
+    
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        parse_mode: parseMode,
-        disable_web_page_preview: false,
-      }),
+      body: JSON.stringify(body),
     });
     
     const result = await response.json();
@@ -116,10 +149,15 @@ async function sendTelegramMessage(chatId: string | number, text: string, parseM
   }
 }
 
-async function fetchNewTonPools(): Promise<GeckoPool[]> {
+interface FetchPoolsResult {
+  pools: GeckoPool[];
+  included: GeckoPoolIncluded[];
+}
+
+async function fetchNewTonPools(): Promise<FetchPoolsResult> {
   try {
     const response = await fetch(
-      "https://api.geckoterminal.com/api/v2/networks/ton/new_pools?page=1",
+      "https://api.geckoterminal.com/api/v2/networks/ton/new_pools?page=1&include=base_token",
       {
         headers: {
           "Accept": "application/json",
@@ -129,23 +167,52 @@ async function fetchNewTonPools(): Promise<GeckoPool[]> {
     
     if (!response.ok) {
       console.error("GeckoTerminal API error:", response.status, response.statusText);
-      return [];
+      return { pools: [], included: [] };
     }
     
     const data = await response.json();
-    console.log(`Fetched ${data.data?.length || 0} pools from GeckoTerminal`);
-    return data.data || [];
+    const pools: GeckoPool[] = data.data || [];
+    const included: GeckoPoolIncluded[] = data.included || [];
+    
+    // Filter to only launchpad DEXes and exclude USDT
+    const filteredPools = pools.filter(pool => {
+      const dexId = pool.relationships?.dex?.data?.id || "";
+      const dexName = dexId.split("_").pop()?.toLowerCase() || "";
+      const poolName = pool.attributes.name?.toUpperCase() || "";
+      
+      // Check if from a launchpad
+      const isLaunchpad = TON_LAUNCHPAD_DEXES.some(lpDex => dexName.includes(lpDex));
+      
+      // Exclude USDT pairs
+      const hasUsdt = poolName.includes("USDT") || poolName.includes("USD₮");
+      
+      return isLaunchpad && !hasUsdt;
+    });
+    
+    console.log(`Fetched ${pools.length} pools, filtered to ${filteredPools.length} launchpad pools (excluding USDT)`);
+    return { pools: filteredPools, included };
   } catch (error) {
     console.error("Error fetching from GeckoTerminal:", error);
-    return [];
+    return { pools: [], included: [] };
   }
 }
 
-function formatPoolMessage(pool: GeckoPool): string {
+interface FormatPoolResult {
+  message: string;
+  replyMarkup: object;
+}
+
+function formatPoolMessage(pool: GeckoPool, included: GeckoPoolIncluded[]): FormatPoolResult {
   const attrs = pool.attributes;
   const poolName = attrs.name || "Unknown";
   const address = attrs.address;
   const shortAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
+  
+  // Get base token info including image
+  const baseTokenId = pool.relationships?.base_token?.data?.id;
+  const baseToken = included.find(t => t.id === baseTokenId);
+  const tokenSymbol = baseToken?.attributes?.symbol || poolName.split("/")[0] || "TOKEN";
+  const tokenAddress = baseToken?.attributes?.address || "";
   
   const priceUsd = parseFloat(attrs.base_token_price_usd || "0");
   const fdv = parseFloat(attrs.fdv_usd || "0");
@@ -164,9 +231,13 @@ function formatPoolMessage(pool: GeckoPool): string {
   };
 
   const geckoLink = `https://www.geckoterminal.com/ton/pools/${address}`;
-  const dexScreenerLink = `https://dexscreener.com/ton/${address}`;
   
-  return `🚀 <b>New TON Launch Detected!</b>
+  // DTrade link with referral - using token address for trading
+  const dtradeLink = tokenAddress 
+    ? `https://t.me/AntaresTONBot?start=V3LkKBH35O-${tokenAddress}`
+    : `https://t.me/dtrade?start=tonkol`;
+  
+  const message = `🚀 <b>New TON Launch Detected!</b>
 
 💎 <b>${poolName}</b>
 
@@ -179,9 +250,18 @@ function formatPoolMessage(pool: GeckoPool): string {
 
 📍 Address: <code>${shortAddress}</code>
 
-🔗 <a href="${geckoLink}">GeckoTerminal</a> | <a href="${dexScreenerLink}">DexScreener</a>
+🔗 <a href="${geckoLink}">GeckoTerminal</a>`;
 
-⚡️ @tonkollaunches_bot`;
+  // Create inline keyboard with DTrade button
+  const replyMarkup = {
+    inline_keyboard: [
+      [
+        { text: "🔥 Trade on DTrade", url: dtradeLink }
+      ]
+    ]
+  };
+
+  return { message, replyMarkup };
 }
 
 async function checkAndPostNewPools() {
@@ -205,11 +285,11 @@ async function checkAndPostNewPools() {
   console.log(`Found ${channels.length} registered channels`);
   
   // Fetch new pools from GeckoTerminal
-  const pools = await fetchNewTonPools();
+  const { pools, included } = await fetchNewTonPools();
   
   if (pools.length === 0) {
-    console.log("No pools fetched from GeckoTerminal");
-    return { posted: 0, message: "No pools found" };
+    console.log("No launchpad pools fetched from GeckoTerminal");
+    return { posted: 0, message: "No launchpad pools found" };
   }
   
   // Get already posted pools
@@ -227,11 +307,11 @@ async function checkAndPostNewPools() {
   let postedCount = 0;
   
   for (const pool of newPools.slice(0, 5)) { // Limit to 5 new posts per check
-    const message = formatPoolMessage(pool);
+    const { message, replyMarkup } = formatPoolMessage(pool, included);
     
     // Post to all channels
     for (const channel of channels) {
-      await sendTelegramMessage(channel.chat_id, message);
+      await sendTelegramMessage(channel.chat_id, message, "HTML", replyMarkup);
       await new Promise(resolve => setTimeout(resolve, 500)); // Rate limiting
     }
     
@@ -281,7 +361,7 @@ async function handleTelegramUpdate(update: TelegramUpdate) {
         // Send welcome message
         await sendTelegramMessage(
           chat.id,
-          `🚀 <b>TON Launches Bot Activated!</b>\n\nI will now automatically post new token launches on TON blockchain to this channel.\n\n🔔 Stay tuned for real-time alerts!\n\n⚡️ @tonkollaunches_bot`
+          `🚀 <b>TON Launches Bot Activated!</b>\n\nI will now automatically post new token launches from TON launchpads to this channel.\n\n🔔 Stay tuned for real-time alerts!`
         );
       }
     } else if (newStatus === "left" || newStatus === "kicked") {
@@ -305,12 +385,11 @@ async function handleTelegramUpdate(update: TelegramUpdate) {
     await sendTelegramMessage(
       chatId,
       `🚀 <b>Welcome to TON Launches Bot!</b>\n\n` +
-      `I track and post new token launches on the TON blockchain.\n\n` +
+      `I track and post new token launches from TON launchpads.\n\n` +
       `<b>How to use:</b>\n` +
       `1️⃣ Add me to your channel/group as an admin\n` +
       `2️⃣ I'll automatically post new launches!\n\n` +
-      `📊 Data sourced from GeckoTerminal\n\n` +
-      `⚡️ @tonkollaunches_bot`
+      `📊 Tracking: GasPump, Blum, TonPump & more`
     );
   }
   
