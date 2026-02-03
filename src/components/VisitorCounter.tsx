@@ -4,7 +4,7 @@ import { Users } from "lucide-react";
 const API_BASE = "https://apitonkol.pro";
 
 export const VisitorCounter = () => {
-  const [visitors7d, setVisitors7d] = useState(1770);
+  const [visitors7d, setVisitors7d] = useState(3260);
 
   const fetchVisitorStats = async () => {
     try {
