@@ -2,31 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 201 100% 96%;
-    --foreground: 210 50% 10%;
+    --background: 0 0% 98%;
+    --foreground: 69 20% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 50% 10%;
+    --card-foreground: 69 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 50% 10%;
+    --popover-foreground: 69 20% 10%;
 
-    --primary: 201 100% 46%;
+    --primary: 69 60% 17%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 201 100% 96%;
-    --secondary-foreground: 201 100% 30%;
+    --secondary: 69 20% 95%;
+    --secondary-foreground: 69 60% 17%;
 
-    --muted: 201 50% 90%;
-    --muted-foreground: 210 20% 45%;
+    --muted: 69 10% 92%;
+    --muted-foreground: 69 10% 45%;
 
-    --accent: 201 100% 40%;
+    --accent: 69 60% 14%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -35,49 +33,42 @@ All colors MUST be HSL.
     --success: 145 70% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 201 30% 88%;
-    --input: 201 30% 92%;
-    --ring: 201 100% 46%;
+    --border: 69 10% 90%;
+    --input: 69 10% 92%;
+    --ring: 69 60% 17%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-foreground: 69 20% 10%;
+    --sidebar-primary: 69 60% 17%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 69 10% 95%;
+    --sidebar-accent-foreground: 69 20% 10%;
+    --sidebar-border: 69 10% 90%;
+    --sidebar-ring: 69 60% 17%;
   }
 
   .dark {
-    --background: 210 50% 8%;
-    --foreground: 195 50% 95%;
+    --background: 69 15% 6%;
+    --foreground: 60 10% 95%;
 
-    --card: 210 45% 12%;
-    --card-foreground: 195 50% 95%;
+    --card: 69 15% 10%;
+    --card-foreground: 60 10% 95%;
 
-    --popover: 210 45% 12%;
-    --popover-foreground: 195 50% 95%;
+    --popover: 69 15% 10%;
+    --popover-foreground: 60 10% 95%;
 
-    --primary: 201 100% 46%;
+    --primary: 69 60% 25%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 45% 18%;
-    --secondary-foreground: 201 50% 95%;
+    --secondary: 69 15% 15%;
+    --secondary-foreground: 60 10% 95%;
 
-    --muted: 210 40% 20%;
-    --muted-foreground: 201 20% 65%;
+    --muted: 69 10% 18%;
+    --muted-foreground: 69 10% 60%;
 
-    --accent: 201 100% 40%;
+    --accent: 69 60% 20%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -86,17 +77,17 @@ All colors MUST be HSL.
     --success: 145 70% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 210 40% 20%;
-    --input: 210 40% 20%;
-    --ring: 201 100% 46%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 69 10% 18%;
+    --input: 69 10% 18%;
+    --ring: 69 60% 25%;
+    --sidebar-background: 69 15% 8%;
+    --sidebar-foreground: 60 10% 95%;
+    --sidebar-primary: 69 60% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 69 10% 14%;
+    --sidebar-accent-foreground: 60 10% 95%;
+    --sidebar-border: 69 10% 14%;
+    --sidebar-ring: 69 60% 25%;
   }
 }
 
@@ -106,19 +97,22 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-in;
+    animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
@@ -127,16 +121,26 @@ All colors MUST be HSL.
   }
 }
 
+/* iOS-style glass morphism */
+.glass {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: hsla(0, 0%, 100%, 0.72);
+}
+
+.dark .glass {
+  background: hsla(69, 15%, 10%, 0.72);
+}
+
 /* STON.fi Swap Widget Theme Overrides */
 .swap-widget-container {
-  --omniston-primary: hsl(201 100% 46%);
-  --omniston-primary-hover: hsl(201 100% 40%);
-  --omniston-bg: hsl(210 45% 12%);
-  --omniston-bg-secondary: hsl(210 40% 20%);
-  --omniston-text: hsl(195 50% 95%);
-  --omniston-text-secondary: hsl(201 20% 65%);
-  --omniston-border: hsl(210 40% 20%);
+  --omniston-primary: hsl(69 60% 17%);
+  --omniston-primary-hover: hsl(69 60% 14%);
+  --omniston-bg: hsl(69 15% 10%);
+  --omniston-bg-secondary: hsl(69 10% 18%);
+  --omniston-text: hsl(60 10% 95%);
+  --omniston-text-secondary: hsl(69 10% 60%);
+  --omniston-border: hsl(69 10% 18%);
   --omniston-success: hsl(145 70% 45%);
   --omniston-error: hsl(0 84% 60%);
 }
-

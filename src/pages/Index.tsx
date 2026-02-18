@@ -18,23 +18,23 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <AdBanner />
-      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1 pb-20 sm:pb-0">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1 pb-24 sm:pb-0">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
-          {/* Desktop tabs - hidden on mobile */}
-          <TabsList className="hidden sm:grid w-full grid-cols-4 max-w-3xl mx-auto h-12 p-1">
-            <TabsTrigger value="trades" className="text-base font-semibold flex items-center justify-center gap-2">
+          {/* Desktop tabs - iOS style segmented control */}
+          <TabsList className="hidden sm:grid w-full grid-cols-4 max-w-3xl mx-auto h-11 p-1 rounded-full bg-muted/60">
+            <TabsTrigger value="trades" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
               <Activity className="h-4 w-4" />
               <span>Trades</span>
             </TabsTrigger>
-            <TabsTrigger value="kol-leaderboard" className="text-base font-semibold flex items-center justify-center gap-2">
+            <TabsTrigger value="kol-leaderboard" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
               <Trophy className="h-4 w-4" />
               <span>KOL Leaderboard</span>
             </TabsTrigger>
-            <TabsTrigger value="token-leaderboard" className="text-base font-semibold flex items-center justify-center gap-2">
+            <TabsTrigger value="token-leaderboard" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
               <Flame className="h-4 w-4" />
               <span>Token Leaderboard</span>
             </TabsTrigger>
-            <TabsTrigger value="swap" className="text-base font-semibold flex items-center justify-center gap-2">
+            <TabsTrigger value="swap" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
               <ArrowLeftRight className="h-4 w-4" />
               <span>Swap</span>
             </TabsTrigger>
@@ -42,7 +42,7 @@ const Index = () => {
 
           <TabsContent value="trades" className="space-y-4 animate-fade-in">
             <div className="text-center mb-4 sm:mb-6 px-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Real-Time Trades</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2 tracking-tight">Real-Time Trades</h2>
               <p className="text-sm sm:text-base text-muted-foreground">
                 Monitor live trading activity from top KOLs on TON
               </p>
@@ -52,7 +52,7 @@ const Index = () => {
 
           <TabsContent value="kol-leaderboard" className="space-y-4 animate-fade-in">
             <div className="text-center mb-4 sm:mb-6 px-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">KOL Leaderboard</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2 tracking-tight">KOL Leaderboard</h2>
               <p className="text-sm sm:text-base text-muted-foreground">
                 Top TON KOLs ranked by profit & loss performance
               </p>
@@ -62,7 +62,7 @@ const Index = () => {
 
           <TabsContent value="token-leaderboard" className="space-y-4 animate-fade-in">
             <div className="text-center mb-4 sm:mb-6 px-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Token Leaderboard</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2 tracking-tight">Token Leaderboard</h2>
               <p className="text-sm sm:text-base text-muted-foreground">
                 Top TON Tokens ranked by trading volume
               </p>
@@ -72,7 +72,7 @@ const Index = () => {
 
           <TabsContent value="swap" className="space-y-4 animate-fade-in">
             <div className="text-center mb-4 sm:mb-6 px-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Swap Tokens</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2 tracking-tight">Swap Tokens</h2>
               <p className="text-sm sm:text-base text-muted-foreground">
                 Swap TON and jettons instantly via STON.fi
               </p>
@@ -85,52 +85,52 @@ const Index = () => {
       <TelegramCTA />
       <Footer />
 
-      {/* Mobile bottom navigation */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50">
-        <div className="grid grid-cols-4 h-16">
+      {/* Mobile bottom navigation - iOS style */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 glass border-t border-border/30 z-50 safe-area-inset-bottom">
+        <div className="grid grid-cols-4 h-16 pb-1">
           <button
             onClick={() => setActiveTab("trades")}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
               activeTab === "trades" 
-                ? "text-primary bg-primary/10" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-primary" 
+                : "text-muted-foreground"
             }`}
           >
-            <Activity className="h-5 w-5" />
-            <span className="text-xs font-medium">Trades</span>
+            <Activity className={`h-5 w-5 transition-transform duration-200 ${activeTab === "trades" ? "scale-110" : ""}`} />
+            <span className="text-[10px] font-medium">Trades</span>
           </button>
           <button
             onClick={() => setActiveTab("kol-leaderboard")}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
               activeTab === "kol-leaderboard" 
-                ? "text-primary bg-primary/10" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-primary" 
+                : "text-muted-foreground"
             }`}
           >
-            <Trophy className="h-5 w-5" />
-            <span className="text-xs font-medium">KOLs</span>
+            <Trophy className={`h-5 w-5 transition-transform duration-200 ${activeTab === "kol-leaderboard" ? "scale-110" : ""}`} />
+            <span className="text-[10px] font-medium">KOLs</span>
           </button>
           <button
             onClick={() => setActiveTab("token-leaderboard")}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
               activeTab === "token-leaderboard" 
-                ? "text-primary bg-primary/10" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-primary" 
+                : "text-muted-foreground"
             }`}
           >
-            <Flame className="h-5 w-5" />
-            <span className="text-xs font-medium">Tokens</span>
+            <Flame className={`h-5 w-5 transition-transform duration-200 ${activeTab === "token-leaderboard" ? "scale-110" : ""}`} />
+            <span className="text-[10px] font-medium">Tokens</span>
           </button>
           <button
             onClick={() => setActiveTab("swap")}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
               activeTab === "swap" 
-                ? "text-primary bg-primary/10" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-primary" 
+                : "text-muted-foreground"
             }`}
           >
-            <ArrowLeftRight className="h-5 w-5" />
-            <span className="text-xs font-medium">Swap</span>
+            <ArrowLeftRight className={`h-5 w-5 transition-transform duration-200 ${activeTab === "swap" ? "scale-110" : ""}`} />
+            <span className="text-[10px] font-medium">Swap</span>
           </button>
         </div>
       </div>
