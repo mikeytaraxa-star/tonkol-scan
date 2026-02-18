@@ -3,13 +3,13 @@ import { Header } from "@/components/Header";
 import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { TokenLeaderboard } from "@/components/TokenLeaderboard";
-import { SwapWidget } from "@/components/SwapWidget";
+
 
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
 import { AdBanner } from "@/components/AdBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Activity, Trophy, Flame, ArrowLeftRight } from "lucide-react";
+import { Activity, Trophy, Flame } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("trades");
@@ -21,7 +21,7 @@ const Index = () => {
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1 pb-24 sm:pb-0">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
           {/* Desktop tabs - iOS style segmented control */}
-          <TabsList className="hidden sm:grid w-full grid-cols-4 max-w-3xl mx-auto h-11 p-1 rounded-full bg-muted/60">
+          <TabsList className="hidden sm:grid w-full grid-cols-3 max-w-3xl mx-auto h-11 p-1 rounded-full bg-muted/60">
             <TabsTrigger value="trades" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
               <Activity className="h-4 w-4" />
               <span>Trades</span>
@@ -33,10 +33,6 @@ const Index = () => {
             <TabsTrigger value="token-leaderboard" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
               <Flame className="h-4 w-4" />
               <span>Token Leaderboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="swap" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
-              <ArrowLeftRight className="h-4 w-4" />
-              <span>Swap</span>
             </TabsTrigger>
           </TabsList>
 
@@ -70,15 +66,6 @@ const Index = () => {
             <TokenLeaderboard />
           </TabsContent>
 
-          <TabsContent value="swap" className="space-y-4 animate-fade-in">
-            <div className="text-center mb-4 sm:mb-6 px-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2 tracking-tight">Swap Tokens</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Swap TON and jettons instantly via STON.fi
-              </p>
-            </div>
-            <SwapWidget />
-          </TabsContent>
         </Tabs>
       </main>
       
@@ -87,7 +74,7 @@ const Index = () => {
 
       {/* Mobile bottom navigation - iOS style */}
       <div className="sm:hidden fixed bottom-0 left-0 right-0 glass border-t border-border/30 z-50 safe-area-inset-bottom">
-        <div className="grid grid-cols-4 h-16 pb-1">
+        <div className="grid grid-cols-3 h-16 pb-1">
           <button
             onClick={() => setActiveTab("trades")}
             className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
@@ -120,17 +107,6 @@ const Index = () => {
           >
             <Flame className={`h-5 w-5 transition-transform duration-200 ${activeTab === "token-leaderboard" ? "scale-110" : ""}`} />
             <span className="text-[10px] font-medium">Tokens</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("swap")}
-            className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
-              activeTab === "swap" 
-                ? "text-primary" 
-                : "text-muted-foreground"
-            }`}
-          >
-            <ArrowLeftRight className={`h-5 w-5 transition-transform duration-200 ${activeTab === "swap" ? "scale-110" : ""}`} />
-            <span className="text-[10px] font-medium">Swap</span>
           </button>
         </div>
       </div>
