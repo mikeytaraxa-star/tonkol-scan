@@ -3,39 +3,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { LoadingScreen } from "./components/LoadingScreen";
 
 const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isExiting, setIsExiting] = useState(false);
-
-  useEffect(() => {
-    const exitTimer = setTimeout(() => {
-      setIsExiting(true);
-    }, 1800);
-
-    const hideTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2500);
-
-    return () => {
-      clearTimeout(exitTimer);
-      clearTimeout(hideTimer);
-    };
-  }, []);
-
-  if (isLoading) {
-    return <LoadingScreen isExiting={isExiting} />;
-  }
-
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
       <QueryClientProvider client={queryClient}>
