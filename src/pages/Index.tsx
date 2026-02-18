@@ -4,7 +4,7 @@ import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { TokenLeaderboard } from "@/components/TokenLeaderboard";
 import { SwapWidget } from "@/components/SwapWidget";
-import { PriceTracker } from "@/components/PriceTracker";
+
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
 import { AdBanner } from "@/components/AdBanner";
@@ -81,7 +81,7 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
-      <PriceTracker />
+      
       <TelegramCTA />
       <Footer />
 
