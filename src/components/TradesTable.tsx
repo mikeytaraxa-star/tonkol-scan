@@ -195,7 +195,7 @@ export const TradesTable = () => {
                           {trade.amount_ton.toFixed(2)} TON
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          ${trade.value_usd.toLocaleString()}
+                          ${trade.value_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </div>
                     </td>
@@ -281,8 +281,8 @@ export const TradesTable = () => {
                   <div className="font-mono font-semibold text-foreground">
                     {trade.amount_ton.toFixed(2)} TON
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    ${trade.value_usd.toLocaleString()}
+                    <div className="text-sm text-muted-foreground">
+                    ${trade.value_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="text-right">
