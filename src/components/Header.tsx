@@ -77,7 +77,7 @@ export const Header = () => {
             </Dialog>
             
             <a
-              href="https://x.com/Toncoinkol"
+              href="https://x.com/groypfi"
               target="_blank"
               rel="noopener noreferrer"
               className="p-1.5 sm:p-2 rounded-full hover:bg-primary/10 text-foreground hover:text-primary transition-all duration-200 hover:scale-110"
