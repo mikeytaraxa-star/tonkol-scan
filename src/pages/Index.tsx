@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
@@ -21,10 +22,35 @@ const reverseTabMap: Record<string, string> = {
   "token-leaderboard": "token",
 };
 
+const seoMeta: Record<string, { title: string; description: string }> = {
+  trades: {
+    title: "Real-Time KOL Trades on TON | Tonkol",
+    description: "Monitor live trading activity from top KOLs on TON. Track buys, sells, amounts, and tokens in real-time.",
+  },
+  "kol-leaderboard": {
+    title: "KOL Leaderboard — Top TON Traders | Tonkol",
+    description: "Discover the top-performing KOL traders on TON ranked by PnL, win rate, and trading volume.",
+  },
+  "token-leaderboard": {
+    title: "Token Leaderboard — Trending TON Tokens | Tonkol",
+    description: "See which TON tokens are trending among tracked KOLs, ranked by trading volume.",
+  },
+};
+
 const Index = () => {
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
   const activeTab = tabMap[tab ?? ""] ?? "trades";
+
+  useEffect(() => {
+    const meta = seoMeta[activeTab] ?? seoMeta.trades;
+    document.title = meta.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", meta.title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", meta.title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", meta.description);
+  }, [activeTab]);
 
   const handleTabChange = (value: string): void => {
     const path = reverseTabMap[value] ?? "trades";
