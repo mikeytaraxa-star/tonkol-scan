@@ -1,0 +1,21 @@
+{
+  "name": "teleton-plugin-tonkol",
+  "version": "1.0.0",
+  "description": "Teleton plugin for Tonkol — track KOL trades, activity, and performance on TON blockchain",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --out-dir dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["teleton", "plugin", "tonkol", "ton", "kol", "trading"],
+  "license": "MIT",
+  "peerDependencies": {
+    "@teleton-agent/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@teleton-agent/sdk": "^1.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.0"
+  }
+}
