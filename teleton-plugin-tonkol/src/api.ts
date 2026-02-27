@@ -43,6 +43,13 @@ export interface KOLStats {
   unrealized_pnl_ton: number;
 }
 
+export interface KOLSearchResult {
+  wallet_address: string;
+  kol_name: string;
+  kol_social: string;
+  kol_platform: string;
+}
+
 export interface KOLActivity {
   wallet_address: string;
   kol_name: string;
@@ -95,4 +102,12 @@ export async function getLeaderboard(
     `/api/leaderboard?period=${period}&limit=${limit}`
   );
   return data.leaderboard ?? [];
+}
+
+/** Search KOLs by name (case-insensitive partial match). */
+export async function searchKOLs(query: string): Promise<KOLSearchResult[]> {
+  const data = await apiFetch<{ kols: KOLSearchResult[] }>(
+    `/api/kols/search?q=${encodeURIComponent(query)}`
+  );
+  return data.kols ?? [];
 }

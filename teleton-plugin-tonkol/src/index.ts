@@ -17,6 +17,7 @@ import {
   getKOLTrades,
   getKOLStats,
   getLeaderboard,
+  searchKOLs,
 } from "./api.js";
 
 export const manifest: PluginManifest = {
@@ -191,6 +192,50 @@ export const tools = (sdk: PluginSDK): SimpleToolDef[] => [
           count: leaders.length,
           summary: `🏆 Top KOLs (${period}):\n${lines.join("\n")}`,
           leaderboard: leaders,
+        },
+      };
+    },
+  },
+
+  // ─── Search KOLs by Name ─────────────────────────────────────
+  {
+    name: "tonkol_search_kol",
+    description:
+      "Search for tracked KOLs by name (partial, case-insensitive). Returns matching KOL names, wallet addresses, and social links.",
+    parameters: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "KOL name or partial name to search for",
+        },
+      },
+      required: ["query"],
+    },
+    async execute(params) {
+      const results = await searchKOLs(params.query);
+
+      if (results.length === 0) {
+        return {
+          success: true,
+          data: {
+            message: `No KOLs found matching "${params.query}".`,
+            results: [],
+          },
+        };
+      }
+
+      const lines = results.map(
+        (k) =>
+          `• ${k.kol_name} — ${k.wallet_address.slice(0, 8)}…${k.wallet_address.slice(-6)} (${k.kol_platform}: ${k.kol_social || "N/A"})`
+      );
+
+      return {
+        success: true,
+        data: {
+          count: results.length,
+          summary: `Found ${results.length} KOL(s) matching "${params.query}":\n${lines.join("\n")}`,
+          results,
         },
       };
     },
