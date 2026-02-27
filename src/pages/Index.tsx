@@ -1,25 +1,42 @@
-import { useState } from "react";
 import { Header } from "@/components/Header";
 import { TradesTable } from "@/components/TradesTable";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { TokenLeaderboard } from "@/components/TokenLeaderboard";
-
-
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
 import { AdBanner } from "@/components/AdBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy, Flame } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+
+const tabMap: Record<string, string> = {
+  trades: "trades",
+  kol: "kol-leaderboard",
+  token: "token-leaderboard",
+};
+
+const reverseTabMap: Record<string, string> = {
+  trades: "trades",
+  "kol-leaderboard": "kol",
+  "token-leaderboard": "token",
+};
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("trades");
+  const { tab } = useParams<{ tab?: string }>();
+  const navigate = useNavigate();
+  const activeTab = tabMap[tab ?? ""] ?? "trades";
+
+  const handleTabChange = (value: string): void => {
+    const path = reverseTabMap[value] ?? "trades";
+    navigate(path === "trades" ? "/" : `/${path}`, { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <AdBanner />
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1 pb-24 sm:pb-0">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
           {/* Desktop tabs - iOS style segmented control */}
           <TabsList className="hidden sm:grid w-full grid-cols-3 max-w-3xl mx-auto h-11 p-1 rounded-full bg-muted/60">
             <TabsTrigger value="trades" className="text-sm font-semibold flex items-center justify-center gap-2 rounded-full data-[state=active]:shadow-sm transition-all">
@@ -65,7 +82,6 @@ const Index = () => {
             </div>
             <TokenLeaderboard />
           </TabsContent>
-
         </Tabs>
       </main>
       
@@ -76,33 +92,27 @@ const Index = () => {
       <div className="sm:hidden fixed bottom-0 left-0 right-0 glass border-t border-border/30 z-50 safe-area-inset-bottom">
         <div className="grid grid-cols-3 h-16 pb-1">
           <button
-            onClick={() => setActiveTab("trades")}
+            onClick={() => handleTabChange("trades")}
             className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
-              activeTab === "trades" 
-                ? "text-primary" 
-                : "text-muted-foreground"
+              activeTab === "trades" ? "text-primary" : "text-muted-foreground"
             }`}
           >
             <Activity className={`h-5 w-5 transition-transform duration-200 ${activeTab === "trades" ? "scale-110" : ""}`} />
             <span className="text-[10px] font-medium">Trades</span>
           </button>
           <button
-            onClick={() => setActiveTab("kol-leaderboard")}
+            onClick={() => handleTabChange("kol-leaderboard")}
             className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
-              activeTab === "kol-leaderboard" 
-                ? "text-primary" 
-                : "text-muted-foreground"
+              activeTab === "kol-leaderboard" ? "text-primary" : "text-muted-foreground"
             }`}
           >
             <Trophy className={`h-5 w-5 transition-transform duration-200 ${activeTab === "kol-leaderboard" ? "scale-110" : ""}`} />
             <span className="text-[10px] font-medium">KOLs</span>
           </button>
           <button
-            onClick={() => setActiveTab("token-leaderboard")}
+            onClick={() => handleTabChange("token-leaderboard")}
             className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-200 ${
-              activeTab === "token-leaderboard" 
-                ? "text-primary" 
-                : "text-muted-foreground"
+              activeTab === "token-leaderboard" ? "text-primary" : "text-muted-foreground"
             }`}
           >
             <Flame className={`h-5 w-5 transition-transform duration-200 ${activeTab === "token-leaderboard" ? "scale-110" : ""}`} />
