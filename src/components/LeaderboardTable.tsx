@@ -275,8 +275,8 @@ export const LeaderboardTable = () => {
                     maxPnl={maxLoss}
                     side="loss"
                     tradeCount={currentTradeCount(entry)}
+                    timeframe={timeframe}
                     onSelect={handleSelect}
-                    animated={animated}
                   />
                 ))}
               </div>
