@@ -27,7 +27,7 @@ export const TelegramCTA = () => {
           </p>
           <Button asChild className="w-full sm:w-40 text-sm">
             <a 
-              href="https://t.me/tonkolaunches" 
+              href="https://t.me/groypadlaunch" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2"
