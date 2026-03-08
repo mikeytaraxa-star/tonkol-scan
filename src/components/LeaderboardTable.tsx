@@ -19,6 +19,79 @@ interface LeaderboardEntry {
 
 const API_BASE = "https://apitonkol.pro";
 
+const SocialIcon = ({ platform, social }: { platform: string; social: string }) => {
+  if (!social) return null;
+  const Icon = platform === "X" ? Twitter : platform === "Telegram" ? Send : null;
+  if (!Icon) return null;
+  return (
+    <a href={social} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+      <Icon className="h-3.5 w-3.5" />
+    </a>
+  );
+};
+
+const CandleBar = ({
+  entry,
+  pnl,
+  maxPnl,
+  side,
+  onSelect,
+}: {
+  entry: LeaderboardEntry;
+  pnl: number;
+  maxPnl: number;
+  side: "profit" | "loss";
+  onSelect: (wallet: string, name: string) => void;
+}) => {
+  const heightPercent = maxPnl === 0 ? 5 : Math.max(5, (Math.abs(pnl) / maxPnl) * 100);
+  const isProfit = side === "profit";
+
+  return (
+    <div className="flex flex-col items-center gap-1.5 flex-1 min-w-0 max-w-[80px]">
+      {/* Candle */}
+      <div className="w-full flex flex-col items-center justify-end h-[180px] sm:h-[240px]">
+        <div
+          className={`w-3/4 rounded-t-sm transition-all duration-500 ${
+            isProfit
+              ? "bg-gradient-to-t from-[hsl(var(--success))] to-[hsl(var(--success)/0.6)]"
+              : "bg-gradient-to-t from-[hsl(var(--destructive))] to-[hsl(var(--destructive)/0.6)]"
+          }`}
+          style={{ height: `${heightPercent}%` }}
+        />
+        {/* Wick line */}
+        <div
+          className={`w-0.5 h-2 ${
+            isProfit ? "bg-[hsl(var(--success)/0.5)]" : "bg-[hsl(var(--destructive)/0.5)]"
+          }`}
+        />
+      </div>
+
+      {/* PnL value */}
+      <span
+        className={`text-[10px] sm:text-xs font-mono font-bold ${
+          isProfit ? "text-success" : "text-destructive"
+        }`}
+      >
+        {isProfit ? "+" : "-"}${Math.abs(pnl).toLocaleString()}
+      </span>
+
+      {/* Name + social */}
+      <div className="flex flex-col items-center gap-0.5 min-w-0 w-full">
+        <button
+          onClick={() => onSelect(entry.wallet_address, entry.kol_name)}
+          className="text-[10px] sm:text-xs font-semibold text-foreground hover:text-primary transition-colors cursor-pointer truncate max-w-full text-center"
+        >
+          {entry.kol_name}
+        </button>
+        <SocialIcon platform={entry.kol_platform} social={entry.kol_social} />
+      </div>
+
+      {/* Rank badge */}
+      <span className="text-[10px] text-muted-foreground font-medium">#{entry.rank}</span>
+    </div>
+  );
+};
+
 export const LeaderboardTable = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,9 +118,17 @@ export const LeaderboardTable = () => {
   useEffect(() => {
     setIsLoading(true);
     fetchLeaderboard();
-    const interval = setInterval(fetchLeaderboard, 45000); // Refresh every 45s
+    const interval = setInterval(fetchLeaderboard, 45000);
     return () => clearInterval(interval);
   }, [timeframe]);
+
+  const currentPnl = (entry: LeaderboardEntry) =>
+    timeframe === "24h" ? entry.total_pnl_24h : entry.total_pnl_7d;
+
+  const currentTradeCount = (entry: LeaderboardEntry) =>
+    timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
+
+  const handleSelect = (wallet: string, name: string) => setSelectedKOL({ wallet, name });
 
   if (isLoading) {
     return (
@@ -57,200 +138,102 @@ export const LeaderboardTable = () => {
     );
   }
 
-  const currentPnl = (entry: LeaderboardEntry) => 
-    timeframe === "24h" ? entry.total_pnl_24h : entry.total_pnl_7d;
-  
-  const currentTradeCount = (entry: LeaderboardEntry) => 
-    timeframe === "24h" ? entry.trade_count_24h : entry.trade_count_7d;
+  const profitable = leaderboard.filter((e) => currentPnl(e) > 0);
+  const breakeven = leaderboard.filter((e) => currentPnl(e) === 0);
+  const negative = leaderboard.filter((e) => currentPnl(e) < 0);
+
+  const maxProfit = profitable.length > 0 ? Math.max(...profitable.map((e) => currentPnl(e))) : 0;
+  const maxLoss = negative.length > 0 ? Math.max(...negative.map((e) => Math.abs(currentPnl(e)))) : 0;
 
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="flex justify-center mb-3 sm:mb-4">
-        <ToggleGroup 
-          type="single" 
-          value={timeframe} 
+        <ToggleGroup
+          type="single"
+          value={timeframe}
           onValueChange={(value) => value && setTimeframe(value as "24h" | "7d")}
           className="bg-muted p-1"
         >
-          <ToggleGroupItem value="24h" aria-label="24 hours" className="text-sm">
-            24H
-          </ToggleGroupItem>
-          <ToggleGroupItem value="7d" aria-label="7 days" className="text-sm">
-            7D
-          </ToggleGroupItem>
+          <ToggleGroupItem value="24h" aria-label="24 hours" className="text-sm">24H</ToggleGroupItem>
+          <ToggleGroupItem value="7d" aria-label="7 days" className="text-sm">7D</ToggleGroupItem>
         </ToggleGroup>
       </div>
-      <div key={timeframe} className="hidden md:block animate-fade-in">
-        <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary text-primary-foreground">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Rank</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Trader</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Trades</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">P&L</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {leaderboard.map((entry) => (
-                  <tr 
-                    key={entry.wallet_address} 
-                    className={`hover:bg-muted/50 transition-colors ${entry.rank <= 3 ? 'group' : ''}`}
-                  >
-                    <td className="px-6 py-4">
-                      <span className="text-2xl font-bold">{entry.rank}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setSelectedKOL({ wallet: entry.wallet_address, name: entry.kol_name })}
-                          className="font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
-                        >
-                          {entry.kol_name}
-                        </button>
-                        <div className="flex gap-2 relative">
-                          {entry.kol_platform === "X" && entry.kol_social && (
-                            <a
-                              href={entry.kol_social}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                              <Twitter className="h-4 w-4" />
-                            </a>
-                          )}
-                          {entry.kol_platform === "Telegram" && entry.kol_social && (
-                            <a
-                              href={entry.kol_social}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                              <Send className="h-4 w-4" />
-                            </a>
-                          )}
-                          {entry.rank === 1 && (
-                            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                              <span className="text-sm font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                                Profi Degen
-                              </span>
-                            </div>
-                          )}
-                          {entry.rank === 2 && (
-                            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                              <span className="text-sm font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                                Beast Mode
-                              </span>
-                            </div>
-                          )}
-                          {entry.rank === 3 && (
-                            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 whitespace-nowrap z-10">
-                              <span className="text-sm font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_15px_rgba(147,51,234,0.5)]">
-                                Alpha Trader
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="font-medium text-foreground">{currentTradeCount(entry)}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div
-                        className={`font-mono font-bold ${
-                          currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
-                        }`}
-                      >
-                        {currentPnl(entry) >= 0 ? "+$" : "-$"}{Math.abs(currentPnl(entry)).toLocaleString()}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
 
-      {/* Mobile view */}
-      <div key={`mobile-${timeframe}`} className="md:hidden space-y-3 sm:space-y-4 animate-fade-in">
-        {leaderboard.map((entry) => (
-          <Card 
-            key={entry.wallet_address} 
-            className={`p-3 sm:p-4 ${entry.rank <= 3 ? 'group' : ''}`}
-          >
-            <div className="space-y-2 sm:space-y-3">
-              <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <span className="text-xl sm:text-2xl font-bold">{entry.rank}</span>
-                    <div className="space-y-0.5 sm:space-y-1">
-                      <button
-                        onClick={() => setSelectedKOL({ wallet: entry.wallet_address, name: entry.kol_name })}
-                        className="font-medium text-sm sm:text-base text-foreground hover:text-primary transition-colors cursor-pointer text-left"
-                      >
-                        {entry.kol_name}
-                      </button>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{currentTradeCount(entry)} trades</div>
-                    </div>
-                  </div>
-                <div className="flex gap-2 relative">
-                  {entry.kol_platform === "X" && entry.kol_social && (
-                    <a
-                      href={entry.kol_social}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <Twitter className="h-4 w-4" />
-                    </a>
-                  )}
-                  {entry.kol_platform === "Telegram" && entry.kol_social && (
-                    <a
-                      href={entry.kol_social}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <Send className="h-4 w-4" />
-                    </a>
-                  )}
-                  {entry.rank === 1 && (
-                    <div className="absolute right-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 whitespace-nowrap z-20">
-                      <span className="text-[10px] font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_10px_rgba(147,51,234,0.4)]">
-                        Profi Degen
-                      </span>
-                    </div>
-                  )}
-                  {entry.rank === 2 && (
-                    <div className="absolute right-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 whitespace-nowrap z-20">
-                      <span className="text-[10px] font-black bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_10px_rgba(147,51,234,0.4)]">
-                        Beast Mode
-                      </span>
-                    </div>
-                  )}
-                  {entry.rank === 3 && (
-                    <div className="absolute right-0 top-full mt-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105 whitespace-nowrap z-20">
-                      <span className="text-[10px] font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_10px_rgba(147,51,234,0.4)]">
-                        Alpha Trader
-                      </span>
-                    </div>
-                  )}
-                </div>
+      <div key={timeframe} className="animate-fade-in space-y-4">
+        {/* Split view: Profitable vs Negative */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Profitable side */}
+          <Card className="p-4 sm:p-6 overflow-hidden">
+            <h3 className="text-sm font-bold text-success mb-4 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-[hsl(var(--success))]" />
+              Profitable ({profitable.length})
+            </h3>
+            {profitable.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">No profitable traders</p>
+            ) : (
+              <div className="flex items-end gap-2 overflow-x-auto pb-2">
+                {profitable.map((entry) => (
+                  <CandleBar
+                    key={entry.wallet_address}
+                    entry={entry}
+                    pnl={currentPnl(entry)}
+                    maxPnl={maxProfit}
+                    side="profit"
+                    onSelect={handleSelect}
+                  />
+                ))}
               </div>
-              <div className="space-y-1 sm:space-y-2">
-                <div
-                  className={`font-mono font-bold text-base sm:text-lg ${
-                    currentPnl(entry) >= 0 ? "text-success" : "text-destructive"
-                  }`}
-                >
-                  {currentPnl(entry) >= 0 ? "+$" : "-$"}{Math.abs(currentPnl(entry)).toLocaleString()}
-                </div>
+            )}
+          </Card>
+
+          {/* Negative side */}
+          <Card className="p-4 sm:p-6 overflow-hidden">
+            <h3 className="text-sm font-bold text-destructive mb-4 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-[hsl(var(--destructive))]" />
+              Negative ({negative.length})
+            </h3>
+            {negative.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">No negative traders</p>
+            ) : (
+              <div className="flex items-end gap-2 overflow-x-auto pb-2">
+                {negative.map((entry) => (
+                  <CandleBar
+                    key={entry.wallet_address}
+                    entry={entry}
+                    pnl={currentPnl(entry)}
+                    maxPnl={maxLoss}
+                    side="loss"
+                    onSelect={handleSelect}
+                  />
+                ))}
               </div>
+            )}
+          </Card>
+        </div>
+
+        {/* Breakeven section */}
+        {breakeven.length > 0 && (
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-sm font-bold text-muted-foreground mb-3 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-[hsl(var(--muted-foreground))]" />
+              Breakeven ({breakeven.length})
+            </h3>
+            <div className="flex flex-wrap gap-3">
+              {breakeven.map((entry) => (
+                <div key={entry.wallet_address} className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5">
+                  <button
+                    onClick={() => handleSelect(entry.wallet_address, entry.kol_name)}
+                    className="text-xs font-medium text-foreground hover:text-primary cursor-pointer transition-colors"
+                  >
+                    {entry.kol_name}
+                  </button>
+                  <SocialIcon platform={entry.kol_platform} social={entry.kol_social} />
+                  <span className="text-[10px] text-muted-foreground">{currentTradeCount(entry)} trades</span>
+                </div>
+              ))}
             </div>
           </Card>
-        ))}
+        )}
       </div>
 
       <KOLProfileDialog
