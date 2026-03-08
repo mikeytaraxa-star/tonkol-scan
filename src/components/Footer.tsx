@@ -140,20 +140,21 @@ export const Footer = () => {
                 <section>
                   <h3 className="text-lg font-semibold mb-2">What is TonKol?</h3>
                   <p className="text-muted-foreground">
-                    TonKol is a comprehensive trading platform for the TON ecosystem. Track real-time trades, 
-                    view leaderboards, and stay updated with the latest market movements.
+                    TonKol is a comprehensive KOL trading analytics platform for the TON ecosystem. Track real-time swaps made by Key Opinion Leaders, 
+                    view performance leaderboards, and discover trending tokens — all in one place.
                   </p>
                 </section>
                 
                 <section>
                   <h3 className="text-lg font-semibold mb-2">Features</h3>
                   <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Real-time KOL trade tracking with clickable profiles</li>
-                    <li>KOL Leaderboard with 24h/7d performance stats, win rates, and PnL charts</li>
-                    <li>Token Leaderboard heat map showing top 5 tokens by KOL trading volume</li>
+                    <li>Real-time KOL swap tracking displayed as interactive grid cards</li>
+                    <li>KOL Leaderboard with split-screen candle chart view — profitable vs negative traders</li>
+                    <li>Token Leaderboard showing trending tokens ranked by KOL trading volume</li>
+                    <li>Detailed KOL profiles with win rates, PnL breakdowns, and trade history</li>
+                    <li>Direct buy buttons linked to GroypFi trading bot</li>
                     <li>Live TON price tracker</li>
-                    <li>Direct trading links to JetTrade, DTrade, Stonks, and x1000</li>
-                    <li>Mobile-optimized responsive design</li>
+                    <li>Mobile-optimized responsive design with bottom navigation</li>
                   </ul>
                 </section>
                 
@@ -161,20 +162,42 @@ export const Footer = () => {
                   <h3 className="text-lg font-semibold mb-2">How to Use</h3>
                   <div className="space-y-3 text-muted-foreground">
                     <div>
-                      <h4 className="font-medium text-foreground">Trades Tab</h4>
-                      <p>View real-time KOL trades. Click on trader names to see detailed profiles with win rates, biggest wins/losses, and recent trade history.</p>
+                      <h4 className="font-medium text-foreground">Trades Tab (/trades)</h4>
+                      <p>View real-time KOL swaps as grid cards. Each card shows the trader, token, amount, and a Buy button to trade via GroypFi. Click trader names to see detailed profiles.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">KOL Leaderboard Tab</h4>
-                      <p>Rankings of tracked KOLs by trading volume. Click any trader to view their full performance analytics including 7-day PnL charts.</p>
+                      <h4 className="font-medium text-foreground">KOL Leaderboard (/kol)</h4>
+                      <p>Split-screen candle chart ranking KOLs by P&L. Green candles show profitable traders, red candles show losses — taller candles mean bigger gains or losses. Hover for detailed stats.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">Token Leaderboard Tab</h4>
-                      <p>Interactive heat map showing the top 5 most traded tokens by KOL volume. Toggle between 24h and 7d timeframes.</p>
+                      <h4 className="font-medium text-foreground">Token Leaderboard (/token)</h4>
+                      <p>Discover trending tokens ranked by KOL trading volume. Toggle between 24h and 7d timeframes.</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">Trade on Ton</h4>
-                      <p>Quick access to multiple trading platforms including JetTrade, DTrade, Stonks, and x1000.</p>
+                      <h4 className="font-medium text-foreground">Trade on TON</h4>
+                      <p>Quick access to trading via GroypFi Telegram Bot and groypfi.io.</p>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-2">Integrations</h3>
+                  <div className="space-y-3 text-muted-foreground">
+                    <div>
+                      <h4 className="font-medium text-foreground">GroypFi Trading</h4>
+                      <p>Buy buttons on swap cards and the "Trade on TON" dialog link directly to the GroypFi Telegram Bot for seamless trading.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Groypad Launch Alerts</h4>
+                      <p>Real-time TON launch alerts filtering for Gaspump, Blum, and Tonpump DEXes. Join @groypadlaunch on Telegram.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Tonkol MCP Plugin (Teleton)</h4>
+                      <p>Developer plugin for the Teleton Agent framework providing tools for fetching trades, KOL stats, leaderboards, and search functionality.</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">Telegram Bot (@toncoinkol_bot)</h4>
+                      <p>Use /trade to get the latest 10 KOL trades directly in Telegram.</p>
                     </div>
                   </div>
                 </section>
