@@ -38,11 +38,18 @@ const CandleBar = ({
   maxPnl,
   side,
   tradeCount,
+  timeframe,
   onSelect,
   animated,
 }: {
   entry: LeaderboardEntry;
   pnl: number;
+  maxPnl: number;
+  side: "profit" | "loss";
+  tradeCount: number;
+  timeframe: "24h" | "7d";
+  onSelect: (wallet: string, name: string) => void;
+  animated: boolean;
   maxPnl: number;
   side: "profit" | "loss";
   tradeCount: number;
