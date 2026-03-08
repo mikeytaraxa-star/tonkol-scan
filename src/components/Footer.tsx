@@ -50,7 +50,7 @@ export const Footer = () => {
               </DialogHeader>
               <Button asChild className="w-full">
                 <a
-                  href="https://t.me/mikeyketomi"
+                  href="https://t.me/yugoslavac"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -117,7 +117,7 @@ export const Footer = () => {
               
               <Button asChild className="w-full">
                 <a
-                  href="https://t.me/mikeyketomi"
+                  href="https://t.me/yugoslavac"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -193,7 +193,7 @@ export const Footer = () => {
                   </p>
                   <Button asChild className="w-full">
                     <a
-                      href="https://t.me/mikeyketomi"
+                      href="https://t.me/yugoslavac"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
