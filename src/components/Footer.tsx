@@ -1,4 +1,4 @@
-import { Mail, Handshake, FileText, Twitter, Megaphone } from "lucide-react";
+import { Handshake, FileText, Twitter, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,13 +24,6 @@ export const Footer = () => {
             <Twitter className="h-5 w-5" />
           </a>
           
-          <a
-            href="mailto:tonkolinfo@gmail.com"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Email"
-          >
-            <Mail className="h-5 w-5" />
-          </a>
           
           <Dialog>
             <DialogTrigger asChild>
