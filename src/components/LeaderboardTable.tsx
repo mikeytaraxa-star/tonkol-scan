@@ -278,6 +278,7 @@ export const LeaderboardTable = () => {
                     tradeCount={currentTradeCount(entry)}
                     timeframe={timeframe}
                     onSelect={handleSelect}
+                    animated={animated}
                   />
                 ))}
               </div>
