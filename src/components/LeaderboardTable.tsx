@@ -50,11 +50,6 @@ const CandleBar = ({
   timeframe: "24h" | "7d";
   onSelect: (wallet: string, name: string) => void;
   animated: boolean;
-  maxPnl: number;
-  side: "profit" | "loss";
-  tradeCount: number;
-  onSelect: (wallet: string, name: string) => void;
-  animated: boolean;
 }) => {
   const heightPercent = maxPnl === 0 ? 5 : Math.max(5, (Math.abs(pnl) / maxPnl) * 100);
   const isProfit = side === "profit";
