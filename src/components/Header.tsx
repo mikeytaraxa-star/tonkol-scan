@@ -1,5 +1,5 @@
 import logo from "@/assets/logo.png";
-import { Twitter, Send, ExternalLink } from "lucide-react";
+import { Send, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

@@ -1,4 +1,4 @@
-import { Mail, Handshake, FileText, Twitter, Megaphone } from "lucide-react";
+import { Handshake, FileText, Twitter, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
