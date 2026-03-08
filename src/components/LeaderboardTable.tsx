@@ -2,7 +2,9 @@ import { Twitter, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { KOLProfileDialog } from "@/components/KOLProfileDialog";
-import { useState, useEffect } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { useState, useEffect, useRef } from "react";
 
 interface LeaderboardEntry {
   rank: number;
@@ -35,60 +37,111 @@ const CandleBar = ({
   pnl,
   maxPnl,
   side,
+  tradeCount,
   onSelect,
+  animated,
 }: {
   entry: LeaderboardEntry;
   pnl: number;
   maxPnl: number;
   side: "profit" | "loss";
+  tradeCount: number;
   onSelect: (wallet: string, name: string) => void;
+  animated: boolean;
 }) => {
   const heightPercent = maxPnl === 0 ? 5 : Math.max(5, (Math.abs(pnl) / maxPnl) * 100);
   const isProfit = side === "profit";
 
   return (
-    <div className="flex flex-col items-center gap-1.5 flex-1 min-w-0 max-w-[80px]">
-      {/* Candle */}
-      <div className="w-full flex flex-col items-center justify-end h-[180px] sm:h-[240px]">
-        <div
-          className={`w-3/4 rounded-t-sm transition-all duration-500 ${
-            isProfit
-              ? "bg-gradient-to-t from-[hsl(var(--success))] to-[hsl(var(--success)/0.6)]"
-              : "bg-gradient-to-t from-[hsl(var(--destructive))] to-[hsl(var(--destructive)/0.6)]"
-          }`}
-          style={{ height: `${heightPercent}%` }}
-        />
-        {/* Wick line */}
-        <div
-          className={`w-0.5 h-2 ${
-            isProfit ? "bg-[hsl(var(--success)/0.5)]" : "bg-[hsl(var(--destructive)/0.5)]"
-          }`}
-        />
-      </div>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex flex-col items-center gap-1.5 flex-1 min-w-0 max-w-[80px] cursor-pointer group">
+            {/* Candle */}
+            <div className="w-full flex flex-col items-center justify-end h-[180px] sm:h-[240px]">
+              <div
+                className={`w-3/4 rounded-t-sm transition-all duration-700 ease-out group-hover:opacity-90 ${
+                  isProfit
+                    ? "bg-gradient-to-t from-[hsl(var(--success))] to-[hsl(var(--success)/0.6)]"
+                    : "bg-gradient-to-t from-[hsl(var(--destructive))] to-[hsl(var(--destructive)/0.6)]"
+                }`}
+                style={{ height: animated ? `${heightPercent}%` : "0%" }}
+              />
+              <div
+                className={`w-0.5 transition-all duration-500 ease-out ${
+                  isProfit ? "bg-[hsl(var(--success)/0.5)]" : "bg-[hsl(var(--destructive)/0.5)]"
+                }`}
+                style={{ height: animated ? "8px" : "0px" }}
+              />
+            </div>
 
-      {/* PnL value */}
-      <span
-        className={`text-[10px] sm:text-xs font-mono font-bold ${
-          isProfit ? "text-success" : "text-destructive"
-        }`}
-      >
-        {isProfit ? "+" : "-"}${Math.abs(pnl).toLocaleString()}
-      </span>
+            {/* Trade count badge */}
+            <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 font-mono">
+              {tradeCount} trades
+            </Badge>
 
-      {/* Name + social */}
-      <div className="flex flex-col items-center gap-0.5 min-w-0 w-full">
-        <button
-          onClick={() => onSelect(entry.wallet_address, entry.kol_name)}
-          className="text-[10px] sm:text-xs font-semibold text-foreground hover:text-primary transition-colors cursor-pointer truncate max-w-full text-center"
-        >
-          {entry.kol_name}
-        </button>
-        <SocialIcon platform={entry.kol_platform} social={entry.kol_social} />
-      </div>
+            {/* PnL value */}
+            <span
+              className={`text-[10px] sm:text-xs font-mono font-bold ${
+                isProfit ? "text-success" : "text-destructive"
+              }`}
+            >
+              {isProfit ? "+" : "-"}${Math.abs(pnl).toLocaleString()}
+            </span>
 
-      {/* Rank badge */}
-      <span className="text-[10px] text-muted-foreground font-medium">#{entry.rank}</span>
-    </div>
+            {/* Name + social */}
+            <div className="flex flex-col items-center gap-0.5 min-w-0 w-full">
+              <button
+                onClick={() => onSelect(entry.wallet_address, entry.kol_name)}
+                className="text-[10px] sm:text-xs font-semibold text-foreground hover:text-primary transition-colors cursor-pointer truncate max-w-full text-center"
+              >
+                {entry.kol_name}
+              </button>
+              <SocialIcon platform={entry.kol_platform} social={entry.kol_social} />
+            </div>
+
+            {/* Rank badge */}
+            <span className="text-[10px] text-muted-foreground font-medium">#{entry.rank}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[200px]">
+          <div className="space-y-1.5 text-xs">
+            <p className="font-bold text-sm">{entry.kol_name}</p>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">P&L</span>
+              <span className={`font-mono font-bold ${isProfit ? "text-success" : "text-destructive"}`}>
+                {isProfit ? "+" : "-"}${Math.abs(pnl).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Trades</span>
+              <span className="font-mono font-semibold">{tradeCount}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Rank</span>
+              <span className="font-semibold">#{entry.rank}</span>
+            </div>
+            {entry.total_pnl_24h !== 0 && entry.total_pnl_7d !== 0 && (
+              <>
+                <hr className="border-border" />
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">24h P&L</span>
+                  <span className={`font-mono text-[11px] ${entry.total_pnl_24h >= 0 ? "text-success" : "text-destructive"}`}>
+                    {entry.total_pnl_24h >= 0 ? "+" : "-"}${Math.abs(entry.total_pnl_24h).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">7d P&L</span>
+                  <span className={`font-mono text-[11px] ${entry.total_pnl_7d >= 0 ? "text-success" : "text-destructive"}`}>
+                    {entry.total_pnl_7d >= 0 ? "+" : "-"}${Math.abs(entry.total_pnl_7d).toLocaleString()}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
@@ -97,6 +150,7 @@ export const LeaderboardTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<"24h" | "7d">("24h");
   const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
+  const [animated, setAnimated] = useState(false);
 
   const fetchLeaderboard = async () => {
     try {
@@ -117,10 +171,19 @@ export const LeaderboardTable = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    setAnimated(false);
     fetchLeaderboard();
     const interval = setInterval(fetchLeaderboard, 45000);
     return () => clearInterval(interval);
   }, [timeframe]);
+
+  // Trigger grow animation after data loads
+  useEffect(() => {
+    if (!isLoading && leaderboard.length > 0) {
+      const timer = setTimeout(() => setAnimated(true), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, leaderboard]);
 
   const currentPnl = (entry: LeaderboardEntry) =>
     timeframe === "24h" ? entry.total_pnl_24h : entry.total_pnl_7d;
@@ -160,7 +223,6 @@ export const LeaderboardTable = () => {
       </div>
 
       <div key={timeframe} className="animate-fade-in space-y-4">
-        {/* Split view: Profitable vs Negative */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Profitable side */}
           <Card className="p-4 sm:p-6 overflow-hidden">
@@ -179,7 +241,9 @@ export const LeaderboardTable = () => {
                     pnl={currentPnl(entry)}
                     maxPnl={maxProfit}
                     side="profit"
+                    tradeCount={currentTradeCount(entry)}
                     onSelect={handleSelect}
+                    animated={animated}
                   />
                 ))}
               </div>
@@ -203,7 +267,9 @@ export const LeaderboardTable = () => {
                     pnl={currentPnl(entry)}
                     maxPnl={maxLoss}
                     side="loss"
+                    tradeCount={currentTradeCount(entry)}
                     onSelect={handleSelect}
+                    animated={animated}
                   />
                 ))}
               </div>
