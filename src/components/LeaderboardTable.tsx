@@ -123,7 +123,7 @@ const CandleBar = ({
               <span className="text-muted-foreground">Rank</span>
               <span className="font-semibold">#{entry.rank}</span>
             </div>
-            {entry.total_pnl_24h !== 0 && entry.total_pnl_7d !== 0 && (
+            {timeframe === "24h" && entry.total_pnl_24h !== 0 && (
               <>
                 <hr className="border-border" />
                 <div className="flex justify-between gap-4">
@@ -132,6 +132,11 @@ const CandleBar = ({
                     {entry.total_pnl_24h >= 0 ? "+" : "-"}${Math.abs(entry.total_pnl_24h).toLocaleString()}
                   </span>
                 </div>
+              </>
+            )}
+            {timeframe === "7d" && entry.total_pnl_7d !== 0 && (
+              <>
+                <hr className="border-border" />
                 <div className="flex justify-between gap-4">
                   <span className="text-muted-foreground">7d P&L</span>
                   <span className={`font-mono text-[11px] ${entry.total_pnl_7d >= 0 ? "text-success" : "text-destructive"}`}>
