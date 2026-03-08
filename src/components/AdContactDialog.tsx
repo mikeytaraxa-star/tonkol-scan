@@ -72,7 +72,7 @@ export const AdContactDialog = ({ open, onOpenChange }: AdContactDialogProps) =>
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             <a
-              href="https://t.me/mikeyketomi"
+              href="https://t.me/yugoslavac"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2"
