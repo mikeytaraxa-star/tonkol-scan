@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Twitter, Send } from "lucide-react";
+import { Twitter, Send, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { KOLProfileDialog } from "./KOLProfileDialog";
 
 interface Trade {
@@ -41,7 +42,6 @@ export const TradesTable = () => {
   const [selectedKOL, setSelectedKOL] = useState<{ wallet: string; name: string } | null>(null);
 
   const filterTrade = (trade: Trade): boolean => {
-    // Skip if amount_ton is 0 or less than 1
     return trade.amount_ton > 1;
   };
 
@@ -50,7 +50,6 @@ export const TradesTable = () => {
     let reconnectTimeout: NodeJS.Timeout | null = null;
     const seenTxHashes = new Set<string>();
 
-    // 1. Fetch initial trades
     const fetchInitialTrades = async () => {
       try {
         const response = await fetch(`${API_BASE}/api/trades/recent?limit=50`, {
@@ -62,7 +61,6 @@ export const TradesTable = () => {
         const data = await response.json();
         const fetchedTrades = data.trades || [];
         
-        // Filter and deduplicate
         const filteredTrades = fetchedTrades.filter((trade: Trade) => {
           if (seenTxHashes.has(trade.tx_hash)) return false;
           seenTxHashes.add(trade.tx_hash);
@@ -77,7 +75,6 @@ export const TradesTable = () => {
       }
     };
 
-    // 2. Connect WebSocket for live updates
     const connectWebSocket = () => {
       ws = new WebSocket("wss://apitonkol.pro/ws/trades/full?api_key=sk_project1_abc123");
 
@@ -85,13 +82,12 @@ export const TradesTable = () => {
         try {
           const newTrade: Trade = JSON.parse(event.data);
           
-          // Skip if duplicate or doesn't pass filter
           if (seenTxHashes.has(newTrade.tx_hash) || !filterTrade(newTrade)) {
             return;
           }
           
           seenTxHashes.add(newTrade.tx_hash);
-          setTrades(prev => [newTrade, ...prev].slice(0, 50)); // Keep max 50
+          setTrades(prev => [newTrade, ...prev].slice(0, 50));
         } catch (error) {
           console.error("Failed to parse WebSocket message:", error);
         }
@@ -111,7 +107,6 @@ export const TradesTable = () => {
     fetchInitialTrades();
     connectWebSocket();
 
-    // Time update interval
     const timeInterval = setInterval(() => {
       setCurrentTime(Date.now());
     }, 1000);
@@ -133,183 +128,79 @@ export const TradesTable = () => {
 
   return (
     <div className="space-y-4">
-      <div className="hidden md:block">
-        <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary text-primary-foreground">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Trader</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Type</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Amount</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Token</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Time</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {trades.map((trade) => (
-                  <tr key={trade.tx_hash} className="hover:bg-muted/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
-                          className="font-medium text-foreground hover:text-primary cursor-pointer transition-colors"
-                        >
-                          {trade.kol_name}
-                        </button>
-                        <div className="flex gap-2">
-                          {trade.kol_platform === "X" && trade.kol_social && (
-                            <a
-                              href={trade.kol_social}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                              <Twitter className="h-4 w-4" />
-                            </a>
-                          )}
-                          {trade.kol_platform === "Telegram" && trade.kol_social && (
-                            <a
-                              href={trade.kol_social}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                              <Send className="h-4 w-4" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <Badge
-                        variant={trade.trade_type === "buy" ? "default" : "destructive"}
-                        className="uppercase font-semibold"
-                      >
-                        {trade.trade_type}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="font-mono font-semibold text-foreground">
-                          {trade.amount_ton.toFixed(2)} TON
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          ${trade.value_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <a
-                          href="https://t.me/groypfi_bot?start=ref_7491048574"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-lg hover:scale-110 transition-transform"
-                          title="Buy on GroypFi"
-                        >
-                          💰
-                        </a>
-                        <a 
-                          href={`https://tonviewer.com/${trade.token_address}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-semibold text-primary hover:underline"
-                        >
-                          ${trade.token_symbol}
-                        </a>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm text-muted-foreground">
-                        {formatTimeSince(trade.timestamp)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
-
-      {/* Mobile view */}
-      <div className="md:hidden space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
         {trades.map((trade) => (
-          <Card key={trade.tx_hash} className="p-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
-                    className="font-medium text-foreground hover:text-primary cursor-pointer transition-colors"
-                  >
-                    {trade.kol_name}
-                  </button>
-                  <div className="flex gap-2">
-                    {trade.kol_platform === "X" && trade.kol_social && (
-                      <a
-                        href={trade.kol_social}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <Twitter className="h-4 w-4" />
-                      </a>
-                    )}
-                    {trade.kol_platform === "Telegram" && trade.kol_social && (
-                      <a
-                        href={trade.kol_social}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <Send className="h-4 w-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-                <Badge
-                  variant={trade.trade_type === "buy" ? "default" : "destructive"}
-                  className="uppercase font-semibold"
+          <Card
+            key={trade.tx_hash}
+            className="p-4 flex flex-col justify-between gap-3 hover:shadow-md transition-shadow"
+          >
+            {/* Header: trader + badge */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0">
+                <button
+                  onClick={() => setSelectedKOL({ wallet: trade.wallet_address, name: trade.kol_name })}
+                  className="font-semibold text-sm text-foreground hover:text-primary cursor-pointer transition-colors truncate"
                 >
-                  {trade.trade_type}
-                </Badge>
+                  {trade.kol_name}
+                </button>
+                {trade.kol_platform === "X" && trade.kol_social && (
+                  <a href={trade.kol_social} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+                    <Twitter className="h-3.5 w-3.5" />
+                  </a>
+                )}
+                {trade.kol_platform === "Telegram" && trade.kol_social && (
+                  <a href={trade.kol_social} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
+                    <Send className="h-3.5 w-3.5" />
+                  </a>
+                )}
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-mono font-semibold text-foreground">
-                    {trade.amount_ton.toFixed(2)} TON
-                  </div>
-                    <div className="text-sm text-muted-foreground">
-                    ${trade.value_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <a
-                      href="https://t.me/groypfi_bot?start=ref_7491048574"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lg hover:scale-110 transition-transform"
-                      title="Buy on GroypFi"
-                    >
-                      💰
-                    </a>
-                    <a 
-                      href={`https://tonviewer.com/${trade.token_address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-primary hover:underline"
-                    >
-                      ${trade.token_symbol}
-                    </a>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {formatTimeSince(trade.timestamp)}
-                  </div>
-                </div>
+              <Badge
+                variant={trade.trade_type === "buy" ? "default" : "destructive"}
+                className="uppercase text-[10px] font-bold shrink-0"
+              >
+                {trade.trade_type}
+              </Badge>
+            </div>
+
+            {/* Token + Amount */}
+            <div className="space-y-1.5">
+              <a
+                href={`https://tonviewer.com/${trade.token_address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-base font-bold text-primary hover:underline block truncate"
+              >
+                ${trade.token_symbol}
+              </a>
+              <div className="flex items-baseline justify-between">
+                <span className="font-mono text-sm font-semibold text-foreground">
+                  {trade.amount_ton.toFixed(2)} TON
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  ${trade.value_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
+            </div>
+
+            {/* Footer: time + buy button */}
+            <div className="flex items-center justify-between pt-1 border-t border-border">
+              <span className="text-xs text-muted-foreground">
+                {formatTimeSince(trade.timestamp)}
+              </span>
+              <Button
+                asChild
+                size="sm"
+                className="h-7 px-3 text-xs font-bold gap-1"
+              >
+                <a
+                  href="https://t.me/groypfi_bot?start=ref_7491048574"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ShoppingCart className="h-3 w-3" />
+                  Buy
+                </a>
+              </Button>
             </div>
           </Card>
         ))}
