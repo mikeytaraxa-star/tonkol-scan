@@ -75,16 +75,7 @@ export function KOLProfileDialog({
   const fetchKOLStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://apitonkol.pro/api/kol/${walletAddress}`,
-        {
-          headers: {
-            "X-API-Key": "sk_project1_abc123",
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await tonkolFetch<KOLStats>(`/api/kol/${encodeURIComponent(walletAddress)}`);
       setStats(data);
     } catch (error) {
       console.error("Error fetching KOL stats:", error);
