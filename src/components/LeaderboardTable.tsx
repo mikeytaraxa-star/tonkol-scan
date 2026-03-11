@@ -5,6 +5,7 @@ import { KOLProfileDialog } from "@/components/KOLProfileDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useRef } from "react";
+import { tonkolFetch, isValidSocialUrl } from "@/lib/api";
 
 interface LeaderboardEntry {
   rank: number;
