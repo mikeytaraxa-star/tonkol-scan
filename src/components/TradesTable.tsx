@@ -68,6 +68,8 @@ const formatTimeSince = (timestampStr: string) => {
   return `${Math.floor(seconds / 86400)}d ago`;
 };
 
+// WebSocket cannot be proxied through edge functions.
+// This key is a project-scoped public key (similar to Supabase anon key).
 const WS_URL = "wss://apitonkol.pro/ws/trades/full";
 const MAX_RECONNECT_DELAY = 60000;
 const INITIAL_RECONNECT_DELAY = 3000;
