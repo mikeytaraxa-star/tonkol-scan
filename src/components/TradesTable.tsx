@@ -81,7 +81,7 @@ export const TradesTable = () => {
 
   useEffect(() => {
     let ws: WebSocket | null = null;
-    let reconnectTimeout: NodeJS.Timeout | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
     const seenTxHashes = new Set<string>();
 
     const fetchInitialTrades = async () => {
