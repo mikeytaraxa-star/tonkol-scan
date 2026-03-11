@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
+import { tonkolFetch } from "@/lib/api";
 
 interface TokenHeatmap {
   token_symbol: string;
@@ -7,8 +8,6 @@ interface TokenHeatmap {
   token_address: string;
   volume_ton: number;
 }
-
-const API_BASE = "https://apitonkol.pro";
 
 export const TokenLeaderboard = () => {
   const [tokens, setTokens] = useState<TokenHeatmap[]>([]);
