@@ -20,10 +20,8 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://apitonkol.pro";
-
 const SocialIcon = ({ platform, social }: { platform: string; social: string }) => {
-  if (!social) return null;
+  if (!social || !isValidSocialUrl(social)) return null;
   const Icon = platform === "X" ? Twitter : platform === "Telegram" ? Send : null;
   if (!Icon) return null;
   return (
