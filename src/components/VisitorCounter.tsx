@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
-
-const API_BASE = "https://apitonkol.pro";
+import { tonkolFetch } from "@/lib/api";
 
 export const VisitorCounter = () => {
   const [visitors7d, setVisitors7d] = useState(4317);
