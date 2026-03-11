@@ -45,6 +45,6 @@ export function isValidSocialUrl(url: string): boolean {
  */
 export function getTradesWebSocketUrl(): string {
   // WebSocket connections cannot be proxied through edge functions.
-  // The API key used here is a public/project-scoped key, not a secret.
-  return `wss://apitonkol.pro/ws/trades/full?api_key=${SUPABASE_ANON_KEY}`;
+  // This endpoint is public (no API key needed for WS).
+  return "wss://apitonkol.pro/ws/trades/full";
 }
