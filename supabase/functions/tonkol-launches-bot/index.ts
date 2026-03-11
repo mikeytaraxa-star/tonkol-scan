@@ -457,6 +457,19 @@ serve(async (req) => {
   
   try {
     const url = new URL(req.url);
+    const action = url.searchParams.get("action");
+    
+    // Admin actions require token authentication
+    if (action === "check" || action === "setwebhook" || action === "getme") {
+      const authHeader = req.headers.get("Authorization");
+      const token = authHeader?.replace("Bearer ", "");
+      if (token !== ADMIN_TOKEN) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
     
     // Webhook endpoint for Telegram updates
     if (req.method === "POST" && !url.searchParams.has("action")) {
@@ -468,7 +481,7 @@ serve(async (req) => {
     }
     
     // Manual trigger to check for new pools (for cron job)
-    if (url.searchParams.get("action") === "check") {
+    if (action === "check") {
       const result = await checkAndPostNewPools();
       return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
