@@ -227,7 +227,7 @@ export const TradesTable = () => {
                 className="h-7 px-3 text-xs font-bold gap-1"
               >
                 <a
-                  href={`https://t.me/groypfi_bot?start=ref_7491048574_token_${trade.token_address}`}
+                  href={`https://t.me/groypfi_bot?start=ref_7491048574_token_${rawToFriendly(trade.token_address)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
