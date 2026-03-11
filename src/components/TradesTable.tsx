@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { KOLProfileDialog } from "./KOLProfileDialog";
+import { tonkolFetch, isValidSocialUrl } from "@/lib/api";
 
 interface Trade {
   kol_name: string;
@@ -22,8 +23,6 @@ interface Trade {
   tx_hash: string;
   dex_name: string;
 }
-
-const API_BASE = "https://apitonkol.pro";
 
 const crc16 = (data: Uint8Array): number => {
   let crc = 0;
@@ -69,6 +68,11 @@ const formatTimeSince = (timestampStr: string) => {
   return `${Math.floor(seconds / 86400)}d ago`;
 };
 
+const WS_URL = "wss://apitonkol.pro/ws/trades/full";
+const MAX_RECONNECT_DELAY = 60000;
+const INITIAL_RECONNECT_DELAY = 3000;
+const MAX_RECONNECT_ATTEMPTS = 20;
+
 export const TradesTable = () => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,21 +86,16 @@ export const TradesTable = () => {
   useEffect(() => {
     let ws: WebSocket | null = null;
     let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    let reconnectAttempts = 0;
     const seenTxHashes = new Set<string>();
 
     const fetchInitialTrades = async () => {
       try {
-        const response = await fetch(`${API_BASE}/api/trades/recent?limit=50`, {
-          headers: {
-            'X-API-Key': 'sk_project1_abc123',
-            'ngrok-skip-browser-warning': 'true'
-          }
-        });
-        const data = await response.json();
-        const fetchedTrades = data.trades || [];
+        const data = await tonkolFetch<{ trades: Trade[] }>("/api/trades/recent?limit=50");
+        const fetchedTrades = Array.isArray(data?.trades) ? data.trades : [];
         
         const filteredTrades = fetchedTrades.filter((trade: Trade) => {
-          if (seenTxHashes.has(trade.tx_hash)) return false;
+          if (!trade.tx_hash || seenTxHashes.has(trade.tx_hash)) return false;
           seenTxHashes.add(trade.tx_hash);
           return filterTrade(trade);
         });
@@ -110,13 +109,22 @@ export const TradesTable = () => {
     };
 
     const connectWebSocket = () => {
-      ws = new WebSocket("wss://apitonkol.pro/ws/trades/full?api_key=sk_project1_abc123");
+      if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+        console.warn("Max WebSocket reconnect attempts reached");
+        return;
+      }
+      
+      ws = new WebSocket(WS_URL);
+
+      ws.onopen = () => {
+        reconnectAttempts = 0; // Reset on successful connection
+      };
 
       ws.onmessage = (event) => {
         try {
           const newTrade: Trade = JSON.parse(event.data);
           
-          if (seenTxHashes.has(newTrade.tx_hash) || !filterTrade(newTrade)) {
+          if (!newTrade.tx_hash || seenTxHashes.has(newTrade.tx_hash) || !filterTrade(newTrade)) {
             return;
           }
           
@@ -128,8 +136,10 @@ export const TradesTable = () => {
       };
 
       ws.onclose = () => {
-        console.log("WebSocket closed, reconnecting in 3 seconds...");
-        reconnectTimeout = setTimeout(connectWebSocket, 3000);
+        reconnectAttempts++;
+        const delay = Math.min(INITIAL_RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1), MAX_RECONNECT_DELAY);
+        console.log(`WebSocket closed, reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+        reconnectTimeout = setTimeout(connectWebSocket, delay);
       };
 
       ws.onerror = (error) => {
@@ -177,12 +187,12 @@ export const TradesTable = () => {
                 >
                   {trade.kol_name}
                 </button>
-                {trade.kol_platform === "X" && trade.kol_social && (
+                {trade.kol_platform === "X" && isValidSocialUrl(trade.kol_social) && (
                   <a href={trade.kol_social} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
                     <Twitter className="h-3.5 w-3.5" />
                   </a>
                 )}
-                {trade.kol_platform === "Telegram" && trade.kol_social && (
+                {trade.kol_platform === "Telegram" && isValidSocialUrl(trade.kol_social) && (
                   <a href={trade.kol_social} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
                     <Send className="h-3.5 w-3.5" />
                   </a>

@@ -103,7 +103,7 @@ export function KOLProfileDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <span className="text-xl sm:text-2xl">{kolName}</span>
-            {stats?.social_link && (
+            {stats?.social_link && isValidSocialUrl(stats.social_link) && (
               <a
                 href={stats.social_link}
                 target="_blank"

@@ -160,14 +160,8 @@ export const LeaderboardTable = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/leaderboard?timeframe=${timeframe}`, {
-        headers: {
-          'X-API-Key': 'sk_project1_abc123',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      const data = await response.json();
-      setLeaderboard(data.leaderboard || []);
+      const data = await tonkolFetch<{ leaderboard: LeaderboardEntry[] }>(`/api/leaderboard?timeframe=${timeframe}`);
+      setLeaderboard(Array.isArray(data?.leaderboard) ? data.leaderboard : []);
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
     } finally {

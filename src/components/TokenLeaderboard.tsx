@@ -16,19 +16,8 @@ export const TokenLeaderboard = () => {
 
   const fetchTokens = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/tokens/heatmap?timeframe=24h`, {
-        headers: {
-          'X-API-Key': 'sk_project1_abc123',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      setTokens(data.tokens || []);
+      const data = await tonkolFetch<{ tokens: TokenHeatmap[] }>("/api/tokens/heatmap?timeframe=24h");
+      setTokens(Array.isArray(data?.tokens) ? data.tokens : []);
       setError(null);
     } catch (error) {
       console.error("Failed to fetch token heatmap:", error);
