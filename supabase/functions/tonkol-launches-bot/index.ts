@@ -489,14 +489,12 @@ serve(async (req) => {
     }
     
     // Set webhook endpoint
-    if (url.searchParams.get("action") === "setwebhook") {
+    if (action === "setwebhook") {
       const webhookUrl = `${SUPABASE_URL}/functions/v1/tonkol-launches-bot`;
       const setWebhookUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${encodeURIComponent(webhookUrl)}`;
       
       const response = await fetch(setWebhookUrl);
       const result = await response.json();
-      
-      console.log("Set webhook result:", result);
       
       return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -504,7 +502,7 @@ serve(async (req) => {
     }
     
     // Get bot info
-    if (url.searchParams.get("action") === "getme") {
+    if (action === "getme") {
       const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`);
       const result = await response.json();
       
