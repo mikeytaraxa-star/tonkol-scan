@@ -5,6 +5,7 @@ import { KOLProfileDialog } from "@/components/KOLProfileDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useRef } from "react";
+import { tonkolFetch, isValidSocialUrl } from "@/lib/api";
 
 interface LeaderboardEntry {
   rank: number;
@@ -19,10 +20,8 @@ interface LeaderboardEntry {
   last_calculated: string;
 }
 
-const API_BASE = "https://apitonkol.pro";
-
 const SocialIcon = ({ platform, social }: { platform: string; social: string }) => {
-  if (!social) return null;
+  if (!social || !isValidSocialUrl(social)) return null;
   const Icon = platform === "X" ? Twitter : platform === "Telegram" ? Send : null;
   if (!Icon) return null;
   return (
@@ -161,14 +160,8 @@ export const LeaderboardTable = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/leaderboard?timeframe=${timeframe}`, {
-        headers: {
-          'X-API-Key': 'sk_project1_abc123',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      const data = await response.json();
-      setLeaderboard(data.leaderboard || []);
+      const data = await tonkolFetch<{ leaderboard: LeaderboardEntry[] }>(`/api/leaderboard?timeframe=${timeframe}`);
+      setLeaderboard(Array.isArray(data?.leaderboard) ? data.leaderboard : []);
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
     } finally {

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, Twitter, Send } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { tonkolFetch, isValidSocialUrl } from "@/lib/api";
 
 interface Trade {
   token_symbol: string;
@@ -74,16 +75,7 @@ export function KOLProfileDialog({
   const fetchKOLStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://apitonkol.pro/api/kol/${walletAddress}`,
-        {
-          headers: {
-            "X-API-Key": "sk_project1_abc123",
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await tonkolFetch<KOLStats>(`/api/kol/${encodeURIComponent(walletAddress)}`);
       setStats(data);
     } catch (error) {
       console.error("Error fetching KOL stats:", error);
@@ -111,7 +103,7 @@ export function KOLProfileDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <span className="text-xl sm:text-2xl">{kolName}</span>
-            {stats?.social_link && (
+            {stats?.social_link && isValidSocialUrl(stats.social_link) && (
               <a
                 href={stats.social_link}
                 target="_blank"

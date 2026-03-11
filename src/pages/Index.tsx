@@ -5,7 +5,7 @@ import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { TokenLeaderboard } from "@/components/TokenLeaderboard";
 import { TelegramCTA } from "@/components/TelegramCTA";
 import { Footer } from "@/components/Footer";
-import { AdBanner } from "@/components/AdBanner";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Trophy, Flame } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";

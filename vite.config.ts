@@ -8,16 +8,6 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    proxy: {
-      '/api': {
-        target: 'https://apitonkol.pro',
-        changeOrigin: true,
-        secure: false,
-        headers: {
-          'X-API-Key': 'sk_project1_abc123'
-        }
-      }
-    }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

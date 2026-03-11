@@ -1,21 +1,14 @@
 import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
-
-const API_BASE = "https://apitonkol.pro";
+import { tonkolFetch } from "@/lib/api";
 
 export const VisitorCounter = () => {
   const [visitors7d, setVisitors7d] = useState(4317);
 
   const fetchVisitorStats = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/stats`, {
-        headers: {
-          'X-API-Key': 'sk_project1_abc123',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      const data = await response.json();
-      if (data.visitors_7d !== undefined) setVisitors7d(data.visitors_7d);
+      const data = await tonkolFetch<{ visitors_7d?: number }>("/api/stats");
+      if (data?.visitors_7d !== undefined) setVisitors7d(data.visitors_7d);
     } catch (error) {
       console.error("Error fetching visitor stats:", error);
     }

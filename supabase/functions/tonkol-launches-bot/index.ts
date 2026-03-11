@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const TELEGRAM_BOT_TOKEN = Deno.env.get("TONKOL_LAUNCHES_BOT_TOKEN")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const ADMIN_TOKEN = Deno.env.get("LAUNCHES_BOT_ADMIN_TOKEN")!;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -456,6 +457,19 @@ serve(async (req) => {
   
   try {
     const url = new URL(req.url);
+    const action = url.searchParams.get("action");
+    
+    // Admin actions require token authentication
+    if (action === "check" || action === "setwebhook" || action === "getme") {
+      const authHeader = req.headers.get("Authorization");
+      const token = authHeader?.replace("Bearer ", "");
+      if (token !== ADMIN_TOKEN) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
     
     // Webhook endpoint for Telegram updates
     if (req.method === "POST" && !url.searchParams.has("action")) {
@@ -467,7 +481,7 @@ serve(async (req) => {
     }
     
     // Manual trigger to check for new pools (for cron job)
-    if (url.searchParams.get("action") === "check") {
+    if (action === "check") {
       const result = await checkAndPostNewPools();
       return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -475,14 +489,12 @@ serve(async (req) => {
     }
     
     // Set webhook endpoint
-    if (url.searchParams.get("action") === "setwebhook") {
+    if (action === "setwebhook") {
       const webhookUrl = `${SUPABASE_URL}/functions/v1/tonkol-launches-bot`;
       const setWebhookUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${encodeURIComponent(webhookUrl)}`;
       
       const response = await fetch(setWebhookUrl);
       const result = await response.json();
-      
-      console.log("Set webhook result:", result);
       
       return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -490,7 +502,7 @@ serve(async (req) => {
     }
     
     // Get bot info
-    if (url.searchParams.get("action") === "getme") {
+    if (action === "getme") {
       const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`);
       const result = await response.json();
       
