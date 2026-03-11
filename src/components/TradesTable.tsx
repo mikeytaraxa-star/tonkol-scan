@@ -25,6 +25,40 @@ interface Trade {
 
 const API_BASE = "https://apitonkol.pro";
 
+const crc16 = (data: Uint8Array): number => {
+  let crc = 0;
+  for (const byte of data) {
+    crc ^= byte << 8;
+    for (let i = 0; i < 8; i++) {
+      crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+      crc &= 0xffff;
+    }
+  }
+  return crc;
+};
+
+const rawToFriendly = (raw: string): string => {
+  const [wcStr, hexHash] = raw.split(":");
+  if (!hexHash || hexHash.length !== 64) return raw;
+  const wc = parseInt(wcStr, 10);
+  const tag = 0x11; // bounceable
+  const wcByte = wc === -1 ? 0xff : wc & 0xff;
+  const hash = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) hash[i] = parseInt(hexHash.substr(i * 2, 2), 16);
+  const payload = new Uint8Array(34);
+  payload[0] = tag;
+  payload[1] = wcByte;
+  payload.set(hash, 2);
+  const crc = crc16(payload);
+  const full = new Uint8Array(36);
+  full.set(payload);
+  full[34] = (crc >> 8) & 0xff;
+  full[35] = crc & 0xff;
+  let binary = "";
+  for (const b of full) binary += String.fromCharCode(b);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_");
+};
+
 const formatTimeSince = (timestampStr: string) => {
   const timestamp = new Date(timestampStr).getTime();
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
